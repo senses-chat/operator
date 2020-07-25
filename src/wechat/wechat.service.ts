@@ -4,11 +4,11 @@ import { Repository } from 'typeorm';
 import { createDecipheriv, createHash } from 'crypto';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
-import { Readable } from 'stream';
 import { Subject } from 'rxjs';
 import { parse as xmlParse } from 'fast-xml-parser';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
+import qs from 'query-string';
 
 import { MinioService } from 'src/minio';
 
@@ -62,24 +62,25 @@ export class WechatService {
     return this.getAuthorizationCode(appId, appSecret, url, code);
   }
 
-  public async getWxACodeUnlimited(appNamespace: string, data: WxACodeUnlimitedDto): Promise<Readable> {
+  public async getWxACodeUnlimited(appNamespace: string, data: WxACodeUnlimitedDto): Promise<Buffer> {
     const token = await this.getAccessToken(appNamespace);
 
-    const { data: stream } = await this.httpService
-      .request({
-        headers: { 'Content-type': 'application/json' },
+    const response = await fetch(
+      `${WECHAT_API_ROOT}/wxa/getwxacodeunlimit?access_token=${token}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
         method: 'post',
-        responseType: 'stream',
-        url: `${WECHAT_API_ROOT}/wxa/getwxacodeunlimit?access_token=${token}`,
-        data,
-      })
-      .toPromise();
+        body: JSON.stringify(data),
+      },
+    );
 
-    if (!stream) {
+    const buffer = await response.buffer();
+
+    if (!buffer || buffer.length <= 0) {
       throw new NotFoundException('cannot get WXA code');
     }
 
-    return stream;
+    return buffer;
   }
 
   public async sendMessage(appNamespace: string, message: WxMessagePayload): Promise<void> {
@@ -87,17 +88,16 @@ export class WechatService {
 
     this.logger.debug(message);
 
-    const { data } = await this.httpService
-      .request({
-        responseType: 'json',
+    const response = await fetch(
+      `${WECHAT_API_ROOT}/cgi-bin/message/custom/send?access_token=${access_token}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
         method: 'POST',
-        url: `${WECHAT_API_ROOT}/cgi-bin/message/custom/send`,
-        params: {
-          access_token,
-        },
-        data: message,
-      })
-      .toPromise();
+        body: JSON.stringify(message),
+      },
+    );
+
+    const data = await response.json();
 
     this.logger.debug(data);
   }
@@ -239,16 +239,10 @@ export class WechatService {
   }
 
   private async getWxTokenOrCode(url: string, params: any): Promise<any> {
-    const { data } = await this.httpService
-      .request({
-        responseType: 'json',
-        method: 'GET',
-        url,
-        params,
-      })
-      .toPromise();
-
-    return data;
+    const response = await fetch(`${url}?${qs.stringify(params)}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.json();
   }
 
   private async getAppIdAndSecret(appNamespace: string): Promise<WechatApp> {
