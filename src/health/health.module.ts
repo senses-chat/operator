@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 
-import { TerminusOptionsService } from './terminus-options.service';
-import { ConfigModule } from 'src/modules';
+import { HealthController } from './health.controller';
 
 @Module({
-  imports: [
-    TerminusModule.forRootAsync({
-      imports: [ConfigModule],
-      useClass: TerminusOptionsService,
-    }),
-  ],
+  imports: [TerminusModule],
+  controllers: [HealthController],
 })
 export class HealthModule {}

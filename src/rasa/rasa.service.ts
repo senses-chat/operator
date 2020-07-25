@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from 'nestjs-config';
@@ -12,7 +12,7 @@ import { RasaServer } from './rasa.entity';
 const RASA_BOTS = 'bots:rasa';
 
 @Injectable()
-export class RasaService {
+export class RasaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RasaService.name);
   private redisClient: Redis;
   private rasaInstances: {
@@ -36,7 +36,10 @@ export class RasaService {
       this.isReadyResolve = resolve;
       // this.isReadyReject = reject;
     });
-    this.launchRasaBots();
+  }
+
+  public async onModuleInit(): Promise<void> {
+    return this.launchRasaBots();
   }
 
   async cleanUpContainers(): Promise<void> {
@@ -94,5 +97,9 @@ export class RasaService {
 
     this.isReadyResolve();
     this.logger.log('Rasa Service finished initializing');
+  }
+
+  public async onModuleDestroy(): Promise<void> {
+    return this.cleanUpContainers();
   }
 }

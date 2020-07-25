@@ -26,7 +26,6 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@godaddy/terminus": "^4.3.1",
     "@marcj/marshal": "^2.1.13",
     "@marcj/marshal-nest": "^2.1.13",
     "@nestjs/common": "^7.3.2",
@@ -51,6 +50,7 @@
     "node-fetch": "^2.6.0",
     "pg": "^8.3.0",
     "query-string": "^6.13.1",
+    "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",
