@@ -1,10 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { ConfigService } from 'nestjs-config';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
 import { DockerService } from 'src/docker';
 import { Rasa } from './rasa.instance';
+import { RasaServer } from './rasa.entity';
 
 const RASA_BOTS = 'bots:rasa';
 
@@ -24,6 +27,8 @@ export class RasaService {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly dockerService: DockerService,
+    @InjectRepository(RasaServer)
+    private readonly rasaServerRepo: Repository<RasaServer>,
   ) {
     this.redisClient = this.redisService.getClient('bots');
     this.rasaInstances = {};
@@ -61,10 +66,8 @@ export class RasaService {
   private async launchRasaBots(): Promise<void> {
     await this.cleanUpContainers();
 
-    const rasaBots = await this.prismaService.botManagerInstance.rasaBots({
-      where: {
-        isActive: true,
-      },
+    const rasaBots = await this.rasaServerRepo.find({
+      isActive: true,
     });
 
     for (const rasaBot of rasaBots) {
@@ -73,20 +76,14 @@ export class RasaService {
       if (keys.length > 0) {
         this.logger.debug(`Rasa Bot ${rasaBot.name} has running containers, skipping`);
 
-        this.rasaInstances[rasaBot.name] = new Rasa(
-          this.configService,
-          this.httpService,
-          this.dockerService,
-          this.prismaService.botManagerInstance,
-          rasaBot,
-        );
+        this.rasaInstances[rasaBot.name] = new Rasa(this.configService, this.dockerService, rasaBot);
 
         continue;
       }
 
       this.logger.debug(`launching ${rasaBot.name}`);
 
-      const rasa = new Rasa(this.configService, this.httpService, this.dockerService, this.prismaService.botManagerInstance, rasaBot);
+      const rasa = new Rasa(this.configService, this.dockerService, rasaBot);
 
       const containerIds = await rasa.launch();
 

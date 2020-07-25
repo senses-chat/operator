@@ -14,11 +14,11 @@ export class WechatApp {
   @Column()
   appSecret: string;
 
-  @Column()
-  token: string;
+  @Column({ nullable: true })
+  token?: string;
 
-  @Column()
-  aesKey: string;
+  @Column({ nullable: true })
+  aesKey?: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   retryAttempts: 10,
   type: process.env.TYPEORM_CONNECTION || 'postgres',
@@ -23,4 +25,5 @@ module.exports = {
       process.env.TYPEORM_MIGRATIONS || 'migrations/*{.ts,.js}',
     ),
   ],
+  seeds: ['src/seeds/*{.ts,.js}'],
 };

@@ -1,4 +1,5 @@
 # compiled output
+/data
 /dist
 /node_modules
 
@@ -34,3 +35,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 *.env.*
+
+/src/seeds/*.ts

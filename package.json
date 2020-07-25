@@ -14,6 +14,11 @@
     "start:prod": "node dist/main",
     "lint": "eslint --fix",
     "docgen": "compodoc -p tsconfig.json",
+    "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d && npm run seed:run",
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
+    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
+    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -49,7 +54,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.11",
