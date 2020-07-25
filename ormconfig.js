@@ -10,7 +10,7 @@ module.exports = {
   entities: [
     path.resolve(
       __dirname,
-      '..',
+      'src',
       process.env.TYPEORM_ENTITIES || '**/*.entity{.ts,.js}',
     ),
   ],
@@ -19,7 +19,7 @@ module.exports = {
   migrations: [
     path.resolve(
       __dirname,
-      '..',
+      'src',
       process.env.TYPEORM_MIGRATIONS || 'migrations/*{.ts,.js}',
     ),
   ],

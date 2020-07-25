@@ -12,12 +12,7 @@ export class DockerService {
 
   public get instance(): Docker {
     if (!this.dockerApi) {
-      // TODO: put config options in, all local for now
-      this.dockerApi = new Docker({
-        host: 'localhost',
-        port: 2376,
-        version: 'v1.40',
-      });
+      this.dockerApi = new Docker(this.configService.get('docker.config'));
     }
 
     return this.dockerApi;

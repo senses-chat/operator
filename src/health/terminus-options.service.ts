@@ -1,5 +1,5 @@
 import { Injectable, OnApplicationShutdown, Logger } from '@nestjs/common';
-import { Transport } from '@nestjs/common/enums/transport.enum';
+import { Transport } from '@nestjs/microservices';
 import {
   TerminusEndpoint,
   TerminusOptionsFactory,

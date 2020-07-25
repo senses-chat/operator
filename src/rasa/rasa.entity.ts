@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn, Column, OneToMany, Entity, ManyToOne } from 'ty
 import { ContainerCreateOptions } from 'dockerode';
 
 @Entity()
-export class RasaBot {
+export class RasaServer {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -12,18 +12,21 @@ export class RasaBot {
   @Column({ type: 'simple-json' })
   dockerOptions: ContainerCreateOptions;
 
+  @Column({ nullable: true })
+  host?: string;
+
   @Column({ type: 'int' })
   port: number;
 
   @Column({ default: false })
   isActive: boolean;
 
-  @OneToMany(() => RasaService, service => service.bot, { eager: true, cascade: true })
-  services: RasaService[];
+  @OneToMany(() => RasaHelperServer, (helper) => helper.bot, { eager: true, cascade: true })
+  helpers: RasaHelperServer[];
 }
 
 @Entity()
-export class RasaService {
+export class RasaHelperServer {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -33,6 +36,8 @@ export class RasaService {
   @Column({ type: 'simple-json' })
   dockerOptions: ContainerCreateOptions;
 
-  @ManyToOne(() => RasaBot, bot => bot.services)
-  bot: RasaBot;
+  @ManyToOne(() => RasaServer, (bot) => bot.helpers)
+  bot: RasaServer;
 }
+
+export const RasaEntities = [RasaServer, RasaHelperServer];
