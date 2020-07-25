@@ -13,7 +13,7 @@ module.exports = {
     path.resolve(
       __dirname,
       'src',
-      process.env.TYPEORM_ENTITIES || '**/*.entity{.ts,.js}',
+      '**/*.entity{.ts,.js}',
     ),
   ],
   synchronize: Boolean(process.env.TYPEORM_SYNCHRONIZE || true),
@@ -22,7 +22,7 @@ module.exports = {
     path.resolve(
       __dirname,
       'src',
-      process.env.TYPEORM_MIGRATIONS || 'migrations/*{.ts,.js}',
+      'migrations/*{.ts,.js}',
     ),
   ],
   seeds: ['src/seeds/*{.ts,.js}'],

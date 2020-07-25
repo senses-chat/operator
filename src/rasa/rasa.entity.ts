@@ -39,5 +39,3 @@ export class RasaHelperServer {
   @ManyToOne(() => RasaServer, (bot) => bot.helpers)
   bot: RasaServer;
 }
-
-export const RasaEntities = [RasaServer, RasaHelperServer];
