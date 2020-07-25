@@ -1,0 +1,3 @@
+src/prisma/client
+src/docker/client
+src/rasa/client
