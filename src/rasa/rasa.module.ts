@@ -6,7 +6,7 @@ import { DockerModule } from 'src/docker';
 
 import { RasaController } from './rasa.controller';
 import { RasaService } from './rasa.service';
-import { RasaServer, RasaHelperServer } from './rasa.entity';
+import { RasaServer, RasaHelperServer } from './models';
 
 @Module({
   imports: [ConfigModule, DockerModule, RedisModule, TypeOrmModule.forFeature([RasaServer, RasaHelperServer])],

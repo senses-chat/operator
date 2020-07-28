@@ -7,8 +7,7 @@ import * as Ops from 'rxjs/operators';
 
 import { DockerService } from 'src/docker';
 
-import { RasaWebhookPayload, RasaResponsePayload } from './rasa.dto';
-import { RasaServer, RasaHelperServer } from './rasa.entity';
+import { RasaWebhookPayload, RasaResponsePayload, RasaServer, RasaHelperServer } from './models';
 
 export class Rasa {
   private logger: Logger;

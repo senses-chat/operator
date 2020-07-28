@@ -7,7 +7,7 @@ import { Redis } from 'ioredis';
 
 import { DockerService } from 'src/docker';
 import { Rasa } from './rasa.instance';
-import { RasaServer } from './rasa.entity';
+import { RasaServer } from './models';
 
 const RASA_BOTS = 'bots:rasa';
 

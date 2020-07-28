@@ -12,9 +12,8 @@ import qs from 'query-string';
 
 import { MinioService } from 'src/minio';
 
-import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WxIncomingMessage } from './wechat.dto';
+import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WxIncomingMessage, WechatApp } from './models';
 import { WXMsgCrypto } from './wechat.crypto';
-import { WechatApp } from './wechat.entity';
 
 const WECHAT_ACCESS_TOKEN = 'wechat:accessToken';
 const WECHAT_API_ROOT = 'https://api.weixin.qq.com';
@@ -65,14 +64,11 @@ export class WechatService {
   public async getWxACodeUnlimited(appNamespace: string, data: WxACodeUnlimitedDto): Promise<Buffer> {
     const token = await this.getAccessToken(appNamespace);
 
-    const response = await fetch(
-      `${WECHAT_API_ROOT}/wxa/getwxacodeunlimit?access_token=${token}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'post',
-        body: JSON.stringify(data),
-      },
-    );
+    const response = await fetch(`${WECHAT_API_ROOT}/wxa/getwxacodeunlimit?access_token=${token}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'post',
+      body: JSON.stringify(data),
+    });
 
     const buffer = await response.buffer();
 
@@ -88,14 +84,11 @@ export class WechatService {
 
     this.logger.debug(message);
 
-    const response = await fetch(
-      `${WECHAT_API_ROOT}/cgi-bin/message/custom/send?access_token=${access_token}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(message),
-      },
-    );
+    const response = await fetch(`${WECHAT_API_ROOT}/cgi-bin/message/custom/send?access_token=${access_token}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify(message),
+    });
 
     const data = await response.json();
 

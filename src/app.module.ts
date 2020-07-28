@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { HealthModule } from './health';
-import { RasaModule } from './rasa';
-import { WechatModule } from './wechat';
 import { TypeOrmModule } from './modules';
+import { HealthModule } from './health';
+import { RouteModule } from './route';
 
 @Module({
-  imports: [HealthModule, RasaModule, WechatModule, TypeOrmModule],
+  imports: [TypeOrmModule, HealthModule, RouteModule],
   controllers: [],
   providers: [],
 })

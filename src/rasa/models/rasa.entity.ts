@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, OneToMany, Entity, ManyToOne } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, OneToMany, Entity, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ContainerCreateOptions } from 'dockerode';
 
 @Entity()
@@ -23,6 +23,12 @@ export class RasaServer {
 
   @OneToMany(() => RasaHelperServer, (helper) => helper.bot, { eager: true, cascade: true })
   helpers: RasaHelperServer[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }
 
 @Entity()
@@ -38,4 +44,10 @@ export class RasaHelperServer {
 
   @ManyToOne(() => RasaServer, (bot) => bot.helpers)
   bot: RasaServer;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }

@@ -1,4 +1,4 @@
 export { WechatModule } from './wechat.module';
 export { WechatService } from './wechat.service';
 
-export * from './wechat.dto';
+export * from './models';

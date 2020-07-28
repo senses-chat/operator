@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { RasaService } from './rasa.service';
-import { RequestAccept } from './rasa.dto';
+import { RequestAccept } from './models';
 
 @Controller('rasa')
 export class RasaController {

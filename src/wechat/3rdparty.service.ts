@@ -5,7 +5,7 @@ import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
 import { WXMsgCrypto } from './wechat.crypto';
-import { Wechat3rdPartyCredentials } from './wechat.dto';
+import { Wechat3rdPartyCredentials } from './models';
 
 const COMPONENT_VERIFY_TICKET = 'wechat:component:verify_ticket';
 
