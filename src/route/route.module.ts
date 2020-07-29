@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WechatModule } from 'src/wechat';
-import { RasaModule } from 'src/rasa';
+import { RedisModule } from 'src/modules';
 
 import { RouteService } from './route.service';
 import { Route } from './models';
+import { SessionRepository } from './repositories';
 
 @Module({
-  imports: [CqrsModule, WechatModule, RasaModule, TypeOrmModule.forFeature([Route])],
-  providers: [RouteService],
-  exports: [],
+  imports: [CqrsModule, RedisModule, TypeOrmModule.forFeature([Route])],
+  providers: [RouteService, SessionRepository],
+  exports: [SessionRepository],
 })
 export class RouteModule {}

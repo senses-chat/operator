@@ -1,12 +1,19 @@
-import { Controller, Get, Param, Post, Body, Res, Query, Header, Logger, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Query, Logger, NotFoundException } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { plainToClass } from 'class-transformer';
 
 import { WechatService } from './wechat.service';
 import { Wechat3rdPartyService } from './3rdparty.service';
+import { NewWechatMessageCommand } from './commands/new-msg.command';
 
 @Controller('wechat')
 export class WechatController {
   private readonly logger = new Logger(WechatController.name);
-  constructor(private readonly wechatService: WechatService, private readonly wx3pService: Wechat3rdPartyService) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly wechatService: WechatService,
+    private readonly wx3pService: Wechat3rdPartyService,
+  ) {}
 
   @Get('/:appNamespace')
   async validate(
@@ -36,7 +43,7 @@ export class WechatController {
     }
 
     this.logger.log(payload);
-    this.wechatService.getSubject(appNamespace).next({ ...payload, appNamespace });
+    this.commandBus.execute(plainToClass(NewWechatMessageCommand, { ...payload, appNamespace }));
 
     return 'success';
   }
@@ -51,6 +58,7 @@ export class WechatController {
     }
 
     this.logger.log(payload);
+    // TODO: push payload into command bus after digesting the channel
 
     if (payload.InfoType === 'component_verify_ticket') {
       this.logger.debug('storing component verify ticket');

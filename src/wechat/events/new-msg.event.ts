@@ -1,7 +1,7 @@
-import { ICommand } from '@nestjs/cqrs';
+import { IEvent } from '@nestjs/cqrs';
 import { WxIncomingMessage } from '../models';
 
-export class NewWechatMessageCommand implements WxIncomingMessage, ICommand {
+export class NewWechatMessageEvent implements WxIncomingMessage, IEvent {
   appNamespace: string;
   ToUserName: string;
   FromUserName: string;
