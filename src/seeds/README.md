@@ -92,3 +92,33 @@ export default class CreateWechatApps implements Seeder {
 }
 
 ```
+
+## Routes
+
+```typescript
+import { Connection } from 'typeorm';
+import { Factory, Seeder } from 'typeorm-seeding';
+
+import { Route } from '../route/models/route.entity';
+import { RouteType } from '../route/models/route.dto';
+
+export default class CreateRoutes implements Seeder {
+  public async run(factory: Factory, connection: Connection): Promise<any> {
+    await connection
+      .createQueryBuilder()
+      .insert()
+      .into(Route)
+      .values([
+        {
+          sourceType: RouteType.WechatApp,
+          sourceName: 'wechat_app_name',
+          destinationType: RouteType.Rasa,
+          destinationName: 'xtech-welcome-bot',
+          isActive: true,
+        },
+      ])
+      .execute();
+  }
+}
+
+```
