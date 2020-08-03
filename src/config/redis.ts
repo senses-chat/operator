@@ -14,7 +14,7 @@ export default {
       password: process.env.REDIS_PASSWORD || 'chatOperator',
     },
     {
-      name: 'bots',
+      name: 'session',
       host: process.env.REDIS_HOST || 'localhost',
       port: Number(process.env.REDIS_PORT || 6379),
       db: Number(process.env.REDIS_BOTS_DB || 2),

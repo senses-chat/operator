@@ -1,14 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { RouteDefinition } from './route.dto';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { RouteType } from './route.dto';
 
 @Entity()
+@Index(['sourceType', 'sourceName', 'destinationType', 'destinationName'], { unique: true })
 export class Route {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'simple-json' })
-  definition: RouteDefinition;
+  @Index()
+  @Column({ type: 'enum', enum: RouteType })
+  sourceType: RouteType;
 
+  @Index()
+  @Column()
+  sourceName: string;
+
+  @Index()
+  @Column({ type: 'enum', enum: RouteType })
+  destinationType: RouteType;
+
+  @Index()
+  @Column()
+  destinationName: string;
+
+  @Index()
   @Column({ default: false })
   isActive: boolean;
 

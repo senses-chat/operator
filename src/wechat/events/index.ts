@@ -1,6 +1,8 @@
 import { NewWechatMessageEvent } from './new-msg.event';
+import { SendWechatMessageEvent } from './send-msg.event';
 import { NewWechatMessageEventHandler } from './handlers/new-msg.handler';
+import { SendWechatMessageEventHandler } from './handlers/send-msg.handler';
 
-export { NewWechatMessageEvent, NewWechatMessageEventHandler };
+export { NewWechatMessageEvent, SendWechatMessageEvent, NewWechatMessageEventHandler, SendWechatMessageEventHandler };
 
-export const EventHandlers = [NewWechatMessageEventHandler];
+export const EventHandlers = [NewWechatMessageEventHandler, SendWechatMessageEventHandler];

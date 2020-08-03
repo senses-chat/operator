@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from 'nestjs-config';
@@ -7,7 +8,9 @@ import { Redis } from 'ioredis';
 
 import { DockerService } from 'src/docker';
 import { Rasa } from './rasa.instance';
-import { RasaServer } from './models';
+import { RasaServer, RasaResponsePayload } from './models';
+import { plainToClass } from 'class-transformer';
+import { NewRasaMessageCommand } from './commands';
 
 const RASA_BOTS = 'bots:rasa';
 
@@ -29,6 +32,7 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
     private readonly dockerService: DockerService,
     @InjectRepository(RasaServer)
     private readonly rasaServerRepo: Repository<RasaServer>,
+    private readonly commandBus: CommandBus,
   ) {
     this.redisClient = this.redisService.getClient('bots');
     this.rasaInstances = {};
@@ -42,20 +46,9 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
     return this.launchRasaBots();
   }
 
-  async cleanUpContainers(): Promise<void> {
-    this.logger.log(`cleaning up running containers`);
-
-    const rasaBots = await this.redisClient.keys(`${RASA_BOTS}:*`);
-
-    for (const key of rasaBots) {
-      this.logger.debug(`cleaning up containers in ${key}`);
-      const containerIds = await this.redisClient.lrange(key, 0, -1);
-      for (const containerId of containerIds) {
-        this.logger.debug(`removing container ${containerId.substr(0, 8)}`);
-        await this.dockerService.cleanUpContainer(containerId);
-      }
-      await this.redisClient.del(key);
-    }
+  public async onModuleDestroy(): Promise<void> {
+    this.cleanUpSubscriptions();
+    return this.cleanUpContainers();
   }
 
   public getInstance(botName: string): Rasa {
@@ -92,6 +85,10 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
 
       this.redisClient.rpush(`${RASA_BOTS}:${rasaBot.name}`, containerIds);
 
+      rasa.subscription = rasa.responseObservable().subscribe((response: RasaResponsePayload) => {
+        this.commandBus.execute(plainToClass(NewRasaMessageCommand, Object.assign(response, { namespace: rasaBot.name })));
+      });
+
       this.rasaInstances[rasaBot.name] = rasa;
     }
 
@@ -99,7 +96,25 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
     this.logger.log('Rasa Service finished initializing');
   }
 
-  public async onModuleDestroy(): Promise<void> {
-    return this.cleanUpContainers();
+  private async cleanUpContainers(): Promise<void> {
+    this.logger.log(`cleaning up running containers`);
+
+    const rasaBots = await this.redisClient.keys(`${RASA_BOTS}:*`);
+
+    for (const key of rasaBots) {
+      this.logger.debug(`cleaning up containers in ${key}`);
+      const containerIds = await this.redisClient.lrange(key, 0, -1);
+      for (const containerId of containerIds) {
+        this.logger.debug(`removing container ${containerId.substr(0, 8)}`);
+        await this.dockerService.cleanUpContainer(containerId);
+      }
+      await this.redisClient.del(key);
+    }
+  }
+
+  private cleanUpSubscriptions(): void {
+    Object.keys(this.rasaInstances).forEach((key: string) => {
+      this.rasaInstances[key].subscription.unsubscribe();
+    });
   }
 }

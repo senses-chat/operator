@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from 'nestjs-config';
-import { Observable, from, zip, interval } from 'rxjs';
+import { Observable, from, zip, interval, Subscription } from 'rxjs';
 import { Container } from 'dockerode';
 import { Subject } from 'rxjs';
 import * as Ops from 'rxjs/operators';
@@ -11,13 +11,11 @@ import { RasaWebhookPayload, RasaResponsePayload, RasaServer, RasaHelperServer }
 
 export class Rasa {
   private logger: Logger;
-  // private domainApi: DomainApi;
   public messageSubject: Subject<RasaWebhookPayload>;
+  public subscription: Subscription;
 
   constructor(private readonly configService: ConfigService, private readonly dockerService: DockerService, public readonly rasaServer: RasaServer) {
     this.logger = new Logger(`${Rasa.name}-${this.rasaServer.name}`);
-    // TODO: hostname
-    // this.domainApi = new DomainApi({}, `http://localhost:${this.rasaServer.port}`, this.httpService.axiosRef);
     this.messageSubject = new Subject();
   }
 
@@ -62,11 +60,6 @@ export class Rasa {
       }),
     );
   }
-
-  // public async getDomain(accept: RequestAccept): Promise<Domain> {
-  //   const { data } = await this.domainApi.getDomain({ headers: { accept } });
-  //   return data;
-  // }
 
   private async createRasaHelperServerContainer(helper: RasaHelperServer): Promise<Container> {
     return this.dockerService.instance.createContainer(helper.dockerOptions);
