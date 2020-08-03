@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { createDecipheriv, createHash } from 'crypto';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
-import { Subject } from 'rxjs';
 import { parse as xmlParse } from 'fast-xml-parser';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
@@ -12,7 +11,7 @@ import qs from 'query-string';
 
 import { MinioService } from 'src/minio';
 
-import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WxIncomingMessage, WechatApp } from './models';
+import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WechatApp } from './models';
 import { WXMsgCrypto } from './wechat.crypto';
 
 const WECHAT_ACCESS_TOKEN = 'wechat:accessToken';
@@ -22,9 +21,6 @@ const WECHAT_API_ROOT = 'https://api.weixin.qq.com';
 export class WechatService {
   private readonly logger = new Logger(WechatService.name);
   private redisClient: Redis;
-  private messageSubjects: {
-    [key: string]: Subject<WxIncomingMessage>;
-  };
 
   constructor(
     private readonly redisService: RedisService,
@@ -33,18 +29,9 @@ export class WechatService {
     private readonly wechatAppRepo: Repository<WechatApp>,
   ) {
     this.redisClient = this.redisService.getClient('wechat');
-    this.messageSubjects = {};
     this.clearAccessTokens().then(() => {
       this.logger.debug('cleared all access tokens');
     });
-  }
-
-  public getSubject(appNamespace: string): Subject<WxIncomingMessage> {
-    if (!this.messageSubjects[appNamespace]) {
-      this.messageSubjects[appNamespace] = new Subject<WxIncomingMessage>();
-    }
-
-    return this.messageSubjects[appNamespace];
   }
 
   public async getAuthorizationCodeMiniApp(appNamespace: string, code: string): Promise<WxAuthorizationCode> {
