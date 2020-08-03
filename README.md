@@ -4,6 +4,10 @@
 
 `chat-operator` is a server that helps route messages between chat service providers (Slack, Wechat, etc) to Chatbot services (Rasa, Bot Framework, etc) or even to each other.
 
+Demo (Scan QR with Wechat):
+
+![demo](demo.png)
+
 ## Support Matrix
 
 Currently support:
