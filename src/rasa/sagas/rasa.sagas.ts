@@ -12,7 +12,7 @@ const DELIMITER = ':';
 
 @Injectable()
 export class RasaSagas {
-  private readonly logger = new Logger(RasaSagas.name);
+  private static logger = new Logger(RasaSagas.name);
 
   @Saga()
   public routeRasaMessageSaga(events$: Observable<IEvent>): Observable<ICommand> {
@@ -21,6 +21,7 @@ export class RasaSagas {
       concatMap((event: NewRasaMessageEvent) => {
         const content: any = { ...event, type: MessageContentType.Text };
         delete (content as any).recipient_id;
+        delete (content as any).namespace;
 
         if (content.buttons) {
           content.type = MessageContentType.TextWithButtons;
@@ -36,7 +37,7 @@ export class RasaSagas {
           content,
         });
 
-        this.logger.debug(routeMessage);
+        RasaSagas.logger.debug(routeMessage);
 
         if (!routeMessage) {
           return EMPTY;
@@ -53,7 +54,7 @@ export class RasaSagas {
       ofType(NewSessionMessageEvent),
       filter((event: NewSessionMessageEvent) => event.isMessageFromSource()),
       filter((event: NewSessionMessageEvent) => event.session.destination.type === RouteType.Rasa),
-      concatMap(this.convertRouteMessageToRasaMessage.bind(this, true)),
+      concatMap(RasaSagas.convertRouteMessageToRasaMessage.bind(null, true)),
     );
   }
 
@@ -63,11 +64,11 @@ export class RasaSagas {
       ofType(NewSessionMessageEvent),
       filter((event: NewSessionMessageEvent) => event.isMessageFromDestination()),
       filter((event: NewSessionMessageEvent) => event.session.source.type === RouteType.Rasa),
-      concatMap(this.convertRouteMessageToRasaMessage.bind(this, false)),
+      concatMap(RasaSagas.convertRouteMessageToRasaMessage.bind(null, false)),
     );
   }
 
-  private convertRouteMessageToRasaMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendRasaMessageCommand> {
+  private static convertRouteMessageToRasaMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendRasaMessageCommand> {
     let namespaces: string[];
 
     if (toDestination) {

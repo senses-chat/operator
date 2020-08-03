@@ -1,5 +1,6 @@
 import { NewRouteMessageCommand } from './new-msg.command';
+import { NewRouteMessageCommandHandler } from './handlers/new-msg.handler';
 
-export { NewRouteMessageCommand };
+export { NewRouteMessageCommand, NewRouteMessageCommandHandler };
 
-export const CommandHandlers = [NewRouteMessageCommand];
+export const CommandHandlers = [NewRouteMessageCommandHandler];

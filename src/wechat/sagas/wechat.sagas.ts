@@ -10,7 +10,7 @@ import { NewWechatMessageEvent } from '../events';
 
 @Injectable()
 export class WechatSagas {
-  private readonly logger = new Logger(WechatSagas.name);
+  private static logger = new Logger(WechatSagas.name);
 
   @Saga()
   public newMessageSaga(events$: Observable<IEvent>): Observable<ICommand> {
@@ -43,7 +43,7 @@ export class WechatSagas {
           });
         }
 
-        this.logger.debug(routeMessage);
+        WechatSagas.logger.debug(routeMessage);
 
         if (!routeMessage) {
           return EMPTY;
@@ -60,7 +60,7 @@ export class WechatSagas {
       ofType(NewSessionMessageEvent),
       filter((event: NewSessionMessageEvent) => event.isMessageFromSource()),
       filter((event: NewSessionMessageEvent) => event.session.destination.type === RouteType.WechatApp),
-      concatMap(this.convertRouteMessageToWechatMessage.bind(this, true)),
+      concatMap(WechatSagas.convertRouteMessageToWechatMessage.bind(null, true)),
     );
   }
 
@@ -70,11 +70,11 @@ export class WechatSagas {
       ofType(NewSessionMessageEvent),
       filter((event: NewSessionMessageEvent) => event.isMessageFromDestination()),
       filter((event: NewSessionMessageEvent) => event.session.source.type === RouteType.WechatApp),
-      concatMap(this.convertRouteMessageToWechatMessage.bind(this, false)),
+      concatMap(WechatSagas.convertRouteMessageToWechatMessage.bind(null, false)),
     );
   }
 
-  private convertRouteMessageToWechatMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendWechatMessageCommand> {
+  private static convertRouteMessageToWechatMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendWechatMessageCommand> {
     let type: RouteType;
     let namespaces: string[];
 
@@ -88,9 +88,11 @@ export class WechatSagas {
 
     return of(
       plainToClass(SendWechatMessageCommand, {
-        ...classToPlain(event.message),
-        type,
-        namespaces,
+        message: {
+          ...classToPlain(event.message),
+          type,
+          namespaces,
+        },
       }),
     );
   }

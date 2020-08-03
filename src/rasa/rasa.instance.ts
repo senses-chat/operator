@@ -4,6 +4,7 @@ import { Observable, from, zip, interval, Subscription } from 'rxjs';
 import { Container } from 'dockerode';
 import { Subject } from 'rxjs';
 import * as Ops from 'rxjs/operators';
+import fetch from 'node-fetch';
 
 import { DockerService } from 'src/docker';
 
@@ -53,8 +54,10 @@ export class Rasa {
           }),
         ),
       ),
-      Ops.concatMap((response) => {
-        return zip(from(response.json()), interval(this.configService.get('rasa.messageDelay')), (payload: RasaResponsePayload, _) => {
+      // TODO: add error handling here
+      Ops.concatMap((response) => from(response.json())),
+      Ops.concatMap((messages) => {
+        return zip(from(messages), interval(this.configService.get('rasa.messageDelay')), (payload: RasaResponsePayload, _) => {
           return payload;
         });
       }),

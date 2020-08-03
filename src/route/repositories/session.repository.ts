@@ -65,8 +65,8 @@ export class SessionRepository {
     const destKey = this.getSessionKey(definition.destination.type, definition.destination.namespaces);
     const pipeline = this.redisClient.pipeline();
     // expire session in 1 hour
-    pipeline.set(srcKey, JSON.stringify(Object.assign({}, definition, { isDestinaion: false })), 'ex', 3600);
-    pipeline.set(destKey, JSON.stringify(Object.assign({}, definition, { isDestinaion: true })), 'ex', 3600);
+    pipeline.set(srcKey, JSON.stringify(Object.assign({}, definition, { isDestination: false })), 'ex', 3600);
+    pipeline.set(destKey, JSON.stringify(Object.assign({}, definition, { isDestination: true })), 'ex', 3600);
     await pipeline.exec();
 
     return new Session(definition);

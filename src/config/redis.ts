@@ -14,7 +14,7 @@ export default {
       password: process.env.REDIS_PASSWORD || 'chatOperator',
     },
     {
-      name: 'session',
+      name: 'bots',
       host: process.env.REDIS_HOST || 'localhost',
       port: Number(process.env.REDIS_PORT || 6379),
       db: Number(process.env.REDIS_BOTS_DB || 2),
@@ -23,6 +23,13 @@ export default {
         client.on('error', (error) => console.error(error));
         client.on('close', () => console.error('redis connnection closed'));
       },
+    },
+    {
+      name: 'session',
+      host: process.env.REDIS_HOST || 'localhost',
+      port: Number(process.env.REDIS_PORT || 6379),
+      db: Number(process.env.REDIS_SESSION_DB || 3),
+      password: process.env.REDIS_PASSWORD || 'chatOperator',
     },
   ],
 };
