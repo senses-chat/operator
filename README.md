@@ -23,7 +23,7 @@ Planning to support:
 
 ```bash
 docker-compose up -d
-
+sh init_minio.sh
 npm install
 ```
 
