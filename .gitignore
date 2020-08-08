@@ -37,3 +37,6 @@ lerna-debug.log*
 *.env.*
 
 /src/seeds/*.ts
+
+login_ssh.sh
+*.pem
