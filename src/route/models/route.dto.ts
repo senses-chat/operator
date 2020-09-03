@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 export enum RouteType {
   Rasa = 'Rasa',
   WechatApp = 'WechatApp',
-  // Wechaty = 'Wechaty',
+  Wechaty = 'Wechaty',
 }
 
 export enum MessageContentType {

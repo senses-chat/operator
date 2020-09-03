@@ -5,6 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "postinstall": "patch-package",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write",
@@ -54,7 +55,9 @@
     "rxjs": "^6.5.4",
     "typeorm": "^0.2.25",
     "typeorm-seeding": "^1.6.1",
-    "uniqid": "^5.2.0"
+    "uniqid": "^5.2.0",
+    "wechaty": "^0.47.24",
+    "wechaty-puppet-hostie": "^0.10.2"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.11",
@@ -78,6 +81,7 @@
     "husky": "^4.2.3",
     "jest": "^26.1.0",
     "lint-staged": "^10.0.9",
+    "patch-package": "^6.2.2",
     "prettier": "^2.0.2",
     "supertest": "^4.0.2",
     "ts-jest": "26.1.3",
