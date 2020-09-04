@@ -5,6 +5,7 @@ export enum RouteType {
   Rasa = 'Rasa',
   WechatApp = 'WechatApp',
   Wechaty = 'Wechaty',
+  Saga = 'Saga',
 }
 
 export enum MessageContentType {
