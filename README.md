@@ -13,12 +13,12 @@ Demo (Scan QR with Wechat):
 Currently support:
 
 - Wechat Public Account / Mini-App Chat
+- Wechaty
 - Rasa
 
 Planning to support:
 
 - Wechat for Work (Greetings API)
-- Wechaty
 - Slack
 - Telegram
 - a generic WebSocket service spun up to accept custom website / app chat widgets.
