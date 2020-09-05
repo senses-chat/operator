@@ -32,6 +32,35 @@ export default class CreateWechatApps implements Seeder {
 }
 ```
 
+## Wechaty
+
+Currently only supports `wechaty-puppet-hostie` as puppet type.
+
+```typescript
+import { Connection } from 'typeorm';
+import { Factory, Seeder } from 'typeorm-seeding';
+
+import { WechatyBot } from '../wechaty/models/wechaty.entity';
+
+export default class CreateWechatyBots implements Seeder {
+  public async run(factory: Factory, connection: Connection): Promise<any> {
+    await connection
+      .createQueryBuilder()
+      .insert()
+      .into(WechatyBot)
+      .values([
+        {
+          name: 'wechaty_name',
+          puppet: 'wechaty-puppet-hostie',
+          token: '<token>',
+          isActive: true,
+        },
+      ])
+      .execute();
+  }
+}
+```
+
 ## Rasa Servers
 
 ```typescript
