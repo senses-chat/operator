@@ -23,6 +23,8 @@ Planning to support:
 - Slack
 - Telegram
 - a generic WebSocket service spun up to accept custom website / app chat widgets.
+- persistence and horizontal scalability via Redis Streams
+- indexing chat sessions in Elasticsearch
 
 ## Installation
 

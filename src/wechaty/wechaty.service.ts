@@ -21,7 +21,7 @@ export class WechatyService implements OnModuleInit {
   ) {}
 
   public async onModuleInit(): Promise<void> {
-    this.logger.debug('spawning wechaty thread');
+    this.logger.debug('spawning wechaty instances');
     const bots = await this.botRepo.find({ isActive: true });
 
     for (const bot of bots) {
