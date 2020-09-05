@@ -6,7 +6,7 @@ import PuppetHostie from 'wechaty-puppet-hostie';
 import { WorkerDataPayload, EventPayload } from './models/wechaty.dto';
 import { Subject, Subscription } from 'rxjs';
 
-const QR_URL = `https://wechaty.github.io/qrcode`;
+const QR_URL = `https://wechaty.js.org/qrcode`;
 
 export class WechatyInstance {
   private logger: Logger;
@@ -74,7 +74,10 @@ export class WechatyInstance {
         return;
       }
 
-      // TODO: filter out group message without mention
+      // group message only available with mentions
+      if (!message.room() || message.room().id.length === 0) {
+        this.logger.verbose('filtering out invalid room message');
+      }
 
       this.msgSubject.next(message);
     });

@@ -23,15 +23,21 @@ export class WechatySagas {
         console.log(event.message);
 
         if (event.message.payload.type === MessageType.Text) {
-          routeMessage = plainToClass(RouteMessage, {
+          const messagePayload = {
             type: RouteType.Wechaty,
-            // TODO: room id
             namespaces: [event.namespace, `${event.message.payload.fromId}`],
             content: {
               type: 'text',
               text: event.message.payload.text,
             },
-          });
+          };
+
+          // seems like group messages are only available with mentions
+          if (event.message.payload.roomId.length > 0) {
+            messagePayload.namespaces.push(event.message.payload.roomId);
+          }
+
+          routeMessage = plainToClass(RouteMessage, messagePayload);
         }
 
         WechatySagas.logger.debug(routeMessage);

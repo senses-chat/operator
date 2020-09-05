@@ -21,7 +21,7 @@ export class DingDongSagas {
       }),
       filter(
         (event: NewSessionMessageEvent) =>
-          event.message.content.type === MessageContentType.Text && (event.message.content as TextMessageContent).text === '#ding',
+          event.message.content.type === MessageContentType.Text && (event.message.content as TextMessageContent).text.indexOf('#ding') > -1,
       ),
       concatMap((event: NewSessionMessageEvent) => {
         return of(

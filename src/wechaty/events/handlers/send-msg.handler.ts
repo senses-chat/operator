@@ -4,6 +4,7 @@ import { Logger } from '@nestjs/common';
 import { WechatyService } from '../../wechaty.service';
 import { SendWechatyMessageEvent } from '../send-msg.event';
 import { MessageContentType, TextMessageContent } from 'src/route';
+import { Room } from 'wechaty';
 
 @EventsHandler(SendWechatyMessageEvent)
 export class SendWechatyMessageEventHandler implements IEventHandler<SendWechatyMessageEvent> {
@@ -14,13 +15,18 @@ export class SendWechatyMessageEventHandler implements IEventHandler<SendWechaty
   public async handle(event: SendWechatyMessageEvent): Promise<void> {
     this.logger.verbose(`send wechaty message event: ${JSON.stringify(event)}`);
 
-    const [botName, userId] = event.message.namespaces;
+    const [botName, userId, roomId] = event.message.namespaces;
     const { wechaty } = this.wechatyService.instances[botName];
     const user = wechaty.Contact.load(userId);
 
+    let room: Room;
+    if (roomId) {
+      room = wechaty.Room.load(roomId);
+    }
+
     switch (event.message.content.type) {
       case MessageContentType.Text:
-        await user.say((event.message.content as TextMessageContent).text);
+        await (room || user).say((event.message.content as TextMessageContent).text);
         return;
       default:
         throw new Error(`message content type ${event.message.content.type} not supported`);
