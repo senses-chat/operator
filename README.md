@@ -15,6 +15,7 @@ Currently support:
 - Wechat Public Account / Mini-App Chat
 - Wechaty
 - Rasa
+- Custom built actions in the form of [Sagas](https://github.com/xanthous-tech/chat-operator/blob/61d7065a5218f0b091fa032624014ced30b9b20d/src/route/sagas/ding-dong.sagas.ts)
 
 Planning to support:
 
