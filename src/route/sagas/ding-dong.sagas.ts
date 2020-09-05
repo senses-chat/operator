@@ -27,8 +27,8 @@ export class DingDongSagas {
         return of(
           new NewRouteMessageCommand(
             plainToClass(RouteMessage, {
-              type: event.session.source.type,
-              namespaces: event.session.source.namespaces,
+              type: event.session.destination.type,
+              namespaces: event.session.destination.namespaces,
               content: {
                 type: MessageContentType.Text,
                 text: 'dong',

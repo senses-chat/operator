@@ -10,7 +10,8 @@ const QR_URL = `https://wechaty.github.io/qrcode`;
 
 export class WechatyInstance {
   private logger: Logger;
-  private wechaty: Wechaty;
+  private loggedInUser: Contact | undefined;
+  public wechaty: Wechaty;
   public msgSubject: Subject<Message>;
   public evtSubject: Subject<EventPayload>;
   public subscription: Subscription;
@@ -56,14 +57,25 @@ export class WechatyInstance {
 
     this.wechaty.on('login', (user: Contact) => {
       this.logger.debug(`login - ${JSON.stringify(user)}`);
+      this.loggedInUser = user;
     });
 
     this.wechaty.on('logout', (user: Contact) => {
       this.logger.debug(`logout - ${JSON.stringify(user)}`);
+      this.loggedInUser = undefined;
     });
 
     this.wechaty.on('message', (message: Message) => {
-      this.logger.debug(`message - ${JSON.stringify(message)}`);
+      this.logger.debug(`incoming wechaty message - ${JSON.stringify(message)}`);
+
+      // filter out own message
+      if (message.from().id === this.loggedInUser.id) {
+        this.logger.verbose('filtering out own message');
+        return;
+      }
+
+      // TODO: filter out group message without mention
+
       this.msgSubject.next(message);
     });
   }

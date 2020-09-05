@@ -5,8 +5,9 @@ import { concatMap, filter } from 'rxjs/operators';
 import { plainToClass, classToPlain } from 'class-transformer';
 import { MessageType } from 'wechaty-puppet';
 
-import { RouteMessage, RouteType, NewRouteMessageCommand } from 'src/route';
+import { RouteMessage, RouteType, NewRouteMessageCommand, NewSessionMessageEvent } from 'src/route';
 import { NewWechatyMessageEvent } from '../events';
+import { SendWechatyMessageCommand } from '../commands';
 
 @Injectable()
 export class WechatySagas {
@@ -40,6 +41,49 @@ export class WechatySagas {
         }
 
         return of(new NewRouteMessageCommand(routeMessage));
+      }),
+    );
+  }
+
+  @Saga()
+  public routeMessageToWechatySaga(events$: Observable<IEvent>): Observable<ICommand> {
+    return events$.pipe(
+      ofType(NewSessionMessageEvent),
+      filter((event: NewSessionMessageEvent) => event.isMessageFromSource()),
+      filter((event: NewSessionMessageEvent) => event.session.destination.type === RouteType.Wechaty),
+      concatMap(WechatySagas.convertRouteMessageToWechatyMessage.bind(null, true)),
+    );
+  }
+
+  @Saga()
+  public routeMessageFromWechatySaga(events$: Observable<IEvent>): Observable<ICommand> {
+    return events$.pipe(
+      ofType(NewSessionMessageEvent),
+      filter((event: NewSessionMessageEvent) => event.isMessageFromDestination()),
+      filter((event: NewSessionMessageEvent) => event.session.source.type === RouteType.Wechaty),
+      concatMap(WechatySagas.convertRouteMessageToWechatyMessage.bind(null, false)),
+    );
+  }
+
+  private static convertRouteMessageToWechatyMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendWechatyMessageCommand> {
+    let type: RouteType;
+    let namespaces: string[];
+
+    if (toDestination) {
+      type = event.session.destination.type;
+      namespaces = event.session.destination.namespaces;
+    } else {
+      type = event.session.source.type;
+      namespaces = event.session.source.namespaces;
+    }
+
+    return of(
+      plainToClass(SendWechatyMessageCommand, {
+        message: {
+          ...classToPlain(event.message),
+          type,
+          namespaces,
+        },
       }),
     );
   }

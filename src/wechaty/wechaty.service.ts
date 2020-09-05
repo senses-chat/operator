@@ -12,7 +12,7 @@ import { NewWechatyMessageCommand } from './commands';
 @Injectable()
 export class WechatyService implements OnModuleInit {
   private readonly logger = new Logger(WechatyService.name);
-  private threads: { [key: string]: WechatyInstance } = {};
+  public instances: { [key: string]: WechatyInstance } = {};
 
   constructor(
     @InjectRepository(WechatyBot)
@@ -25,7 +25,7 @@ export class WechatyService implements OnModuleInit {
     const bots = await this.botRepo.find({ isActive: true });
 
     for (const bot of bots) {
-      this.threads[bot.name] = this.setUpWechatyBot(bot);
+      this.instances[bot.name] = this.setUpWechatyBot(bot);
     }
   }
 
