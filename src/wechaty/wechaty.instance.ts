@@ -65,7 +65,7 @@ export class WechatyInstance {
       this.loggedInUser = undefined;
     });
 
-    this.wechaty.on('message', (message: Message) => {
+    this.wechaty.on('message', async (message: Message) => {
       this.logger.debug(`incoming wechaty message - ${JSON.stringify(message)}`);
 
       // filter out own message
@@ -75,9 +75,17 @@ export class WechatyInstance {
       }
 
       // group message only available with mentions
-      if (!message.room() || message.room().id.length === 0) {
+      if (!message.to() && (!message.room() || message.room().id.length === 0)) {
         this.logger.verbose('filtering out invalid room message');
+        return;
       }
+
+      // TODO: maybe make mentionSelf into a configuration
+
+      // const mentionSelf = await message.mentionSelf();
+      // if (!mentionSelf) {
+      //   this.logger.verbose('filtering out room message that did not mention self');
+      // }
 
       this.msgSubject.next(message);
     });
