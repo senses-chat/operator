@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
 
+export interface WecomCredentials {
+  corpId: string;
+  corpSecret: string;
+  token: string;
+  aesKey: string;
+}
+
 export interface Wechat3rdPartyCredentials {
   appId: string;
   appSecret: string;
@@ -15,6 +22,7 @@ export interface WxAuthorizationCode {
 
 export interface WxAccessToken {
   access_token?: string;
+  expires_in?: number;
 }
 
 export interface WxACodeUnlimitedDto {

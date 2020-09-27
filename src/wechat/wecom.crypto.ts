@@ -31,9 +31,9 @@ class PKCS7 {
 
 /**
  * 微信公众号消息加解密
- * 官方文档(写的非常之烂)：https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/Message_Encryption/Technical_Plan.html
+ * 官方文档(写的非常之烂)：https://work.weixin.qq.com/api/doc/90000/90139/90968
  */
-export class WXMsgCrypto {
+export class WecomMsgCrypto {
   private key: Buffer;
   private iv: Buffer;
 
@@ -41,11 +41,11 @@ export class WXMsgCrypto {
    * 以下信息在公众号 - 开发 - 基本配置
    * @param {String} token          令牌(Token)
    * @param {String} encodingAESKey 消息加解密密钥
-   * @param {String} appId          公众号的AppId
+   * @param {String} corpId          企业微信的corpId
    */
 
-  constructor(private readonly appId: string, private readonly token: string, encodingAESKey: string) {
-    if (!token || !encodingAESKey || !appId) {
+  constructor(private readonly corpId: string, private readonly token: string, encodingAESKey: string) {
+    if (!token || !encodingAESKey || !corpId) {
       throw new Error('please check arguments');
     }
 
@@ -74,7 +74,7 @@ export class WXMsgCrypto {
    * 对密文进行解密
    * @param {String} text    待解密的密文
    */
-  decrypt(text: string): { message: string; appId: string } {
+  decrypt(text: string): { message: string; corpId: string } {
     // 创建解密对象，AES采用CBC模式，数据采用PKCS#7填充；IV初始向量大小为16字节，取AESKey前16字节
     const decipher = crypto.createDecipheriv('aes-256-cbc', this.key, this.iv);
     decipher.setAutoPadding(false);
@@ -89,12 +89,12 @@ export class WXMsgCrypto {
 
     return {
       message: content.slice(4, length + 4).toString(),
-      appId: content.slice(length + 4).toString(),
+      corpId: content.slice(length + 4).toString(),
     };
   }
   /**
    * 对明文进行加密
-   * 算法：Base64_Encode(AES_Encrypt[random(16B) + msg_len(4B) + msg + $appId])
+   * 算法：Base64_Encode(AES_Encrypt[random(16B) + msg_len(4B) + msg + $corpId])
    * @param {String} text    待加密明文文本
    */
   encrypt(text: string): string {
@@ -106,7 +106,7 @@ export class WXMsgCrypto {
     const msgLength = Buffer.alloc(4);
     msgLength.writeUInt32BE(msg.length, 0);
 
-    const id = Buffer.from(this.appId);
+    const id = Buffer.from(this.corpId);
 
     const bufMsg = Buffer.concat([randomString, msgLength, msg, id]);
 

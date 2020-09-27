@@ -19,7 +19,7 @@ export default {
       port: Number(process.env.REDIS_PORT || 6379),
       db: Number(process.env.REDIS_BOTS_DB || 2),
       password: process.env.REDIS_PASSWORD || 'chatOperator',
-      onClientReady: (client: Redis) => {
+      onClientReady: (client: Redis): void => {
         client.on('error', (error) => console.error(error));
         client.on('close', () => console.error('redis connnection closed'));
       },

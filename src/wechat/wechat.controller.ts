@@ -23,6 +23,7 @@ export class WechatController {
     @Query('nonce') nonce: string,
     @Query('echostr') echostr: string,
   ): Promise<string> {
+    // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
     // 若确认此次GET请求来自微信服务器，请原样返回echostr参数内容，则接入生效，成为开发者成功，否则接入失败
     const validated = await this.wechatService.validateWechatServer(appNamespace, signature, timestamp, nonce);
 
