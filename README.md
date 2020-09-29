@@ -13,15 +13,16 @@ Demo (Scan QR with Wechat):
 Currently support:
 
 - Wechat Public Account / Mini-App Chat
+- Wechat for Work / Wecom (Greetings API)
 - Wechaty
 - Rasa
 - Custom built actions in the form of [Sagas](https://github.com/xanthous-tech/chat-operator/blob/61d7065a5218f0b091fa032624014ced30b9b20d/src/route/sagas/ding-dong.sagas.ts)
 
 Planning to support:
 
-- Wechat for Work (Greetings API)
 - Slack
 - Telegram
+- Microsoft Teams
 - a generic WebSocket service spun up to accept custom website / app chat widgets.
 - persistence and horizontal scalability via Redis Streams
 - indexing chat sessions in Elasticsearch
