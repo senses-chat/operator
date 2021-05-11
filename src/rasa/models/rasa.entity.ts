@@ -9,8 +9,8 @@ export class RasaServer {
   @Column({ unique: true })
   name: string;
 
-  @Column({ type: 'simple-json' })
-  dockerOptions: ContainerCreateOptions;
+  @Column({ type: 'simple-json', nullable: true })
+  dockerOptions?: ContainerCreateOptions;
 
   @Column({ nullable: true })
   host?: string;

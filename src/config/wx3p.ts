@@ -3,4 +3,5 @@ export default {
   appSecret: process.env.WX3P_APP_SECRET,
   aesKey: process.env.WX3P_AESKEY,
   token: process.env.WX3P_TOKEN,
+  validationString: process.env.WX3P_VALIDATION_STRING,
 };

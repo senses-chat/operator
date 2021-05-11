@@ -4,7 +4,7 @@ services:
   postgres:
     container_name: chat-operator-postgres
     hostname: postgres
-    image: postgres:11
+    image: postgres:12
     restart: always
     networks:
       - chat-operator
@@ -20,7 +20,7 @@ services:
   redis:
     container_name: chat-operator-redis
     hostname: redis
-    image: redis:5
+    image: redis:6
     command: redis-server --appendonly yes --requirepass chatOperator
     restart: always
     networks:
@@ -35,13 +35,13 @@ services:
   minio:
     container_name: chat-operator-minio
     hostname: minio
-    image: minio/minio:RELEASE.2020-02-07T23-28-16Z
+    image: minio/minio:RELEASE.2021-04-22T15-44-28Z
     restart: always
     command: server /data
     networks:
       - chat-operator
     ports:
-      - '9000:9000'
+      - '9001:9000'
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
@@ -53,7 +53,7 @@ services:
   docker-proxy:
     container_name: chat-operator-docker-proxy
     hostname: docker-proxy
-    image: alpine/socat
+    image: alpine/socat:1.7.4.1-r0
     restart: always
     networks:
       - chat-operator

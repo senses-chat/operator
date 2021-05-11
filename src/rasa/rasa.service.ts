@@ -83,7 +83,9 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
 
       const containerIds = await rasa.launch();
 
-      this.redisClient.rpush(`${RASA_BOTS}:${rasaBot.name}`, containerIds);
+      if (containerIds.length > 0) {
+        this.redisClient.rpush(`${RASA_BOTS}:${rasaBot.name}`, containerIds);
+      }
 
       rasa.subscription = rasa.responseObservable().subscribe((response: RasaResponsePayload) => {
         const command = plainToClass(NewRasaMessageCommand, Object.assign(response, { namespace: rasaBot.name }));
