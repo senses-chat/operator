@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import * as Ops from 'rxjs/operators';
 import fetch from 'node-fetch';
 
-import { DockerService } from 'src/docker';
+import { DockerService } from 'server/docker';
 
 import { RasaWebhookPayload, RasaResponsePayload, RasaServer, RasaHelperServer } from './models';
 

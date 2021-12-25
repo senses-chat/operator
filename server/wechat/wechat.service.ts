@@ -9,7 +9,7 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 
-import { MinioService } from 'src/minio';
+import { MinioService } from 'server/minio';
 
 import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WechatApp } from './models';
 import { WXMsgCrypto } from './wechat.crypto';

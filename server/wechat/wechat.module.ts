@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConfigModule, RedisModule } from 'src/modules';
-import { MinioModule } from 'src/minio';
+import { ConfigModule, RedisModule } from 'server/modules';
+import { MinioModule } from 'server/minio';
 
 import { WechatApp } from './models';
 import { CommandHandlers } from './commands';

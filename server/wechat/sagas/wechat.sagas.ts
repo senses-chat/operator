@@ -4,7 +4,7 @@ import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
 import { plainToClass, classToPlain } from 'class-transformer';
 
-import { RouteMessage, NewRouteMessageCommand, NewSessionMessageEvent, RouteType } from 'src/route';
+import { RouteMessage, NewRouteMessageCommand, NewSessionMessageEvent, RouteType } from 'server/route';
 import { SendWechatMessageCommand } from '../commands';
 import { NewWechatMessageEvent } from '../events';
 

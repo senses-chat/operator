@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConfigModule, RedisModule } from 'src/modules';
-import { DockerModule } from 'src/docker';
+import { ConfigModule, RedisModule } from 'server/modules';
+import { DockerModule } from 'server/docker';
 
 import { RasaServer, RasaHelperServer } from './models';
 import { CommandHandlers } from './commands';

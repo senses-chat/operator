@@ -4,7 +4,7 @@ import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer';
 
-import { RouteMessage, NewRouteMessageCommand, MessageContentType, NewSessionMessageEvent, RouteType, TextMessageContent } from 'src/route';
+import { RouteMessage, NewRouteMessageCommand, MessageContentType, NewSessionMessageEvent, RouteType, TextMessageContent } from 'server/route';
 import { NewRasaMessageEvent } from '../events';
 import { SendRasaMessageCommand } from '../commands';
 

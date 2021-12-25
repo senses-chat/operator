@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { RedisModule } from 'src/modules';
+import { RedisModule } from 'server/modules';
 
 import { Route } from './models';
 import { CommandHandlers } from './commands';

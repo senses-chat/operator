@@ -6,7 +6,7 @@ import { ConfigService } from 'nestjs-config';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
-import { DockerService } from 'src/docker';
+import { DockerService } from 'server/docker';
 import { Rasa } from './rasa.instance';
 import { RasaServer, RasaResponsePayload } from './models';
 import { plainToClass } from 'class-transformer';

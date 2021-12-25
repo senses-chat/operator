@@ -2,7 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
-import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent } from 'src/route';
+import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent } from 'server/route';
 
 import { WechatService } from '../../wechat.service';
 import { SendWechatMessageEvent } from '../send-msg.event';

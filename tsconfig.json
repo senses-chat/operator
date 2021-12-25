@@ -4,7 +4,8 @@
       "node_modules",
       ".next",
       "dist",
-      "pages"
+      "pages",
+      "data"
     ]
   },
   "compilerOptions": {
@@ -40,7 +41,7 @@
     "dist"
   ],
   "include": [
-    "src",
+    "server",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
