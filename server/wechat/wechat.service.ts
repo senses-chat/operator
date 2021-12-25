@@ -1,6 +1,4 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { createDecipheriv, createHash } from 'crypto';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
@@ -10,6 +8,7 @@ import fetch from 'node-fetch';
 import qs from 'query-string';
 
 import { MinioService } from 'server/minio';
+import { PrismaService } from 'server/prisma';
 
 import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WechatApp } from './models';
 import { WXMsgCrypto } from './wechat.crypto';
@@ -25,8 +24,7 @@ export class WechatService {
   constructor(
     private readonly redisService: RedisService,
     private readonly minioService: MinioService,
-    @InjectRepository(WechatApp)
-    private readonly wechatAppRepo: Repository<WechatApp>,
+    private readonly prisma: PrismaService,
   ) {
     this.redisClient = this.redisService.getClient('wechat');
     this.clearAccessTokens().then(() => {
@@ -227,8 +225,10 @@ export class WechatService {
   }
 
   private async getAppIdAndSecret(appNamespace: string): Promise<WechatApp> {
-    return this.wechatAppRepo.findOne({
-      name: appNamespace,
+    return this.prisma.wechatApp.findFirst({
+      where: {
+        name: appNamespace,
+      },
     });
   }
 }

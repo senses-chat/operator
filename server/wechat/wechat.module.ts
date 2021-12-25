@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule, RedisModule } from 'server/modules';
 import { MinioModule } from 'server/minio';
+import { PrismaModule } from 'server/prisma';
 
-import { WechatApp } from './models';
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
 import { WechatSagas } from './sagas';
@@ -17,7 +16,7 @@ import { WecomService } from './wecom.service';
 import { Wechat3rdPartyService } from './3rdparty.service';
 
 @Module({
-  imports: [CqrsModule, ConfigModule, RedisModule, MinioModule, TypeOrmModule.forFeature([WechatApp])],
+  imports: [CqrsModule, ConfigModule, RedisModule, MinioModule, PrismaModule],
   controllers: [WechatController, WecomController],
   providers: [WechatService, WecomService, Wechat3rdPartyService, WechatSagas, ...CommandHandlers, ...EventHandlers],
 })

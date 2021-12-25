@@ -38,10 +38,10 @@
   "exclude": [
     "node_modules",
     ".next",
-    "dist"
+    "dist",
+    "server"
   ],
   "include": [
-    "server",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"

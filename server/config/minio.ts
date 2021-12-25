@@ -1,3 +1,4 @@
+import { registerAs } from '@nestjs/config';
 import { ClientOptions } from 'minio';
 
 const minioConfig: ClientOptions = {
@@ -8,4 +9,4 @@ const minioConfig: ClientOptions = {
   secretKey: process.env.MINIO_SECRET_KEY || 'minio123',
 };
 
-export default minioConfig;
+export default registerAs('minio', () => minioConfig);

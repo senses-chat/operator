@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { XMLParser } from 'fast-xml-parser';
 import { Redis } from 'ioredis';
-import { ConfigService } from 'nestjs-config';
+import { ConfigService } from '@nestjs/config';
 import { RedisService } from 'nestjs-redis';
 import fetch from 'node-fetch';
 import qs from 'query-string';

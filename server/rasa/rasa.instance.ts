@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { ConfigService } from 'nestjs-config';
+import { ConfigService } from '@nestjs/config';
 import { Observable, from, zip, interval, Subscription } from 'rxjs';
 import { Container, ContainerCreateOptions } from 'dockerode';
 import { Subject } from 'rxjs';
@@ -26,7 +26,7 @@ export class Rasa {
     const containerIds = [];
 
     if (this.rasaServer.dockerOptions) {
-      const rasaBotContainer = await this.createDockerContainer(this.rasaServer.dockerOptions);
+      const rasaBotContainer = await this.createDockerContainer((this.rasaServer as any).dockerOptions);
       this.logger.debug(`Rasa Bot ${this.rasaServer.name} container created as ${rasaBotContainer.id.substr(0, 8)}`);
       containerIds.push(rasaBotContainer.id);
       await rasaBotContainer.start();
@@ -34,7 +34,7 @@ export class Rasa {
     }
 
     // start action servers
-    const actionServers = this.rasaServer.helpers;
+    const actionServers = (this.rasaServer as any).helpers;
     for (const actionServer of actionServers) {
       if (actionServer.dockerOptions) {
         const actionServerContainer = await this.createDockerContainer(actionServer.dockerOptions);

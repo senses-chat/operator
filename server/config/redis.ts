@@ -1,7 +1,7 @@
+import { registerAs } from '@nestjs/config';
 import { Redis } from 'ioredis';
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+export default registerAs('redis', () => ({
   host: process.env.REDIS_HOST || 'localhost',
   port: Number(process.env.REDIS_PORT || 6379),
   password: process.env.REDIS_PASSWORD || 'chatOperator',
@@ -33,4 +33,4 @@ export default {
       password: process.env.REDIS_PASSWORD || 'chatOperator',
     },
   ],
-};
+}));

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RedisModule } from 'server/modules';
+import { PrismaModule } from 'server/prisma';
 
-import { Route } from './models';
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
 import { RouteSagas } from './sagas';
@@ -12,7 +11,7 @@ import { SessionRepository } from './repositories';
 import { RouteService } from './route.service';
 
 @Module({
-  imports: [CqrsModule, RedisModule, TypeOrmModule.forFeature([Route])],
+  imports: [CqrsModule, RedisModule, PrismaModule],
   providers: [RouteService, SessionRepository, ...CommandHandlers, ...EventHandlers, ...RouteSagas],
 })
 export class RouteModule {}

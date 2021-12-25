@@ -1,12 +1,8 @@
 import { Observable, Subscriber } from 'rxjs';
 import { Type } from 'class-transformer';
+import { RouteType } from '@prisma/client';
 
-export enum RouteType {
-  Rasa = 'Rasa',
-  WechatApp = 'WechatApp',
-  Wechaty = 'Wechaty',
-  Saga = 'Saga',
-}
+export { RouteType };
 
 export enum MessageContentType {
   Text = 'text',

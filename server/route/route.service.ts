@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { PrismaService } from 'server/prisma';
 
-import { RouteType, Route } from './models';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Route, RouteType } from './models';
 
 @Injectable()
 export class RouteService {
   constructor(
-    @InjectRepository(Route)
-    private readonly routeRepository: Repository<Route>,
+    private readonly prisma: PrismaService,
   ) {}
 
   public async getActiveRouteForSource(sourceType: RouteType, sourceName: string): Promise<Route | undefined> {
-    return this.routeRepository.findOne({
-      isActive: true,
-      sourceType,
-      sourceName,
+    return this.prisma.route.findFirst({
+      where: {
+        isActive: true,
+        sourceType,
+        sourceName,
+      },
     });
   }
 }

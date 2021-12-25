@@ -1,8 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ConfigService } from 'nestjs-config';
+import { ConfigService } from '@nestjs/config';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
@@ -11,6 +9,7 @@ import { Rasa } from './rasa.instance';
 import { RasaServer, RasaResponsePayload } from './models';
 import { plainToClass } from 'class-transformer';
 import { NewRasaMessageCommand } from './commands';
+import { PrismaService } from 'server/prisma';
 
 const RASA_BOTS = 'bots:rasa';
 
@@ -30,8 +29,7 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly dockerService: DockerService,
-    @InjectRepository(RasaServer)
-    private readonly rasaServerRepo: Repository<RasaServer>,
+    private readonly prisma: PrismaService,
     private readonly commandBus: CommandBus,
   ) {
     this.redisClient = this.redisService.getClient('bots');
@@ -62,8 +60,10 @@ export class RasaService implements OnModuleInit, OnModuleDestroy {
   private async launchRasaBots(): Promise<void> {
     await this.cleanUpContainers();
 
-    const rasaBots = await this.rasaServerRepo.find({
-      isActive: true,
+    const rasaBots = await this.prisma.rasaServer.findMany({
+      where: {
+        isActive: true,
+      },
     });
 
     for (const rasaBot of rasaBots) {

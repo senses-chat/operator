@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Client } from 'minio';
-import { ConfigService } from 'nestjs-config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MinioService {

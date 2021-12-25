@@ -4,5 +4,6 @@
     "incremental": false,
     "noEmit": false
   },
-  "exclude": ["node_modules", "dist", ".next", "pages", "components"]
+  "exclude": ["node_modules", "dist", ".next", "pages", "components", "server/seeds/*.ts"],
+  "include": ["server"]
 }

@@ -8,7 +8,7 @@ import {
   HealthCheck,
   HealthCheckResult,
 } from '@nestjs/terminus';
-import { ConfigService } from 'nestjs-config';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('health')
 export class HealthController {

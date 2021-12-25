@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigModule, TypeOrmModule } from './modules';
+import { ConfigModule } from './modules';
+import { PrismaModule } from './prisma';
 import { HealthModule } from './health';
 import { RouteModule } from './route';
 import { WechatModule } from './wechat';
 import { RasaModule } from './rasa';
+import { ViewModule } from './view';
+
 import { AppController } from './app.controller';
-import { ViewModule } from './view/view.module';
 
 @Module({
-  imports: [ConfigModule, TypeOrmModule, HealthModule, RouteModule, WechatModule, RasaModule, ViewModule],
+  imports: [ConfigModule, PrismaModule, HealthModule, RouteModule, WechatModule, RasaModule, ViewModule],
   controllers: [AppController],
   providers: [],
 })
