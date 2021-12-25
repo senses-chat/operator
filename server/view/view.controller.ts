@@ -1,4 +1,4 @@
-import { Logger, Controller, Get, Res, Req } from '@nestjs/common';
+import { Logger, Controller, All, Get, Res, Req } from '@nestjs/common';
 import { IncomingMessage, ServerResponse } from 'http';
 import { parse } from 'url';
 
@@ -16,12 +16,12 @@ export class ViewController {
     await this.viewService.getNextServer().render(req, res, parsedUrl.pathname, parsedUrl.query);
   }
 
-  @Get('_next*')
+  @All('_next*')
   public async assets(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
-    return this.handler(req, res);
+    return this.viewService.getNextServer().getRequestHandler()(req, res);
   }
 
-  @Get('/*')
+  @Get('/ui*')
   public async showHome(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
     return this.handler(req, res);
   }

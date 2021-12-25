@@ -12,6 +12,7 @@ export class ViewService implements OnModuleInit {
     this.logger.verbose(process.env.NODE_ENV);
     try {
       this.server = createServer({
+        customServer: true,
         dev: process.env.NODE_ENV !== 'production',
       });
       await this.server.prepare();

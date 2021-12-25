@@ -11,7 +11,15 @@ import { ViewModule } from './view';
 import { AppController } from './app.controller';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, HealthModule, RouteModule, WechatModule, RasaModule, ViewModule],
+  imports: [
+    ConfigModule,
+    PrismaModule,
+    HealthModule,
+    RouteModule,
+    WechatModule,
+    RasaModule,
+    ViewModule,
+  ],
   controllers: [AppController],
   providers: [],
 })
