@@ -60,7 +60,7 @@ export class Rasa {
       ),
       // TODO: add error handling here
       Ops.concatMap((response) => from(response.json())),
-      Ops.concatMap((messages) => {
+      Ops.concatMap((messages: RasaResponsePayload[]) => {
         return zip(from(messages), interval(this.configService.get('rasa.messageDelay')), (payload: RasaResponsePayload, _) => {
           return payload;
         });

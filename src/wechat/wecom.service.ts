@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { parse as xmlParse } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import { Redis } from 'ioredis';
 import { ConfigService } from 'nestjs-config';
 import { RedisService } from 'nestjs-redis';
@@ -35,7 +35,8 @@ export class WecomService {
   }
 
   public decryptXmlMessage(encryptedXml: string): any {
-    return xmlParse(this.decryptMessage(encryptedXml)).xml;
+    const parser = new XMLParser();
+    return parser.parse(this.decryptMessage(encryptedXml)).xml;
   }
 
   public decryptMessage(encrypted: string): string {

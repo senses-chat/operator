@@ -5,11 +5,10 @@ import { HealthModule } from './health';
 import { RouteModule } from './route';
 import { WechatModule } from './wechat';
 import { RasaModule } from './rasa';
-import { WechatyModule } from './wechaty';
 import { AppController } from './app.controller';
 
 @Module({
-  imports: [ConfigModule, TypeOrmModule, HealthModule, RouteModule, WechatModule, RasaModule, WechatyModule],
+  imports: [ConfigModule, TypeOrmModule, HealthModule, RouteModule, WechatModule, RasaModule],
   controllers: [AppController],
   providers: [],
 })

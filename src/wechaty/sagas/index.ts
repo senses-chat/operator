@@ -1,1 +1,0 @@
-export * from './wechaty.sagas';

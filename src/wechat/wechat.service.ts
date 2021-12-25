@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { createDecipheriv, createHash } from 'crypto';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
-import { parse as xmlParse } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import qs from 'query-string';
@@ -111,7 +111,7 @@ export class WechatService {
           method: 'POST',
         });
 
-        const data = await response.json();
+        const data: any = await response.json();
 
         this.logger.debug(data);
 
@@ -151,7 +151,8 @@ export class WechatService {
   public async decodeEncryptedXmlMessage(appNamespace: string, encrypted: string): Promise<any> {
     const { appId, token, aesKey } = await this.getAppIdAndSecret(appNamespace);
     const crypto = new WXMsgCrypto(appId, token, aesKey);
-    return xmlParse(crypto.decrypt(encrypted).message).xml;
+    const parser = new XMLParser();
+    return parser.parse(crypto.decrypt(encrypted).message).xml;
   }
 
   public async validateWechatServer(appNamespace: string, signature: string, timestamp: string, nonce: string): Promise<boolean> {

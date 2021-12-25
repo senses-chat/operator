@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from 'nestjs-config';
-import { parse as xmlParse } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 
@@ -24,7 +24,8 @@ export class Wechat3rdPartyService {
   public async decodeEncryptedXmlMessage(encrypted: string): Promise<any> {
     const { appId, token, aesKey } = this.credentials;
     const crypto = new WXMsgCrypto(appId, token, aesKey);
-    return xmlParse(crypto.decrypt(encrypted).message).xml;
+    const parser = new XMLParser();
+    return parser.parse(crypto.decrypt(encrypted).message).xml;
   }
 
   public async storeComponentVerifyTicket(ticket?: string): Promise<void> {

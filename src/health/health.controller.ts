@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { Transport } from '@nestjs/microservices';
 import {
   HealthCheckService,
-  DNSHealthIndicator,
+  HttpHealthIndicator,
   MicroserviceHealthIndicator,
   MemoryHealthIndicator,
   HealthCheck,
@@ -15,7 +15,7 @@ export class HealthController {
   constructor(
     private readonly configService: ConfigService,
     private readonly health: HealthCheckService,
-    private readonly dns: DNSHealthIndicator,
+    private readonly http: HttpHealthIndicator,
     private readonly microservice: MicroserviceHealthIndicator,
     private readonly memory: MemoryHealthIndicator,
   ) {}
@@ -24,7 +24,7 @@ export class HealthController {
   @HealthCheck()
   public async healthCheck(): Promise<HealthCheckResult> {
     return this.health.check([
-      async () => this.dns.pingCheck('docker', `${this.configService.get('docker.proxyEndpoint')}/_ping`),
+      async () => this.http.pingCheck('docker', `${this.configService.get('docker.proxyEndpoint')}/_ping`),
       async () =>
         this.microservice.pingCheck('redis', {
           transport: Transport.REDIS,
