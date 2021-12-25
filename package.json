@@ -5,6 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "prepare": "husky install",
     "postinstall": "patch-package",
     "prebuild": "rimraf dist",
     "build": "nest build",
