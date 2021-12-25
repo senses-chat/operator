@@ -5,6 +5,7 @@
       ".next",
       "dist",
       "pages",
+      "components",
       "data"
     ]
   },
@@ -38,10 +39,10 @@
   "exclude": [
     "node_modules",
     ".next",
-    "dist",
-    "server"
+    "dist"
   ],
   "include": [
+    "server",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
