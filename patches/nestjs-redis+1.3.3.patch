@@ -1,5 +1,5 @@
 diff --git a/node_modules/nestjs-redis/dist/redis-core.module.js b/node_modules/nestjs-redis/dist/redis-core.module.js
-index 3d1a982..ac2da9d 100644
+index 329c9ab..e59be44 100644
 --- a/node_modules/nestjs-redis/dist/redis-core.module.js
 +++ b/node_modules/nestjs-redis/dist/redis-core.module.js
 @@ -41,7 +41,7 @@ let RedisCoreModule = RedisCoreModule_1 = class RedisCoreModule {
@@ -8,6 +8,6 @@ index 3d1a982..ac2da9d 100644
      }
 -    onModuleDestroy() {
 +    beforeApplicationShutdown() {
-         const closeConnection = ({ clients, defaultKey }) => options => {
+         const closeConnection = ({ clients, defaultKey }) => (options) => {
              const name = options.name || defaultKey;
              const client = clients.get(name);

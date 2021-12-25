@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { ConfigService } from 'nestjs-config';
 
 import { AppModule } from './app.module';
@@ -8,16 +7,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const logger = new Logger('Main');
 
-  const fastify = new FastifyAdapter();
-  fastify.register(import('fastify-xml-body-parser'));
-
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, fastify, {
-    cors: {
-      allowedHeaders: '*',
-      origin: '*',
-    },
-  });
-
+  const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 
   const configService: ConfigService = app.get(ConfigService);

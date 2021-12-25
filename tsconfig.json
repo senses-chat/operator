@@ -1,6 +1,15 @@
 {
+  "watchOptions": {
+    "excludeDirectories": [
+      "node_modules",
+      ".next",
+      "dist",
+      "pages"
+    ]
+  },
   "compilerOptions": {
     "module": "commonjs",
+    "jsx": "preserve",
     "declaration": true,
     "removeComments": true,
     "esModuleInterop": true,
@@ -10,7 +19,30 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist"
+  ],
+  "include": [
+    "src",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

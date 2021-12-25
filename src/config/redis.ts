@@ -1,5 +1,6 @@
 import { Redis } from 'ioredis';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   host: process.env.REDIS_HOST || 'localhost',
   port: Number(process.env.REDIS_PORT || 6379),

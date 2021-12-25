@@ -9,7 +9,7 @@ services:
     networks:
       - chat-operator
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_USER: chatop
       POSTGRES_PASSWORD: chatOperator
@@ -26,7 +26,7 @@ services:
     networks:
       - chat-operator
     ports:
-      - 6379:6379
+      - 6380:6379
     environment:
       - REDIS_PASSWORD=chatOperator
     volumes:

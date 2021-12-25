@@ -1,5 +1,6 @@
 # compiled output
 /data
+/.next
 /dist
 /node_modules
 
