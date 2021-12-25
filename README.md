@@ -1,33 +1,34 @@
 # chat-operator
 
-## Description
+## 介绍
 
-`chat-operator` is a server that helps route messages between chat service providers (Slack, Wechat, etc) to Chatbot services (Rasa, Bot Framework, etc) or even to each other.
+`chat-operator` 是一个消息中间件服务器，用于集中接收不同渠道的消息（微信、企业微信、微信小程序、B站等），并转发到对应的渠道（Rasa，Bot Framework等）。
 
-Demo (Scan QR with Wechat):
+Demo (微信扫描二维码):
 
 ![demo](demo.png)
 
-## Support Matrix
+## 支持列表
 
-Currently support:
+目前支持以下服务:
 
-- Wechat Public Account / Mini-App Chat
-- Wechat for Work / Wecom (Greetings API)
-- Wechaty
+- 微信公众号 / 微信小程序客服通道
 - Rasa
-- Custom built actions in the form of [Sagas](https://github.com/xanthous-tech/chat-operator/blob/61d7065a5218f0b091fa032624014ced30b9b20d/src/route/sagas/ding-dong.sagas.ts)
+- Custom built actions in the form of [Sagas](https://github.com/xanthous-tech/chat-operator/blob/61d7065a5218f0b091fa032624014ced30b9b20d/src/route/sagas/ding-dong.sagas.ts) and/or [XState](https://xstate.js.org)
 
-Planning to support:
+后续支持对接以下服务:
 
-- Slack
-- Telegram
-- Microsoft Teams
-- a generic WebSocket service spun up to accept custom website / app chat widgets.
+- 企业微信
+- Bilibili
+- 字节跳动系客服通道
+- WebSocket通道（SocketIO）
+
+## 后续功能列表
+
 - persistence and horizontal scalability via Redis Streams
 - indexing chat sessions in Elasticsearch
 
-## Installation
+## 安装
 
 ```bash
 docker-compose up -d
@@ -35,13 +36,11 @@ sh init_minio.sh
 npm install
 ```
 
-## Configuration
+## 配置
 
-Please copy `example.env` to `.env.development` and fill in the environment variables shown where applicable. Please also see `src/config` and check out any configuration variables you would like to update.
+TODO
 
-Also please check [the database seeder README](src/seeds/README.md).
-
-## Running the app
+## 运行
 
 ```bash
 # development
@@ -53,21 +52,6 @@ npm run start:dev
 # production mode
 npm run start:prod
 ```
-
-<!--
-## Test
-
-```bash
-# unit tests
-npm run test
-
-# e2e tests
-npm run test:e2e
-
-# test coverage
-npm run test:cov
-```
--->
 
 ## License
 
