@@ -1,19 +1,23 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Layout } from 'antd';
 import { useRouter } from 'next/router';
+import createPersistedState from 'use-persisted-state';
 
 import { SideNav } from './SideNav';
 
 import styles from './app-layout.module.css';
 
 const { Content, Footer } = Layout;
+
+const useCollapsedState = createPersistedState('side-nav-collapsed');
+
 interface AppLayoutProps {
   children?: ReactNode;
 }
 
 export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
   const router = useRouter();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useCollapsedState(false);
 
   return (
     <Layout className="min-h-screen" style={{ marginLeft: collapsed ? '80px' : '200px' }}>

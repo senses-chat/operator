@@ -17,11 +17,12 @@ export class ViewController {
   }
 
   @All('_next*')
-  public async assets(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
+  public async otherNextRequests(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
+    this.logger.verbose(req.url);
     return this.viewService.getNextServer().getRequestHandler()(req, res);
   }
 
-  @Get('/ui*')
+  @Get('ui*')
   public async showHome(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
     return this.handler(req, res);
   }

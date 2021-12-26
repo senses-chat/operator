@@ -64,7 +64,8 @@
     "tailwindcss": "^3.0.7",
     "typeorm": "^0.2.41",
     "typeorm-seeding": "^1.6.1",
-    "uniqid": "^5.4.0"
+    "uniqid": "^5.4.0",
+    "use-persisted-state": "^0.3.3"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.16",
