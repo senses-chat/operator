@@ -1,4 +1,4 @@
-FROM node:10-jessie
+FROM node:16
 
 EXPOSE 3000
 
@@ -12,7 +12,7 @@ WORKDIR /opt/server
 
 ADD ./package.json /opt/server
 ADD ./yarn.lock /opt/server
-RUN yarn
+RUN yarn install --frozen-lockfile
 
 ADD . /opt/server
 RUN yarn build

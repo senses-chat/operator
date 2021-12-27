@@ -7,20 +7,21 @@
   "scripts": {
     "prepare": "husky install",
     "postinstall": "patch-package",
-    "prebuild": "rimraf dist",
-    "build": "nest build && next build",
-    "format": "prettier --write",
+    "prebuild": "yarn clean:nest && yarn clean:next && yarn db:generate",
+    "build": "yarn build:nest && yarn build:next",
+    "build:nest": "nest build",
+    "build:next": "next build",
+    "db:generate": "prisma generate",
     "start": "nest start",
     "start:dev": "NODE_ENV=development nest start --watch",
     "start:debug": "NODE_ENV=development nest start --debug --watch",
     "start:prod": "node dist/main",
+    "clean:nest": "rimraf dist",
+    "clean:next": "rimraf .next",
+    "format": "prettier --write",
     "lint": "eslint --fix",
     "docgen": "compodoc -p tsconfig.json",
-    "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d && npm run seed:run",
-    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
-    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
-    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
+    "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -62,8 +63,6 @@
     "rxjs": "^7.4.0",
     "swr": "^1.1.1",
     "tailwindcss": "^3.0.7",
-    "typeorm": "^0.2.41",
-    "typeorm-seeding": "^1.6.1",
     "uniqid": "^5.4.0",
     "use-persisted-state": "^0.3.3"
   },
