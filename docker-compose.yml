@@ -50,18 +50,18 @@ services:
       - ./data/minio/data:/data
       - ./data/minio/config:/root/.minio
 
-  docker-proxy:
-    container_name: chat-operator-docker-proxy
-    hostname: docker-proxy
-    image: alpine/socat:1.7.4.1-r0
-    restart: always
-    networks:
-      - chat-operator
-    ports:
-      - 2376:2375
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+  # docker-proxy:
+  #   container_name: chat-operator-docker-proxy
+  #   hostname: docker-proxy
+  #   image: alpine/socat:1.7.4.1-r0
+  #   restart: always
+  #   networks:
+  #     - chat-operator
+  #   ports:
+  #     - 2376:2375
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
 
 networks:
   chat-operator:

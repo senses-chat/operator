@@ -7,26 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model RasaHelperServer {
-  id            Int          @id @default(autoincrement())
-  name          String       @db.VarChar
-  dockerOptions String
-  createdAt     DateTime     @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime     @default(now()) @db.Timestamptz(6)
-  botId         Int?
-  rasa_server   RasaServer? @relation(fields: [botId], references: [id])
-}
-
 model RasaServer {
   id                 Int                  @id @default(autoincrement())
   name               String               @unique @db.VarChar
-  dockerOptions      Json?
-  host               String?              @db.VarChar
-  port               Int
+  url                String               @db.VarChar
   isActive           Boolean              @default(false)
   createdAt          DateTime             @default(now()) @db.Timestamptz(6)
   updatedAt          DateTime             @default(now()) @db.Timestamptz(6)
-  helpers RasaHelperServer[]
 }
 
 model Route {
@@ -61,6 +48,5 @@ model WechatApp {
 enum RouteType {
   Rasa
   WechatApp
-  Wechaty
   Saga
 }

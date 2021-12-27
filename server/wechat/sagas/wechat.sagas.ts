@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
-import { plainToClass, classToPlain } from 'class-transformer';
+import { plainToClass, instanceToPlain } from 'class-transformer';
 
 import { RouteMessage, NewRouteMessageCommand, NewSessionMessageEvent, RouteType } from 'server/route';
 import { SendWechatMessageCommand } from '../commands';
@@ -89,7 +89,7 @@ export class WechatSagas {
     return of(
       plainToClass(SendWechatMessageCommand, {
         message: {
-          ...classToPlain(event.message),
+          ...instanceToPlain(event.message),
           type,
           namespaces,
         },

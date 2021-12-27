@@ -1,124 +1,76 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
-import { RedisService } from 'nestjs-redis';
-import { Redis } from 'ioredis';
-
-import { DockerService } from 'server/docker';
-import { Rasa } from './rasa.instance';
-import { RasaServer, RasaResponsePayload } from './models';
 import { plainToClass } from 'class-transformer';
-import { NewRasaMessageCommand } from './commands';
+import { of, from, zip, interval } from 'rxjs';
+import Ops from 'rxjs/operators';
+import fetch from 'node-fetch';
+
 import { PrismaService } from 'server/prisma';
 
-const RASA_BOTS = 'bots:rasa';
+import { RasaResponsePayload, RasaWebhookPayload } from './models';
+import { SendRasaMessageEvent } from './events';
+import { NewRasaMessageCommand } from './commands';
 
 @Injectable()
-export class RasaService implements OnModuleInit, OnModuleDestroy {
+export class RasaService {
   private readonly logger = new Logger(RasaService.name);
-  private redisClient: Redis;
-  private rasaInstances: {
-    [key: string]: Rasa;
-  };
-
-  public isReady: Promise<void>;
-  private isReadyResolve: () => void;
-  // private isReadyReject: (error: Error) => void;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly redisService: RedisService,
-    private readonly dockerService: DockerService,
     private readonly prisma: PrismaService,
     private readonly commandBus: CommandBus,
-  ) {
-    this.redisClient = this.redisService.getClient('bots');
-    this.rasaInstances = {};
-    this.isReady = new Promise((resolve, reject) => {
-      this.isReadyResolve = resolve;
-      // this.isReadyReject = reject;
-    });
-  }
+  ) {}
 
-  public async onModuleInit(): Promise<void> {
-    return this.launchRasaBots();
-  }
-
-  public async onModuleDestroy(): Promise<void> {
-    this.cleanUpSubscriptions();
-    return this.cleanUpContainers();
-  }
-
-  public getInstance(botName: string): Rasa {
-    if (!this.rasaInstances[botName]) {
-      throw new Error('Rasa Instance not active');
-    }
-
-    return this.rasaInstances[botName];
-  }
-
-  private async launchRasaBots(): Promise<void> {
-    await this.cleanUpContainers();
-
-    const rasaBots = await this.prisma.rasaServer.findMany({
+  public async sendMessage(event: SendRasaMessageEvent): Promise<void> {
+    const rasaServer = await this.prisma.rasaServer.findFirst({
       where: {
+        name: event.namespace,
         isActive: true,
       },
     });
 
-    for (const rasaBot of rasaBots) {
-      const keys = await this.redisClient.keys(`${RASA_BOTS}:${rasaBot.name}`);
+    if (!rasaServer) {
+      const message = `rasa server ${event.namespace} not found or inactive or invalid configuration`;
+      this.logger.error(message);
+      throw new Error(message);
+    }
 
-      if (keys.length > 0) {
-        this.logger.debug(`Rasa Bot ${rasaBot.name} has running containers, skipping`);
+    const payload: RasaWebhookPayload = {
+      sender: event.sender,
+      message: event.message,
+    };
 
-        this.rasaInstances[rasaBot.name] = new Rasa(this.configService, this.dockerService, rasaBot);
-
-        continue;
-      }
-
-      this.logger.debug(`launching ${rasaBot.name}`);
-
-      const rasa = new Rasa(this.configService, this.dockerService, rasaBot);
-
-      const containerIds = await rasa.launch();
-
-      if (containerIds.length > 0) {
-        this.redisClient.rpush(`${RASA_BOTS}:${rasaBot.name}`, containerIds);
-      }
-
-      rasa.subscription = rasa.responseObservable().subscribe((response: RasaResponsePayload) => {
-        const command = plainToClass(NewRasaMessageCommand, Object.assign(response, { namespace: rasaBot.name }));
-        this.logger.debug(command);
-        this.commandBus.execute(command);
+    return new Promise((resolve, reject) => {
+      of(rasaServer).pipe(
+        Ops.concatMap((rasaServer) =>
+          from(
+            fetch(rasaServer.url, {
+              method: 'POST',
+              body: JSON.stringify(payload),
+            }),
+          )
+        ),
+        Ops.concatMap((response) => response.json()),
+        Ops.concatMap((messages: RasaResponsePayload[]) => {
+          return zip(from(messages), interval(this.configService.get('rasa.messageDelay')), (payload: RasaResponsePayload, _) => {
+            return payload;
+          });
+        }),
+      ).subscribe({
+        next: (response: RasaResponsePayload) => {
+          const command = plainToClass(NewRasaMessageCommand, Object.assign(response, { namespace: rasaServer.name }));
+          this.logger.debug(command);
+          this.commandBus.execute(command);
+        },
+        error: (error: Error) => {
+          this.logger.error(error);
+          reject(error);
+        },
+        complete: () => {
+          resolve();
+        },
       });
-
-      this.rasaInstances[rasaBot.name] = rasa;
-    }
-
-    this.isReadyResolve();
-    this.logger.log('Rasa Service finished initializing');
-  }
-
-  private async cleanUpContainers(): Promise<void> {
-    this.logger.log(`cleaning up running containers`);
-
-    const rasaBots = await this.redisClient.keys(`${RASA_BOTS}:*`);
-
-    for (const key of rasaBots) {
-      this.logger.debug(`cleaning up containers in ${key}`);
-      const containerIds = await this.redisClient.lrange(key, 0, -1);
-      for (const containerId of containerIds) {
-        this.logger.debug(`removing container ${containerId.substr(0, 8)}`);
-        await this.dockerService.cleanUpContainer(containerId);
-      }
-      await this.redisClient.del(key);
-    }
-  }
-
-  private cleanUpSubscriptions(): void {
-    Object.keys(this.rasaInstances).forEach((key: string) => {
-      this.rasaInstances[key].subscription.unsubscribe();
     });
   }
 }
