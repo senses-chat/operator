@@ -45,10 +45,15 @@ export class WecomController {
       throw new NotFoundException();
     }
 
-    const payload = this.wecomService.decryptXmlMessage(body.Encrypt);
+    const tokenMessage = this.wecomService.decryptXmlMessage(body.Encrypt);
 
-    this.logger.log(payload);
-    // this.commandBus.execute(plainToClass(NewWechatMessageCommand, { ...payload, appNamespace }));
+    this.logger.log(tokenMessage);
+
+    const messages = await this.wecomService.getLatestMessage(tokenMessage.Token);
+
+    this.logger.log(messages);
+
+    // this.commandBus.execute(plainToClass(NewWechatMessageCommand, { ...payload, appNamespace: 'wecom' }));
 
     return 'success';
   }

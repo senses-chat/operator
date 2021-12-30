@@ -10,6 +10,7 @@ import { WecomCredentials, WxAccessToken } from './models';
 import { WecomMsgCrypto } from './wecom.crypto';
 
 const WECOM_ACCESS_TOKEN = 'wecom:accessToken';
+const WECOM_LATEST_CURSOR = 'wecom:latestCursor';
 const WECOM_API_ROOT = 'https://qyapi.weixin.qq.com';
 
 @Injectable()
@@ -51,6 +52,39 @@ export class WecomService {
     return message;
   }
 
+  public async getLatestMessage(token: string, limit = 1): Promise<any> {
+    const access_token = await this.getAccessToken();
+    const cursor = await this.getLatestCursor();
+
+    const response = await fetch(`${WECOM_API_ROOT}/cgi-bin/kf/sync_msg?access_token=${access_token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token,
+        cursor,
+        limit,
+      }),
+    });
+
+    const result = await response.json();
+    if (result.next_cursor) {
+      await this.setLatestCursor(result.next_cursor);
+    }
+
+    return result;
+  }
+
+  private async getLatestCursor(): Promise<string | null> {
+    const key = `${WECOM_LATEST_CURSOR}`;
+    const cursorData = await this.redisClient.get(key);
+    return cursorData;
+  }
+
+  private async setLatestCursor(cursor: string): Promise<void> {
+    const key = `${WECOM_LATEST_CURSOR}`;
+    await this.redisClient.set(key, cursor);
+  }
+
   public async getAccessToken(): Promise<string> {
     const key = `${WECOM_ACCESS_TOKEN}`;
 
@@ -59,10 +93,10 @@ export class WecomService {
     if (!tokenData) {
       this.logger.debug('no wecom access token cached, fetching');
 
-      const { corpId, corpSecret } = this.credentials;
+      const { corpId, secret } = this.credentials;
 
       // 请求token
-      const accessTokenResponse = await this.fetchAccessToken(corpId, corpSecret);
+      const accessTokenResponse = await this.fetchAccessToken(corpId, secret);
       const { access_token } = accessTokenResponse;
       this.logger.debug(`fetched wecom access token ${access_token}`);
 

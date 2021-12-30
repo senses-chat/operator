@@ -2,7 +2,10 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Express } from 'express';
-import xmlBodyParser from 'express-xml-bodyparser';
+import bodyParser from 'body-parser';
+import xmlBodyParser from 'body-parser-xml';
+
+xmlBodyParser(bodyParser);
 
 import { AppModule } from './app.module';
 
@@ -11,7 +14,13 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const express: Express = app.getHttpAdapter().getInstance();
-  express.use(xmlBodyParser());
+  express.use(bodyParser.xml({
+    limit: '1mb',
+    xmlParseOptions: {
+      explicitArray: false,
+      normalize: false,
+    },
+  }));
   app.enableCors();
   app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 

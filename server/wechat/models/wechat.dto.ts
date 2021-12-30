@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 
 export interface WecomCredentials {
   corpId: string;
-  corpSecret: string;
+  secret: string;
   token: string;
   aesKey: string;
 }
