@@ -62,15 +62,13 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     const publishEventToRedis = async (event: EventBase): Promise<string> => {
       const type = event.constructor.name;
       const data = JSON.stringify(instanceToPlain(event));
-      this.logger.debug(`publishing ${type} event ${data} to ${key}`);
+      this.logger.debug(`saving ${type} event ${data} to ${key}`);
 
       const version = await this.redisClient.xadd(key, [
         '*',
         'type', type,
         'data', data,
       ]);
-
-      this.logger.debug(version);
 
       return version;
     };
@@ -101,8 +99,6 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     } else {
       aggregate.version = '0';
     }
-
-    this.logger.verbose(aggregate.version);
 
     return aggregate;
   }

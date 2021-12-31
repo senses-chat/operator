@@ -13,6 +13,7 @@ Demo (微信扫描二维码):
 目前支持以下服务:
 
 - 微信公众号 / 微信小程序客服通道
+- 微信客服
 - Rasa
 - Custom built actions in the form of [Sagas](https://github.com/xanthous-tech/chat-operator/blob/61d7065a5218f0b091fa032624014ced30b9b20d/src/route/sagas/ding-dong.sagas.ts) and/or [XState](https://xstate.js.org)
 
@@ -23,9 +24,11 @@ Demo (微信扫描二维码):
 - 字节跳动系客服通道
 - WebSocket通道（SocketIO）
 
+目前所有收发的消息均在Redis Stream中存储。
+
 ## 后续功能列表
 
-- persistence and horizontal scalability via Redis Streams
+- horizontal scalability via Redis Streams
 - indexing chat sessions in Elasticsearch
 
 ## 安装
