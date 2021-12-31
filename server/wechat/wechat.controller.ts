@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body, Query, Logger, NotFoundException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { WechatService } from './wechat.service';
 import { Wechat3rdPartyService } from './3rdparty.service';
@@ -44,7 +44,7 @@ export class WechatController {
     }
 
     this.logger.log(payload);
-    this.commandBus.execute(plainToClass(NewWechatMessageCommand, { ...payload, appNamespace }));
+    this.commandBus.execute(plainToInstance(NewWechatMessageCommand, { ...payload, appNamespace }));
 
     return 'success';
   }

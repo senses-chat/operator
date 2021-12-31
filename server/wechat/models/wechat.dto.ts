@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
 
-export interface WecomCredentials {
-  corpId: string;
-  secret: string;
-  token: string;
-  aesKey: string;
-}
-
 export interface Wechat3rdPartyCredentials {
   appId: string;
   appSecret: string;

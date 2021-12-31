@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Query, Logger, NotFoundException, HttpCode } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
-import { NewWechatMessageCommand } from './commands/new-msg.command';
+import { NewWecomMessageCommand } from './commands/new-msg.command';
 import { WecomService } from './wecom.service';
 
 @Controller('wecom')
@@ -49,11 +49,14 @@ export class WecomController {
 
     this.logger.log(tokenMessage);
 
-    const messages = await this.wecomService.getLatestMessage(tokenMessage.Token);
+    const messages = await this.wecomService.syncMessage(tokenMessage.Token);
 
-    this.logger.log(messages);
-
-    // this.commandBus.execute(plainToClass(NewWechatMessageCommand, { ...payload, appNamespace: 'wecom' }));
+    if (messages.msg_list) {
+      messages.msg_list.forEach((message) => {
+        const command = plainToInstance(NewWecomMessageCommand, message);
+        this.commandBus.execute(command);
+      });
+    }
 
     return 'success';
   }

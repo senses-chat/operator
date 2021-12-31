@@ -48,5 +48,6 @@ model WechatApp {
 enum RouteType {
   Rasa
   WechatApp
+  Wecom
   Saga
 }

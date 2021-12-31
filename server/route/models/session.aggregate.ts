@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@nestjs/cqrs';
+import { Aggregate, AggregateRootWithId } from 'server/event-store';
 
 import { RouteType } from './route.dto';
 import { NewRouteMessageCommand } from '../commands';
@@ -16,9 +16,10 @@ export interface SessionDefinition {
   isDestination?: boolean;
 }
 
-export class Session extends AggregateRoot {
+@Aggregate()
+export class Session extends AggregateRootWithId {
   constructor(public readonly definition: SessionDefinition) {
-    super();
+    super(definition.id);
   }
 
   public newRouteMessage(command: NewRouteMessageCommand): void {

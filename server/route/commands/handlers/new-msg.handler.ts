@@ -8,11 +8,12 @@ import { SessionRepository } from '../../repositories';
 export class NewRouteMessageCommandHandler implements ICommandHandler<NewRouteMessageCommand, void> {
   private readonly logger = new Logger(NewRouteMessageCommandHandler.name);
 
-  constructor(private readonly sessionRepository: SessionRepository, private readonly publisher: EventPublisher) {}
+  constructor(private readonly sessionRepository: SessionRepository) {}
 
   public async execute(command: NewRouteMessageCommand): Promise<void> {
-    const session = this.publisher.mergeObjectContext(
-      await this.sessionRepository.getSessionForIncomingRoute(command.message.type, command.message.namespaces),
+    const session = await this.sessionRepository.getSessionForIncomingRoute(
+      command.message.type,
+      command.message.namespaces,
     );
 
     session.newRouteMessage(command);

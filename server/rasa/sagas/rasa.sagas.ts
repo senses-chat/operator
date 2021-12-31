@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { RouteMessage, NewRouteMessageCommand, MessageContentType, NewSessionMessageEvent, RouteType, TextMessageContent } from 'server/route';
 import { NewRasaMessageEvent } from '../events';
@@ -31,7 +31,7 @@ export class RasaSagas {
           content.type = MessageContentType.Image;
         }
 
-        const routeMessage = plainToClass(RouteMessage, {
+        const routeMessage = plainToInstance(RouteMessage, {
           type: RouteType.Rasa,
           namespaces: [event.namespace, ...event.recipient_id.split(DELIMITER)],
           content,
@@ -78,7 +78,7 @@ export class RasaSagas {
     }
 
     return of(
-      plainToClass(SendRasaMessageCommand, {
+      plainToInstance(SendRasaMessageCommand, {
         namespace: namespaces[0],
         sender: namespaces.slice(1).join(DELIMITER),
         // TODO: message types

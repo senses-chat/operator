@@ -6,8 +6,9 @@ import { RedisService } from 'nestjs-redis';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 
-import { WecomCredentials, WxAccessToken } from './models';
+import { WecomCredentials, WecomAccessToken, WecomMessagePayload, WecomSyncMsgResponse } from './models';
 import { WecomMsgCrypto } from './wecom.crypto';
+import { plainToInstance } from 'class-transformer';
 
 const WECOM_ACCESS_TOKEN = 'wecom:accessToken';
 const WECOM_LATEST_CURSOR = 'wecom:latestCursor';
@@ -21,11 +22,11 @@ export class WecomService {
 
   constructor(private readonly configService: ConfigService, private readonly redisService: RedisService) {
     this.credentials = this.configService.get('wecom');
-    this.redisClient = this.redisService.getClient('wechat');
+    this.redisClient = this.redisService.getClient('wecom');
 
-    this.clearAccessTokens().then(() => {
-      this.logger.debug('cleared wecom access token');
-    });
+    // this.clearAccessTokens().then(() => {
+    //   this.logger.debug('cleared wecom access token');
+    // });
   }
 
   public validateWecomRequestSignature(signature: string, timestamp: string, nonce: string, echostr: string): boolean {
@@ -52,7 +53,32 @@ export class WecomService {
     return message;
   }
 
-  public async getLatestMessage(token: string, limit = 1): Promise<any> {
+  public async sendMessage(payload: WecomMessagePayload, code?: string): Promise<void> {
+    const access_token = await this.getAccessToken();
+
+    if (code) {
+      const response = await fetch(`${WECOM_API_ROOT}/cgi-bin/kf/send_msg_on_event?access_token=${access_token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          code,
+        }),
+      });
+
+      return response.json();
+    }
+
+    const response = await fetch(`${WECOM_API_ROOT}/cgi-bin/kf/send_msg?access_token=${access_token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    return response.json();
+  }
+
+  public async syncMessage(token: string, limit = 1000): Promise<WecomSyncMsgResponse> {
     const access_token = await this.getAccessToken();
     const cursor = await this.getLatestCursor();
 
@@ -66,7 +92,10 @@ export class WecomService {
       }),
     });
 
-    const result = await response.json();
+    const resultJson = await response.json();
+    this.logger.debug(JSON.stringify(resultJson));
+    const result = plainToInstance(WecomSyncMsgResponse, resultJson);
+
     if (result.next_cursor) {
       await this.setLatestCursor(result.next_cursor);
     }
@@ -108,14 +137,14 @@ export class WecomService {
     return tokenData;
   }
 
-  private async fetchAccessToken(corpid: string, corpsecret: string): Promise<WxAccessToken> {
-    return (await this.getWxTokenOrCode(`${WECOM_API_ROOT}/cgi-bin/gettoken`, {
+  private async fetchAccessToken(corpid: string, corpsecret: string): Promise<WecomAccessToken> {
+    return (await this.getRequest(`${WECOM_API_ROOT}/cgi-bin/gettoken`, {
       corpid,
       corpsecret,
-    })) as WxAccessToken;
+    })) as WecomAccessToken;
   }
 
-  private async getWxTokenOrCode(url: string, params: any): Promise<any> {
+  private async getRequest(url: string, params: any): Promise<any> {
     const response = await fetch(`${url}?${qs.stringify(params)}`, {
       headers: { 'Content-Type': 'application/json' },
     });

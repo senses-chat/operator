@@ -12,6 +12,9 @@ export enum MessageContentType {
 
 export class MessageContent {
   type: MessageContentType;
+  metadata: {
+    [key: string]: any;
+  };
 }
 
 export class Button {
@@ -30,6 +33,8 @@ export class ImageMessageContent extends MessageContent {
 export class TextWithButtonsMessageContent extends TextMessageContent {
   @Type(() => Button)
   buttons: Button[];
+
+  textAfterButtons?: string;
 }
 
 export class RouteMessage {

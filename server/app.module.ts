@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma';
 import { HealthModule } from './health';
 import { RouteModule } from './route';
 import { WechatModule } from './wechat';
+import { WecomModule } from './wecom';
 import { RasaModule } from './rasa';
 import { ViewModule } from './view';
 
@@ -17,6 +18,7 @@ import { AppController } from './app.controller';
     HealthModule,
     RouteModule,
     WechatModule,
+    WecomModule,
     RasaModule,
     ViewModule,
   ],

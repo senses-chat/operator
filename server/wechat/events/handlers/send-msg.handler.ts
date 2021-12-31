@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent } from 'server/route';
 
@@ -36,7 +36,7 @@ export class SendWechatMessageEventHandler implements IEventHandler<SendWechatMe
 
       return this.wechatService.sendMessage(
         appNamespace,
-        plainToClass(WxMessagePayload, {
+        plainToInstance(WxMessagePayload, {
           touser: openid,
           msgtype: WxMessageType.Text,
           text: {
@@ -51,7 +51,7 @@ export class SendWechatMessageEventHandler implements IEventHandler<SendWechatMe
 
       return this.wechatService.sendMessage(
         appNamespace,
-        plainToClass(WxMessagePayload, {
+        plainToInstance(WxMessagePayload, {
           touser: openid,
           msgtype: WxMessageType.Image,
           image: {

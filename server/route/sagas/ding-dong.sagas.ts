@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, of } from 'rxjs';
 import { filter, concatMap } from 'rxjs/operators';
 
 import { NewSessionMessageEvent } from '../events';
 import { RouteType, MessageContentType, TextMessageContent, RouteMessage } from '../models';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { NewRouteMessageCommand } from '../commands';
 
 @Injectable()
 export class DingDongSagas {
+  private static logger = new Logger(DingDongSagas.name);
+
   @Saga()
   public replyDingdong(events$: Observable<IEvent>): Observable<ICommand> {
     return events$.pipe(
@@ -24,9 +26,11 @@ export class DingDongSagas {
           event.message.content.type === MessageContentType.Text && (event.message.content as TextMessageContent).text.indexOf('#ding') > -1,
       ),
       concatMap((event: NewSessionMessageEvent) => {
+        DingDongSagas.logger.verbose(`replydingdong ${JSON.stringify(event)}`);
+
         return of(
           new NewRouteMessageCommand(
-            plainToClass(RouteMessage, {
+            plainToInstance(RouteMessage, {
               type: event.session.destination.type,
               namespaces: event.session.destination.namespaces,
               content: {

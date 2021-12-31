@@ -38,6 +38,7 @@
     "@nestjs/typeorm": "^8.0.2",
     "@prisma/client": "3.7.0",
     "antd": "^4.17.4",
+    "array-keyed-map": "^2.1.2",
     "body-parser-xml": "^2.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { of, from, zip, interval } from 'rxjs';
 import Ops from 'rxjs/operators';
 import fetch from 'node-fetch';
@@ -59,7 +59,7 @@ export class RasaService {
         }),
       ).subscribe({
         next: (response: RasaResponsePayload) => {
-          const command = plainToClass(NewRasaMessageCommand, Object.assign(response, { namespace: rasaServer.name }));
+          const command = plainToInstance(NewRasaMessageCommand, Object.assign(response, { namespace: rasaServer.name }));
           this.logger.debug(command);
           this.commandBus.execute(command);
         },

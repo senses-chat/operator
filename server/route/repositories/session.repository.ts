@@ -3,6 +3,8 @@ import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 import uniqid from 'uniqid';
 
+import { EventStoreService } from 'server/event-store';
+
 import { RouteService } from '../route.service';
 import { Route, RouteType, SessionDefinition, Session } from '../models';
 
@@ -10,7 +12,11 @@ import { Route, RouteType, SessionDefinition, Session } from '../models';
 export class SessionRepository {
   private readonly redisClient: Redis;
 
-  constructor(private readonly routeService: RouteService, private readonly redisService: RedisService) {
+  constructor(
+    private readonly eventStore: EventStoreService,
+    private readonly routeService: RouteService,
+    private readonly redisService: RedisService,
+  ) {
     this.redisClient = this.redisService.getClient('session');
   }
 
@@ -39,8 +45,8 @@ export class SessionRepository {
     }
 
     try {
-      const sessionDefinition: SessionDefinition = JSON.parse(sessionDefinitionJson);
-      return new Session(sessionDefinition);
+      const definition: SessionDefinition = JSON.parse(sessionDefinitionJson);
+      return this.eventStore.getAggregate<Session>(Session.name, definition.id, definition);
     } catch (error) {
       return undefined;
     }
@@ -69,7 +75,7 @@ export class SessionRepository {
     pipeline.set(destKey, JSON.stringify(Object.assign({}, definition, { isDestination: true })), 'ex', 3600);
     await pipeline.exec();
 
-    return new Session(definition);
+    return this.eventStore.getAggregate<Session>(Session.name, definition.id, definition);
   }
 
   private getSessionKey(type: RouteType, namespaces: string[]): string {

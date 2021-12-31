@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
-import { plainToClass, instanceToPlain } from 'class-transformer';
+import { plainToInstance, instanceToPlain } from 'class-transformer';
 
 import { RouteMessage, NewRouteMessageCommand, NewSessionMessageEvent, RouteType } from 'server/route';
 import { SendWechatMessageCommand } from '../commands';
@@ -22,7 +22,7 @@ export class WechatSagas {
         if (event.MsgType === 'miniprogrampage' || event.MsgType === 'event') {
           // fake /greet
           // TODO: make this into a configuration somehow
-          routeMessage = plainToClass(RouteMessage, {
+          routeMessage = plainToInstance(RouteMessage, {
             type: RouteType.WechatApp,
             namespaces: [event.appNamespace, event.FromUserName],
             content: {
@@ -33,7 +33,7 @@ export class WechatSagas {
         }
 
         if (event.MsgType === 'text' && event.Content) {
-          routeMessage = plainToClass(RouteMessage, {
+          routeMessage = plainToInstance(RouteMessage, {
             type: RouteType.WechatApp,
             namespaces: [event.appNamespace, event.FromUserName],
             content: {
@@ -87,7 +87,7 @@ export class WechatSagas {
     }
 
     return of(
-      plainToClass(SendWechatMessageCommand, {
+      plainToInstance(SendWechatMessageCommand, {
         message: {
           ...instanceToPlain(event.message),
           type,
