@@ -12,7 +12,7 @@ export enum MessageContentType {
 
 export class MessageContent {
   type: MessageContentType;
-  metadata: {
+  metadata?: {
     [key: string]: any;
   };
 }

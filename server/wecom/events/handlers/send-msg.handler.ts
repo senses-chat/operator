@@ -2,7 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
-import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent } from 'server/route';
+import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent, MessageContentType } from 'server/route';
 
 import { WecomService } from '../../wecom.service';
 import { SendWecomMessageEvent } from '../send-msg.event';
@@ -15,13 +15,18 @@ export class SendWecomMessageEventHandler implements IEventHandler<SendWecomMess
   constructor(private readonly wecomService: WecomService) {}
 
   public async handle(event: SendWecomMessageEvent): Promise<void> {
-    this.logger.verbose(`send wechat message event: ${JSON.stringify(event)}`);
+    this.logger.verbose(`send wecom message event: ${JSON.stringify(event)}`);
 
     const { message } = event;
+    const { content } = message;
 
     let payload: any = {};
 
-    if (message.namespaces.length === 2) {
+    if (content.metadata && content.metadata.welcome_code) {
+      payload = {
+        code: content.metadata.welcome_code,
+      };
+    } else {
       const [open_kfid, touser] = message.namespaces;
       payload = {
         touser,
@@ -29,23 +34,15 @@ export class SendWecomMessageEventHandler implements IEventHandler<SendWecomMess
       };
     }
 
-    if (message.namespaces.length === 3) {
-      const [open_kfid, touser, code] = message.namespaces;
-      payload = {
-        code,
-      };
-    }
-
-
     this.logger.debug(JSON.stringify(payload));
 
-    if (message.content instanceof TextMessageContent) {
+    if (message.content.type === MessageContentType.Text) {
       return this.wecomService.sendMessage(
         plainToInstance(WecomMessagePayload, {
           ...payload,
           msgtype: WecomMessageType.Text,
           text: {
-            content: message.content.text,
+            content: (content as TextMessageContent).text,
           },
         }),
       );

@@ -34,11 +34,12 @@ export class WecomSagas {
             // TODO: make this into a configuration somehow
             routeMessage = plainToInstance(RouteMessage, {
               type: RouteType.Wecom,
-              namespaces: [wecomMessage.open_kfid, wecomMessage.external_userid, messageEvent.welcome_code],
+              namespaces: [messageEvent.open_kfid, messageEvent.external_userid],
               content: {
                 type: MessageContentType.Text,
                 text: '/greet',
                 metadata: {
+                  welcome_code: messageEvent.welcome_code,
                   scene: messageEvent.scene,
                   scene_param: messageEvent.scene_param,
                 },

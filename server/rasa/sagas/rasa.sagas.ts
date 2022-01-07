@@ -20,8 +20,11 @@ export class RasaSagas {
       ofType(NewRasaMessageEvent),
       concatMap((event: NewRasaMessageEvent) => {
         const content: any = { ...event, type: MessageContentType.Text };
-        delete (content as any).recipient_id;
-        delete (content as any).namespace;
+
+        content.metadata = content.custom;
+        delete content.recipient_id;
+        delete content.namespace;
+        delete content.custom;
 
         if (content.buttons) {
           content.type = MessageContentType.TextWithButtons;
@@ -77,12 +80,23 @@ export class RasaSagas {
       namespaces = event.session.source.namespaces;
     }
 
+    let message = '';
+
+    const content = event.message.content;
+
+    if (content.type === MessageContentType.Text) {
+      const text = (content as TextMessageContent).text;
+      message += text;
+      if (text.startsWith('/') && content.metadata) {
+        message += JSON.stringify(content.metadata);
+      }
+    }
+
     return of(
       plainToInstance(SendRasaMessageCommand, {
         namespace: namespaces[0],
         sender: namespaces.slice(1).join(DELIMITER),
-        // TODO: message types
-        message: (event.message.content as TextMessageContent).text,
+        message,
       }),
     );
   }

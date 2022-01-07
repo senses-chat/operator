@@ -3,7 +3,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { of, from, zip, interval } from 'rxjs';
-import Ops from 'rxjs/operators';
+import { concatMap, tap } from 'rxjs/operators';
 import fetch from 'node-fetch';
 
 import { PrismaService } from 'server/prisma';
@@ -41,18 +41,25 @@ export class RasaService {
       message: event.message,
     };
 
+    this.logger.debug(`send rasa message ${JSON.stringify(payload)} to ${JSON.stringify(rasaServer)}`);
+
     return new Promise((resolve, reject) => {
       of(rasaServer).pipe(
-        Ops.concatMap((rasaServer) =>
+        tap((rasaServer) => this.logger.verbose(JSON.stringify(rasaServer))),
+        concatMap((rasaServer) =>
           from(
             fetch(rasaServer.url, {
               method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
               body: JSON.stringify(payload),
             }),
           )
         ),
-        Ops.concatMap((response) => response.json()),
-        Ops.concatMap((messages: RasaResponsePayload[]) => {
+        concatMap((response) => response.json()),
+        tap((responseJson) => this.logger.verbose(JSON.stringify(responseJson))),
+        concatMap((messages: RasaResponsePayload[]) => {
           return zip(from(messages), interval(this.configService.get('rasa.messageDelay')), (payload: RasaResponsePayload, _) => {
             return payload;
           });
