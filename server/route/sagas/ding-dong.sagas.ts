@@ -26,8 +26,6 @@ export class DingDongSagas {
           event.message.content.type === MessageContentType.Text && (event.message.content as TextMessageContent).text.indexOf('#ding') > -1,
       ),
       concatMap((event: NewSessionMessageEvent) => {
-        DingDongSagas.logger.verbose(`replydingdong ${JSON.stringify(event)}`);
-
         return of(
           new NewRouteMessageCommand(
             plainToInstance(RouteMessage, {

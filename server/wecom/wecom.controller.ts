@@ -38,7 +38,6 @@ export class WecomController {
     @Query('nonce') nonce: string,
     @Body('xml') body: any,
   ): Promise<string> {
-    this.logger.debug(body);
     const validated = this.wecomService.validateWecomRequestSignature(signature, timestamp, nonce, body.Encrypt);
 
     if (!validated) {
@@ -46,9 +45,6 @@ export class WecomController {
     }
 
     const tokenMessage = this.wecomService.decryptXmlMessage(body.Encrypt);
-
-    this.logger.log(tokenMessage);
-
     const messages = await this.wecomService.syncMessage(tokenMessage.Token);
 
     if (messages.msg_list) {

@@ -1,6 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
 
-import dockerConfig from 'server/config/docker';
 import minioConfig from 'server/config/minio';
 import rasaConfig from 'server/config/rasa';
 import redisConfig from 'server/config/redis';
@@ -19,7 +18,6 @@ export const Module = ConfigModule.forRoot({
     '.env',
   ],
   load: [
-    dockerConfig,
     minioConfig,
     rasaConfig,
     redisConfig,
