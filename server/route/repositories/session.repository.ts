@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RedisService } from 'nestjs-redis';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 import uniqid from 'uniqid';
 

@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 
 import { RouteMessage } from 'server/route';
 
-export class SendWecomMessageCommand implements ICommand {
+export class SendWxkfMessageCommand implements ICommand {
   @Type(() => RouteMessage)
   message: RouteMessage;
 }

@@ -33,7 +33,7 @@ class PKCS7 {
  * 微信公众号消息加解密
  * 官方文档(写的非常之烂)：https://work.weixin.qq.com/api/doc/90000/90139/90968
  */
-export class WecomMsgCrypto {
+export class WxkfMsgCrypto {
   private key: Buffer;
   private iv: Buffer;
 

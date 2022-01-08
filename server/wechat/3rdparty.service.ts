@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { XMLParser } from 'fast-xml-parser';
-import { RedisService } from 'nestjs-redis';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 
 import { WXMsgCrypto } from './wechat.crypto';

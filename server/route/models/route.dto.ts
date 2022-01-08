@@ -8,6 +8,7 @@ export enum MessageContentType {
   Text = 'text',
   TextWithButtons = 'text_with_buttons',
   Image = 'image',
+  File = 'file',
 }
 
 export class MessageContent {
@@ -37,6 +38,10 @@ export class TextWithButtonsMessageContent extends TextMessageContent {
   textAfterButtons?: string;
 }
 
+export class FileMessageContent extends MessageContent {
+  file_url: string;
+}
+
 export class RouteMessage {
   type: RouteType;
   namespaces: string[];
@@ -49,6 +54,7 @@ export class RouteMessage {
         { value: TextMessageContent, name: MessageContentType.Text },
         { value: TextWithButtonsMessageContent, name: MessageContentType.TextWithButtons },
         { value: ImageMessageContent, name: MessageContentType.Image },
+        { value: FileMessageContent, name: MessageContentType.File },
       ],
     },
   })

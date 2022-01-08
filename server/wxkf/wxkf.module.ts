@@ -8,13 +8,13 @@ import { PrismaModule } from 'server/prisma';
 
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
-import { WecomSagas } from './sagas';
-import { WecomController } from './wecom.controller';
-import { WecomService } from './wecom.service';
+import { WxkfSagas } from './sagas';
+import { WxkfController } from './wxkf.controller';
+import { WxkfService } from './wxkf.service';
 
 @Module({
   imports: [CqrsModule, EventStoreModule, ConfigModule, RedisModule, MinioModule, PrismaModule],
-  controllers: [WecomController],
-  providers: [WecomService, WecomSagas, ...CommandHandlers, ...EventHandlers],
+  controllers: [WxkfController],
+  providers: [WxkfService, WxkfSagas, ...CommandHandlers, ...EventHandlers],
 })
-export class WecomModule {}
+export class WxkfModule {}

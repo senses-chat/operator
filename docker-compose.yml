@@ -2,14 +2,10 @@ version: '3.7'
 
 services:
   postgres:
-    container_name: chat-operator-postgres
-    hostname: postgres
     image: postgres:12
     restart: always
-    networks:
-      - chat-operator
     ports:
-      - 5433:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: chatop
       POSTGRES_PASSWORD: chatOperator
@@ -18,30 +14,23 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
-    container_name: chat-operator-redis
-    hostname: redis
     image: redis:6
     command: redis-server --appendonly yes --requirepass chatOperator
     restart: always
-    networks:
-      - chat-operator
     ports:
-      - 6380:6379
+      - 6379:6379
     environment:
       - REDIS_PASSWORD=chatOperator
     volumes:
       - redis:/data
 
   minio:
-    container_name: chat-operator-minio
-    hostname: minio
-    image: minio/minio:RELEASE.2021-04-22T15-44-28Z
     restart: always
-    command: server /data
-    networks:
-      - chat-operator
+    image: minio/minio:RELEASE.2021-11-09T03-21-45Z
     ports:
-      - '9001:9000'
+      - '9000:9000'
+      - '9001:9001'
+    command: 'server /data --console-address ":9001"'
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
@@ -50,27 +39,8 @@ services:
       - ./data/minio/data:/data
       - ./data/minio/config:/root/.minio
 
-  # docker-proxy:
-  #   container_name: chat-operator-docker-proxy
-  #   hostname: docker-proxy
-  #   image: alpine/socat:1.7.4.1-r0
-  #   restart: always
-  #   networks:
-  #     - chat-operator
-  #   ports:
-  #     - 2376:2375
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
-
-networks:
-  chat-operator:
-    name: chat-operator
-
 volumes:
   redis:
-    name: chat-operator-redis
     driver: local
   postgres:
-    name: chat-operator-postgres
     driver: local

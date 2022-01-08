@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { createDecipheriv, createHash } from 'crypto';
-import { RedisService } from 'nestjs-redis';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 import { XMLParser } from 'fast-xml-parser';
 import FormData from 'form-data';

@@ -4,18 +4,18 @@ import { plainToInstance } from 'class-transformer';
 
 import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent, MessageContentType } from 'server/route';
 
-import { WecomService } from '../../wecom.service';
-import { SendWecomMessageEvent } from '../send-msg.event';
-import { WecomMessagePayload, WecomMessageType } from '../../models';
+import { WxkfService } from '../../wxkf.service';
+import { SendWxkfMessageEvent } from '../send-msg.event';
+import { WxkfMessagePayload, WxkfMessageType } from '../../models';
 
-@EventsHandler(SendWecomMessageEvent)
-export class SendWecomMessageEventHandler implements IEventHandler<SendWecomMessageEvent> {
-  private readonly logger = new Logger(SendWecomMessageEventHandler.name);
+@EventsHandler(SendWxkfMessageEvent)
+export class SendWxkfMessageEventHandler implements IEventHandler<SendWxkfMessageEvent> {
+  private readonly logger = new Logger(SendWxkfMessageEventHandler.name);
 
-  constructor(private readonly wecomService: WecomService) {}
+  constructor(private readonly wxkfService: WxkfService) {}
 
-  public async handle(event: SendWecomMessageEvent): Promise<void> {
-    this.logger.verbose(`send wecom message event: ${JSON.stringify(event)}`);
+  public async handle(event: SendWxkfMessageEvent): Promise<void> {
+    this.logger.verbose(`send wxkf message event: ${JSON.stringify(event)}`);
 
     const { message } = event;
     const { content } = message;
@@ -37,10 +37,10 @@ export class SendWecomMessageEventHandler implements IEventHandler<SendWecomMess
     this.logger.debug(JSON.stringify(payload));
 
     if (message.content.type === MessageContentType.Text) {
-      return this.wecomService.sendMessage(
-        plainToInstance(WecomMessagePayload, {
+      return this.wxkfService.sendMessage(
+        plainToInstance(WxkfMessagePayload, {
           ...payload,
-          msgtype: WecomMessageType.Text,
+          msgtype: WxkfMessageType.Text,
           text: {
             content: (content as TextMessageContent).text,
           },
@@ -49,13 +49,13 @@ export class SendWecomMessageEventHandler implements IEventHandler<SendWecomMess
     }
 
     // if (message.content instanceof ImageMessageContent) {
-    //   const media_id = await this.wecomService.uploadImage(appNamespace, message.content.image);
+    //   const media_id = await this.wxkfService.uploadImage(appNamespace, message.content.image);
 
-    //   return this.wecomService.sendMessage(
+    //   return this.wxkfService.sendMessage(
     //     appNamespace,
-    //     plainToInstance(WecomMessagePayload, {
+    //     plainToInstance(WxkfMessagePayload, {
     //       touser: openid,
-    //       msgtype: WecomMessageType.Image,
+    //       msgtype: WxkfMessageType.Image,
     //       image: {
     //         media_id,
     //       },

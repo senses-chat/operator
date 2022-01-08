@@ -4,7 +4,15 @@ import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
-import { RouteMessage, NewRouteMessageCommand, MessageContentType, NewSessionMessageEvent, RouteType, TextMessageContent } from 'server/route';
+import {
+  RouteMessage,
+  NewRouteMessageCommand,
+  MessageContentType,
+  NewSessionMessageEvent,
+  RouteType,
+  TextMessageContent,
+  FileMessageContent,
+} from 'server/route';
 import { NewRasaMessageEvent } from '../events';
 import { SendRasaMessageCommand } from '../commands';
 
@@ -15,7 +23,9 @@ export class RasaSagas {
   private static logger = new Logger(RasaSagas.name);
 
   @Saga()
-  public routeRasaMessageSaga(events$: Observable<IEvent>): Observable<ICommand> {
+  public routeRasaMessageSaga(
+    events$: Observable<IEvent>,
+  ): Observable<ICommand> {
     return events$.pipe(
       ofType(NewRasaMessageEvent),
       concatMap((event: NewRasaMessageEvent) => {
@@ -52,26 +62,41 @@ export class RasaSagas {
   }
 
   @Saga()
-  public routeMessageToRasaSaga(events$: Observable<IEvent>): Observable<ICommand> {
+  public routeMessageToRasaSaga(
+    events$: Observable<IEvent>,
+  ): Observable<ICommand> {
     return events$.pipe(
       ofType(NewSessionMessageEvent),
       filter((event: NewSessionMessageEvent) => event.isMessageFromSource()),
-      filter((event: NewSessionMessageEvent) => event.session.destination.type === RouteType.Rasa),
+      filter(
+        (event: NewSessionMessageEvent) =>
+          event.session.destination.type === RouteType.Rasa,
+      ),
       concatMap(RasaSagas.convertRouteMessageToRasaMessage.bind(null, true)),
     );
   }
 
   @Saga()
-  public routeMessageFromRasaSaga(events$: Observable<IEvent>): Observable<ICommand> {
+  public routeMessageFromRasaSaga(
+    events$: Observable<IEvent>,
+  ): Observable<ICommand> {
     return events$.pipe(
       ofType(NewSessionMessageEvent),
-      filter((event: NewSessionMessageEvent) => event.isMessageFromDestination()),
-      filter((event: NewSessionMessageEvent) => event.session.source.type === RouteType.Rasa),
+      filter((event: NewSessionMessageEvent) =>
+        event.isMessageFromDestination(),
+      ),
+      filter(
+        (event: NewSessionMessageEvent) =>
+          event.session.source.type === RouteType.Rasa,
+      ),
       concatMap(RasaSagas.convertRouteMessageToRasaMessage.bind(null, false)),
     );
   }
 
-  private static convertRouteMessageToRasaMessage(toDestination: boolean, event: NewSessionMessageEvent): Observable<SendRasaMessageCommand> {
+  private static convertRouteMessageToRasaMessage(
+    toDestination: boolean,
+    event: NewSessionMessageEvent,
+  ): Observable<SendRasaMessageCommand> {
     let namespaces: string[];
 
     if (toDestination) {
@@ -90,6 +115,12 @@ export class RasaSagas {
       if (text.startsWith('/') && content.metadata) {
         message += JSON.stringify(content.metadata);
       }
+    }
+
+    if (content.type === MessageContentType.File) {
+      message = `/file_uploaded{"file_url":"${
+        (content as FileMessageContent).file_url
+      }"}`;
     }
 
     return of(

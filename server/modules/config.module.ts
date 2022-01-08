@@ -4,7 +4,7 @@ import minioConfig from 'server/config/minio';
 import rasaConfig from 'server/config/rasa';
 import redisConfig from 'server/config/redis';
 import serverConfig from 'server/config/server';
-import wecomConfig from 'server/config/wecom';
+import wxkfConfig from 'server/config/wxkf';
 import wx3pConfig from 'server/config/wx3p';
 
 const ENV = process.env.NODE_ENV;
@@ -22,7 +22,7 @@ export const Module = ConfigModule.forRoot({
     rasaConfig,
     redisConfig,
     serverConfig,
-    wecomConfig,
+    wxkfConfig,
     wx3pConfig,
   ],
 });

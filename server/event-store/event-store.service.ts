@@ -1,8 +1,14 @@
-import { Injectable, Logger, Type, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { IEvent, EventBus, IEventPublisher, IMessageSource } from '@nestjs/cqrs';
+import {
+  Injectable,
+  Logger,
+  Type,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
+import { IEvent, EventBus } from '@nestjs/cqrs';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Redis } from 'ioredis';
-import { RedisService } from 'nestjs-redis';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 import { from, lastValueFrom, Subject } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 // import ArrayKeyedMap from 'array-keyed-map';
@@ -15,8 +21,11 @@ const PREFIX = 'events';
 const DELIMITER = ':';
 
 @Injectable()
-export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase extends AggregateRootWithId<EventBase> = AggregateRootWithId<EventBase>>
-  implements OnModuleInit, OnModuleDestroy {
+export class EventStoreService<
+  EventBase extends IEvent = IEvent,
+  AggregateBase extends AggregateRootWithId<EventBase> = AggregateRootWithId<EventBase>,
+> implements OnModuleInit, OnModuleDestroy
+{
   private logger = new Logger(EventStoreService.name);
   private redisClient: Redis;
   private subject$: Subject<EventBase>;
@@ -32,7 +41,6 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
 
   async onModuleInit(): Promise<void> {
     // TODO: this is better if we have LRU, so it doesn't overwhelm the heap memory
-
     // for (const name of AggregateStore.keys()) {
     //   const keyPrefix = `${PREFIX}${DELIMITER}${name}${DELIMITER}*`;
     //   this.logger.debug(`finding streams that starts with ${keyPrefix}`);
@@ -51,7 +59,11 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     this.subject$.complete();
   }
 
-  async getAggregate<T extends AggregateBase>(aggregateType: string, aggregateId: string, aggregateArgs?: any): Promise<T> {
+  async getAggregate<T extends AggregateBase>(
+    aggregateType: string,
+    aggregateId: string,
+    aggregateArgs?: any,
+  ): Promise<T> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const clazz = AggregateStore.get(aggregateType) as Type<T>;
     const aggregate = new clazz(aggregateArgs || aggregateId);
@@ -66,8 +78,10 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
 
       const version = await this.redisClient.xadd(key, [
         '*',
-        'type', type,
-        'data', data,
+        'type',
+        type,
+        'data',
+        data,
       ]);
 
       return version;
@@ -82,9 +96,11 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     };
 
     aggregate.publishAll = (events: EventBase[]) => {
-      lastValueFrom(from(events).pipe(
-        concatMap((event) => from(publishEventToRedis(event))),
-      )).then((version) => {
+      lastValueFrom(
+        from(events).pipe(
+          concatMap((event) => from(publishEventToRedis(event))),
+        ),
+      ).then((version) => {
         aggregate.version = version;
       });
       eventBus.publishAll(events);
@@ -93,7 +109,9 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     const redisMessages = await this.redisClient.xrange(key, '-', '+');
     if (redisMessages.length > 0) {
       const latestVersion = redisMessages.slice(-1)[0][0];
-      const history = redisMessages.map(message => this.convertRedisMessageToEvent(message));
+      const history = redisMessages.map((message) =>
+        this.convertRedisMessageToEvent(message),
+      );
       aggregate.loadFromHistory(history);
       aggregate.version = latestVersion;
     } else {
@@ -103,7 +121,9 @@ export class EventStoreService<EventBase extends IEvent = IEvent, AggregateBase 
     return aggregate;
   }
 
-  private convertRedisMessageToEvent<T extends EventBase>(message: [string, string[]]): T {
+  private convertRedisMessageToEvent<T extends EventBase>(
+    message: [string, string[]],
+  ): T {
     const [, object] = message;
     const [, eventType, , eventData] = object;
     const data = JSON.parse(eventData);

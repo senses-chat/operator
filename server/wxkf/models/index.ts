@@ -1,4 +1,4 @@
-export * from './wecom.dto';
+export * from './wxkf.dto';
 export * from './msg-log.aggregate';
 
 import { WechatApp } from '@prisma/client';
