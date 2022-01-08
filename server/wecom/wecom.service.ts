@@ -53,17 +53,14 @@ export class WecomService {
     return message;
   }
 
-  public async sendMessage(payload: WecomMessagePayload, code?: string): Promise<void> {
+  public async sendMessage(payload: WecomMessagePayload): Promise<void> {
     const access_token = await this.getAccessToken();
 
-    if (code) {
+    if (payload.code) {
       const response = await fetch(`${WECOM_API_ROOT}/cgi-bin/kf/send_msg_on_event?access_token=${access_token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...payload,
-          code,
-        }),
+        body: JSON.stringify(payload),
       });
 
       return response.json();
