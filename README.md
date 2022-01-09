@@ -23,13 +23,9 @@ Demo (微信扫描二维码):
 - Bilibili
 - 字节跳动系客服通道
 - WebSocket通道（SocketIO）
+- Microsoft BotFramework
 
-目前所有收发的消息均在Redis Stream中存储。
-
-## 后续功能列表
-
-- horizontal scalability via Redis Streams
-- indexing chat sessions in Elasticsearch
+目前所有收发的消息均可在Redis Stream或者SQL（通过Prisma）中存储。
 
 ## 安装
 

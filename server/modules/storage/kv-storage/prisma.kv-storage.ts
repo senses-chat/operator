@@ -22,15 +22,7 @@ export class PrismaKeyValueStorage extends KeyValueStorageBase {
     }
 
     if (record.expires && addSeconds(record.createdAt, record.expires) < new Date()) {
-      await this.prisma.keyValueStorage.delete({
-        where: {
-          namespace_key: {
-            namespace: this.namespace,
-            key,
-          },
-        },
-      });
-
+      await this.delete(key);
       return undefined;
     }
 
