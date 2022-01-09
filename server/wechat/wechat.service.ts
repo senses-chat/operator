@@ -7,8 +7,7 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 
-import { MinioService } from 'server/minio';
-import { PrismaService } from 'server/prisma';
+import { MinioService, PrismaService } from 'server/modules/storage';
 
 import { WxACodeUnlimitedDto, WxAuthorizationCode, WxAccessToken, WxMessagePayload, WechatApp } from './models';
 import { WXMsgCrypto } from './wechat.crypto';

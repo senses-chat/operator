@@ -1,16 +1,12 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
-import { ConfigModule, RedisModule } from 'server/modules';
+import { ConfigModule, StorageModule } from 'server/modules';
 
 import { EventStoreService } from './event-store.service';
 
 @Module({
-  imports: [
-    ConfigModule,
-    CqrsModule,
-    RedisModule,
-  ],
+  imports: [CqrsModule, ConfigModule, StorageModule.register()],
   providers: [EventStoreService],
   exports: [EventStoreService],
 })

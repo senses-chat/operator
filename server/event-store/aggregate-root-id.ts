@@ -2,7 +2,7 @@ import { AggregateRoot, IEvent } from '@nestjs/cqrs';
 
 export class AggregateRootWithId<EventBase extends IEvent = IEvent> extends AggregateRoot<EventBase> {
   protected _id: string;
-  protected _version: string;
+  protected _version: string | number;
 
   constructor(id: string) {
     super();
@@ -17,11 +17,11 @@ export class AggregateRootWithId<EventBase extends IEvent = IEvent> extends Aggr
     this._id = id;
   }
 
-  get version(): string {
+  get version(): string | number {
     return this._version;
   }
 
-  set version(version: string) {
+  set version(version: string | number) {
     this._version = version;
   }
 }

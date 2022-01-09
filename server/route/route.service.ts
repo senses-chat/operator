@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'server/prisma';
+
+import { PrismaService } from 'server/modules/storage';
 
 import { Route, RouteType } from './models';
 

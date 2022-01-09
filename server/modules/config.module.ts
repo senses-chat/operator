@@ -2,7 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import minioConfig from 'server/config/minio';
 import rasaConfig from 'server/config/rasa';
-import redisConfig from 'server/config/redis';
+import storageConfig from 'server/config/storage';
 import serverConfig from 'server/config/server';
 import wxkfConfig from 'server/config/wxkf';
 import wx3pConfig from 'server/config/wx3p';
@@ -20,7 +20,7 @@ export const Module = ConfigModule.forRoot({
   load: [
     minioConfig,
     rasaConfig,
-    redisConfig,
+    storageConfig,
     serverConfig,
     wxkfConfig,
     wx3pConfig,

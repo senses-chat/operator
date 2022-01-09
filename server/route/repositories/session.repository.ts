@@ -1,27 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import uniqid from 'uniqid';
 
 import { EventStoreService } from 'server/event-store';
+import { SESSION_STORAGE, ISessionStorage } from 'server/modules/storage';
 
 import { RouteService } from '../route.service';
 import { Route, RouteType, SessionDefinition, Session } from '../models';
 
 @Injectable()
 export class SessionRepository {
-  private readonly redisClient: Redis;
-
   constructor(
     private readonly eventStore: EventStoreService,
     private readonly routeService: RouteService,
-    private readonly redisService: RedisService,
-  ) {
-    this.redisClient = this.redisService.getClient('session');
-  }
+    @Inject(SESSION_STORAGE)
+    private readonly sessionStorage: ISessionStorage,
+  ) {}
 
   public async getSessionForIncomingRoute(sourceType: RouteType, namespaces: string[]): Promise<Session> {
-    const session = await this.getSessionFromSessionStorage(sourceType, namespaces);
+    const session = await this.getSession(sourceType, namespaces);
 
     if (session) {
       return session;
@@ -36,20 +32,14 @@ export class SessionRepository {
     return this.createSession(sourceType, namespaces, route);
   }
 
-  private async getSessionFromSessionStorage(type: RouteType, namespaces: string[]): Promise<Session | undefined> {
-    const key = this.getSessionKey(type, namespaces);
-    const sessionDefinitionJson: string = await this.redisClient.get(key);
+  private async getSession(type: RouteType, namespaces: string[]): Promise<Session | undefined> {
+    const definition: SessionDefinition = await this.sessionStorage.getSessionDefinition(type, namespaces);
 
-    if (!sessionDefinitionJson) {
+    if (!definition) {
       return undefined;
     }
 
-    try {
-      const definition: SessionDefinition = JSON.parse(sessionDefinitionJson);
-      return this.eventStore.getAggregate<Session>(Session.name, definition.id, definition);
-    } catch (error) {
-      return undefined;
-    }
+    return this.eventStore.getAggregate<Session>(Session.name, definition.id, definition);
   }
 
   private async createSession(sourceType: RouteType, namespaces: string[], route: Route): Promise<Session> {
@@ -67,18 +57,7 @@ export class SessionRepository {
       },
     };
 
-    const srcKey = this.getSessionKey(definition.source.type, definition.source.namespaces);
-    const destKey = this.getSessionKey(definition.destination.type, definition.destination.namespaces);
-    const pipeline = this.redisClient.pipeline();
-    // expire session in 1 hour
-    pipeline.set(srcKey, JSON.stringify(Object.assign({}, definition, { isDestination: false })), 'ex', 3600);
-    pipeline.set(destKey, JSON.stringify(Object.assign({}, definition, { isDestination: true })), 'ex', 3600);
-    await pipeline.exec();
-
+    await this.sessionStorage.storeSessionDefinition(definition);
     return this.eventStore.getAggregate<Session>(Session.name, definition.id, definition);
-  }
-
-  private getSessionKey(type: RouteType, namespaces: string[]): string {
-    return `session:${type}:${namespaces.join(':')}`;
   }
 }

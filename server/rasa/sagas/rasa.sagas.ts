@@ -50,7 +50,7 @@ export class RasaSagas {
           content,
         });
 
-        RasaSagas.logger.debug(routeMessage);
+        RasaSagas.logger.debug(JSON.stringify(routeMessage));
 
         if (!routeMessage) {
           return EMPTY;

@@ -1,14 +1,12 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { XMLParser } from 'fast-xml-parser';
-import { Redis } from 'ioredis';
 import { Client as Minio } from 'minio';
 import { ConfigService } from '@nestjs/config';
-import { RedisService } from '@liaoliaots/nestjs-redis';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 import contentDisposition from 'content-disposition';
 
-import { MinioService } from 'server/minio';
+import { KeyValueStorageBase, KV_STORAGE, MinioService } from 'server/modules/storage';
 
 import {
   WxkfCredentials,
@@ -26,20 +24,20 @@ const WXKF_API_ROOT = 'https://qyapi.weixin.qq.com';
 @Injectable()
 export class WxkfService {
   private readonly logger = new Logger(WxkfService.name);
-  private redisClient: Redis;
   private minioClient: Minio;
   private credentials: WxkfCredentials;
   private assetsBucket: string;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly redisService: RedisService,
     private readonly minioService: MinioService,
+    @Inject(KV_STORAGE)
+    private readonly kvStorage: KeyValueStorageBase,
   ) {
     this.credentials = this.configService.get<WxkfCredentials>('wxkf.credentials');
-    this.redisClient = this.redisService.getClient('wxkf');
-    this.minioClient = this.minioService.instance;
     this.assetsBucket = this.configService.get<string>('wxkf.assetsBucket');
+    this.minioClient = this.minioService.instance;
+    this.kvStorage.namespace = 'wxkf';
 
     // this.clearAccessTokens().then(() => {
     //   this.logger.debug('cleared wxkf access token');
@@ -150,19 +148,19 @@ export class WxkfService {
 
   private async getLatestCursor(): Promise<string | null> {
     const key = `${WXKF_LATEST_CURSOR}`;
-    const cursorData = await this.redisClient.get(key);
+    const cursorData = await this.kvStorage.get(key);
     return cursorData;
   }
 
   private async setLatestCursor(cursor: string): Promise<void> {
     const key = `${WXKF_LATEST_CURSOR}`;
-    await this.redisClient.set(key, cursor);
+    await this.kvStorage.set(key, cursor);
   }
 
   public async getAccessToken(): Promise<string> {
     const key = `${WXKF_ACCESS_TOKEN}`;
 
-    const tokenData = await this.redisClient.get(key);
+    const tokenData = await this.kvStorage.get(key);
 
     if (!tokenData) {
       this.logger.debug('no wxkf access token cached, fetching');
@@ -174,7 +172,7 @@ export class WxkfService {
       const { access_token } = accessTokenResponse;
       this.logger.debug(`fetched wxkf access token ${access_token}`);
 
-      await this.redisClient.set(key, access_token, 'ex', 7100);
+      await this.kvStorage.set(key, access_token, 7100);
 
       return access_token;
     }
@@ -199,16 +197,16 @@ export class WxkfService {
     return response.json();
   }
 
-  private async clearAccessTokens(): Promise<any> {
-    const keys = await this.redisClient.keys(`${WXKF_ACCESS_TOKEN}`);
+  // private async clearAccessTokens(): Promise<any> {
+  //   const keys = await this.redisClient.keys(`${WXKF_ACCESS_TOKEN}`);
 
-    if (keys.length <= 0) {
-      return;
-    }
+  //   if (keys.length <= 0) {
+  //     return;
+  //   }
 
-    const pipeline = this.redisClient.pipeline();
-    keys.forEach((key: string) => pipeline.del(key));
+  //   const pipeline = this.redisClient.pipeline();
+  //   keys.forEach((key: string) => pipeline.del(key));
 
-    return pipeline.exec();
-  }
+  //   return pipeline.exec();
+  // }
 }

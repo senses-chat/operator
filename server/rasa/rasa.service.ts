@@ -6,7 +6,7 @@ import { of, from, zip, interval } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
 import fetch from 'node-fetch';
 
-import { PrismaService } from 'server/prisma';
+import { PrismaService } from 'server/modules/storage';
 
 import { RasaResponsePayload, RasaWebhookPayload } from './models';
 import { SendRasaMessageEvent } from './events';
@@ -67,7 +67,7 @@ export class RasaService {
       ).subscribe({
         next: (response: RasaResponsePayload) => {
           const command = plainToInstance(NewRasaMessageCommand, Object.assign(response, { namespace: rasaServer.name }));
-          this.logger.debug(command);
+          this.logger.debug(JSON.stringify(command));
           this.commandBus.execute(command);
         },
         error: (error: Error) => {

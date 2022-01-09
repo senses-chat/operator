@@ -7,24 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model KeyValueStorage {
+  namespace String
+  key       String
+  value     String
+  expires   Int?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([namespace])
+  @@index([namespace, key])
+  @@unique([namespace, key])
+}
+
+model SessionStorage {
+  id                    String    @id
+  sourceType            RouteType
+  sourceNamespaces      String
+  destinationType       RouteType
+  destinationNamespaces String
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([sourceType, sourceNamespaces])
+  @@index([destinationType, destinationNamespaces])
+}
+
+model EventStorage {
+  id            Int      @id @default(autoincrement())
+  aggregateId   String
+  aggregateType String
+  version       Int
+  eventType     String
+  eventData     Json
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([aggregateId, aggregateType, version])
+  @@index([aggregateId, aggregateType])
+  @@index([aggregateId])
+}
+
 model RasaServer {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique @db.VarChar
-  url                String               @db.VarChar
-  isActive           Boolean              @default(false)
-  createdAt          DateTime             @default(now()) @db.Timestamptz(6)
-  updatedAt          DateTime             @default(now()) @db.Timestamptz(6)
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar
+  url       String   @db.VarChar
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6)
 }
 
 model Route {
-  id              Int                        @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   sourceType      RouteType
-  sourceName      String                     @db.VarChar
+  sourceName      String    @db.VarChar
   destinationType RouteType
-  destinationName String                     @db.VarChar
-  isActive        Boolean                    @default(false)
-  createdAt       DateTime                   @default(now()) @db.Timestamptz(6)
-  updatedAt       DateTime                   @default(now()) @db.Timestamptz(6)
+  destinationName String    @db.VarChar
+  isActive        Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @db.Timestamptz(6)
 
   @@unique([sourceType, sourceName, destinationType, destinationName])
   @@index([destinationName])

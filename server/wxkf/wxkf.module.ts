@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { EventStoreModule } from 'server/event-store';
-import { ConfigModule, RedisModule } from 'server/modules';
-import { MinioModule } from 'server/minio';
-import { PrismaModule } from 'server/prisma';
+import { ConfigModule, StorageModule } from 'server/modules';
 
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
@@ -13,7 +11,7 @@ import { WxkfController } from './wxkf.controller';
 import { WxkfService } from './wxkf.service';
 
 @Module({
-  imports: [CqrsModule, EventStoreModule, ConfigModule, RedisModule, MinioModule, PrismaModule],
+  imports: [CqrsModule, EventStoreModule, ConfigModule, StorageModule.register()],
   controllers: [WxkfController],
   providers: [WxkfService, WxkfSagas, ...CommandHandlers, ...EventHandlers],
 })
