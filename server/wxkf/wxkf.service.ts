@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 import qs from 'query-string';
 import contentDisposition from 'content-disposition';
 
-import { KeyValueStorageBase, KV_STORAGE, MinioService } from 'server/modules/storage';
+import { KeyValueStorageBase, WXKF_KV_STORAGE, MinioService } from 'server/modules/storage';
 
 import {
   WxkfCredentials,
@@ -31,13 +31,12 @@ export class WxkfService {
   constructor(
     private readonly configService: ConfigService,
     private readonly minioService: MinioService,
-    @Inject(KV_STORAGE)
+    @Inject(WXKF_KV_STORAGE)
     private readonly kvStorage: KeyValueStorageBase,
   ) {
     this.credentials = this.configService.get<WxkfCredentials>('wxkf.credentials');
     this.assetsBucket = this.configService.get<string>('wxkf.assetsBucket');
     this.minioClient = this.minioService.instance;
-    this.kvStorage.namespace = 'wxkf';
 
     // this.clearAccessTokens().then(() => {
     //   this.logger.debug('cleared wxkf access token');

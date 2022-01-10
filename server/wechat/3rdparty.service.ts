@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { XMLParser } from 'fast-xml-parser';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
+
+import { KeyValueStorageBase, WECHAT_KV_STORAGE } from 'server/modules/storage';
 
 import { WXMsgCrypto } from './wechat.crypto';
 import { Wechat3rdPartyCredentials } from './models';
@@ -14,11 +14,13 @@ export class Wechat3rdPartyService {
   private logger = new Logger(Wechat3rdPartyService.name);
 
   private credentials: Wechat3rdPartyCredentials;
-  private redisClient: Redis;
 
-  constructor(private readonly configService: ConfigService, private readonly redisService: RedisService) {
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(WECHAT_KV_STORAGE)
+    private readonly kvStorage: KeyValueStorageBase,
+  ) {
     this.credentials = this.configService.get('wx3p') as Wechat3rdPartyCredentials;
-    this.redisClient = this.redisService.getClient('wechat');
   }
 
   public async decodeEncryptedXmlMessage(encrypted: string): Promise<any> {
@@ -35,7 +37,7 @@ export class Wechat3rdPartyService {
     }
 
     // setting it to 30 mins for now
-    await this.redisClient.set(COMPONENT_VERIFY_TICKET, ticket, 'ex', 1800);
+    await this.kvStorage.set(COMPONENT_VERIFY_TICKET, ticket, 1800);
   }
 
   // private async clearAccessTokens(): Promise<any> {

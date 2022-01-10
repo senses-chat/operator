@@ -17,7 +17,8 @@ import {
   PrismaSessionStorage,
 } from './session-storage';
 import {
-  KV_STORAGE,
+  WECHAT_KV_STORAGE,
+  WXKF_KV_STORAGE,
   PrismaKeyValueStorage,
   RedisKeyValueStorage,
 } from './kv-storage';
@@ -57,13 +58,22 @@ export class StorageModule {
               new PrismaSessionStorage(configService, prismaService),
       },
       {
-        provide: KV_STORAGE,
+        provide: WECHAT_KV_STORAGE,
         inject: useRedis ? [RedisService] : [PrismaService],
         useFactory: useRedis
           ? (redisService: RedisService) =>
-              new RedisKeyValueStorage(redisService)
+              new RedisKeyValueStorage(redisService, 'wechat')
           : (prismaService: PrismaService) =>
-              new PrismaKeyValueStorage(prismaService),
+              new PrismaKeyValueStorage(prismaService, 'wechat'),
+      },
+      {
+        provide: WXKF_KV_STORAGE,
+        inject: useRedis ? [RedisService] : [PrismaService],
+        useFactory: useRedis
+          ? (redisService: RedisService) =>
+              new RedisKeyValueStorage(redisService, 'wxkf')
+          : (prismaService: PrismaService) =>
+              new PrismaKeyValueStorage(prismaService, 'wxkf'),
       },
     ];
 
