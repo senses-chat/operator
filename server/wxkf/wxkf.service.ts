@@ -115,31 +115,40 @@ export class WxkfService {
   }
 
   public async syncMessage(
-    token: string,
+    token?: string,
     limit = 1000,
   ): Promise<WxkfSyncMsgResponse> {
     const access_token = await this.getAccessToken();
     const cursor = await this.getLatestCursor();
+    let doneFetching = false;
 
-    const response = await fetch(
-      `${WXKF_API_ROOT}/cgi-bin/kf/sync_msg?access_token=${access_token}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          cursor,
-          limit,
-        }),
-      },
-    );
+    let result: WxkfSyncMsgResponse;
 
-    const resultJson = await response.json();
-    this.logger.debug(JSON.stringify(resultJson));
-    const result = plainToInstance(WxkfSyncMsgResponse, resultJson);
+    while (!doneFetching) {
+      const response = await fetch(
+        `${WXKF_API_ROOT}/cgi-bin/kf/sync_msg?access_token=${access_token}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token,
+            cursor,
+            limit,
+          }),
+        },
+      );
 
-    if (result.next_cursor) {
-      await this.setLatestCursor(result.next_cursor);
+      const resultJson = await response.json();
+      this.logger.debug(JSON.stringify(resultJson));
+      result = plainToInstance(WxkfSyncMsgResponse, resultJson);
+
+      if (result.next_cursor) {
+        await this.setLatestCursor(result.next_cursor);
+      }
+
+      if (result.has_more === 0) {
+        doneFetching = true;
+      }
     }
 
     return result;

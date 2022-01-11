@@ -56,4 +56,10 @@ export class WxkfController {
 
     return 'success';
   }
+
+  @Get('/latest')
+  async fetchTillLatestMessage(): Promise<string> {
+    const messages = await this.wxkfService.syncMessage();
+    return messages.next_cursor;
+  }
 }
