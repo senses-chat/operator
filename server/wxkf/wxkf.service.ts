@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 import contentDisposition from 'content-disposition';
+import { lookup } from 'mime-types';
 
 import { KeyValueStorageBase, WXKF_KV_STORAGE, MinioService } from 'server/modules/storage';
 
@@ -52,7 +53,7 @@ export class WxkfService {
     const { filename } = contentDisposition.parse(cdHeaderValue).parameters;
     const buffer = await response.buffer();
     await this.minioClient.putObject(this.assetsBucket, filename, buffer, {
-      'Content-Type': contentType,
+      'Content-Type': lookup(filename) || contentType,
     });
     return `s3://${this.assetsBucket}/${filename}`;
   }
