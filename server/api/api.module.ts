@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
 
-import { EventStoreModule } from 'server/event-store';
-import { ConfigModule, StorageModule } from 'server/modules';
-import { MinioModule } from 'server/modules/storage/minio';
-import { PrismaModule } from 'server/modules/storage/prisma';
+import { WxkfModule } from 'server/wxkf';
 
-
-import { WxkfController } from './wxkf.controller';
-import { WxkfService } from '../wxkf/wxkf.service';
+import { WxkfApiController } from './wxkf-api.controller';
 
 @Module({
-  imports: [CqrsModule, EventStoreModule, ConfigModule, MinioModule, PrismaModule, StorageModule.register()],
-  controllers: [WxkfController],
-  providers: [WxkfService],
+  imports: [WxkfModule],
+  controllers: [WxkfApiController],
 })
 export class ApiModule {}

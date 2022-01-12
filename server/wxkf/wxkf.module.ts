@@ -14,5 +14,6 @@ import { WxkfService } from './wxkf.service';
   imports: [CqrsModule, EventStoreModule, ConfigModule, StorageModule.register()],
   controllers: [WxkfController],
   providers: [WxkfService, WxkfSagas, ...CommandHandlers, ...EventHandlers],
+  exports: [WxkfService],
 })
 export class WxkfModule {}

@@ -1,19 +1,26 @@
 import fs from 'fs';
 import path from 'path';
 import { Express } from 'express';
-import { Controller, Get, Post, Body, Query, Logger, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Logger,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import {
-  WxkfAccountLink,
-} from './models';
+import { WxkfAccountLink } from './models';
 import { WxkfService } from '../wxkf/wxkf.service';
 
 @Controller('/api/wxkf')
-export class WxkfController {
-  private readonly logger = new Logger(WxkfController.name);
-  constructor(private readonly commandBus: CommandBus, private readonly wxkfService: WxkfService) {}
+export class WxkfApiController {
+  private readonly logger = new Logger(WxkfApiController.name);
+
+  constructor(private readonly wxkfService: WxkfService) {}
 
   @Get('/account')
   async getAccountList(): Promise<any[]> {
@@ -31,10 +38,12 @@ export class WxkfController {
     let mediaId = body.mediaId;
     if (!mediaId) {
       const file: any = {
-        buffer: fs.readFileSync(path.resolve(__dirname, '../../public/default_avatar.png')),
+        buffer: fs.readFileSync(
+          path.resolve(__dirname, '../../public/default_avatar.png'),
+        ),
         originalname: 'default_avatar.png',
         mimetype: 'image/png',
-      }
+      };
       mediaId = await this.wxkfService.uploadAvatar(file);
     }
     return !!(await this.wxkfService.createAccount(body.name, mediaId));
@@ -42,12 +51,18 @@ export class WxkfController {
 
   @Post('/account/update')
   async updateAccount(@Body() body: any): Promise<boolean> {
-    return await this.wxkfService.updateAccount(body.id, body?.name || null, body?.mediaId || null);
+    return await this.wxkfService.updateAccount(
+      body.id,
+      body?.name || null,
+      body?.mediaId || null,
+    );
   }
 
   @Post('/account/avatar')
   @UseInterceptors(FileInterceptor('avatar'))
-  async uploadAccountAvatar(@UploadedFile() file: Express.Multer.File): Promise<string> {
+  async uploadAccountAvatar(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
     return await this.wxkfService.uploadAvatar(file);
   }
 
@@ -58,7 +73,11 @@ export class WxkfController {
 
   @Post('/account/link/add')
   async addAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfService.addAccountLink(body.id, body.scene, body.sceneParam));
+    return !!(await this.wxkfService.addAccountLink(
+      body.id,
+      body.scene,
+      body.sceneParam,
+    ));
   }
 
   @Post('/account/link/delete')
