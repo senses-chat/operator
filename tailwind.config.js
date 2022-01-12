@@ -1,7 +1,7 @@
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './public/**/*.{html,js}'],
   media: false,
-  important: '#__next',
+  important: true,
   theme: {
     extend: {
       maxWidth: {

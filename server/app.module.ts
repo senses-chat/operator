@@ -7,6 +7,7 @@ import { WechatModule } from './wechat';
 import { WxkfModule } from './wxkf';
 import { RasaModule } from './rasa';
 import { ViewModule } from './view';
+import { ApiModule } from './api';
 
 import { AppController } from './app.controller';
 
@@ -19,6 +20,7 @@ import { AppController } from './app.controller';
     WxkfModule,
     RasaModule,
     ViewModule,
+    ApiModule,
   ],
   controllers: [AppController],
   providers: [],
