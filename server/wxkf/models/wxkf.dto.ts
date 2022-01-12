@@ -12,6 +12,12 @@ export interface WxkfAccessToken {
   expires_in?: number;
 }
 
+export interface WxkfAccount {
+  open_kfid?: string;
+  name: string;
+  avatar: string;
+}
+
 export class WxkfMedia {
   media_id: string;
 }

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import Link from 'next/link';
 import { Layout, Menu } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout;
 
@@ -11,7 +11,11 @@ interface SideNavProps {
   setCollapsed: (bool: boolean) => void;
 }
 
-export const SideNav: FC<SideNavProps> = ({ selected, collapsed, setCollapsed }: SideNavProps) => (
+export const SideNav: FC<SideNavProps> = ({
+  selected,
+  collapsed,
+  setCollapsed,
+}: SideNavProps) => (
   <Sider
     className="z-50"
     collapsible
@@ -28,6 +32,9 @@ export const SideNav: FC<SideNavProps> = ({ selected, collapsed, setCollapsed }:
     <Menu theme="dark" mode="inline" defaultSelectedKeys={[selected]}>
       <Menu.Item key="/ui" icon={<HomeOutlined />}>
         <Link href="/ui">Home</Link>
+      </Menu.Item>
+      <Menu.Item key="/ui/wxkf/account" icon={<CustomerServiceOutlined />}>
+        <Link href="/ui/wxkf/account">WXKF Account Management</Link>
       </Menu.Item>
     </Menu>
   </Sider>

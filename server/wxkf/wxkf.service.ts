@@ -1,18 +1,22 @@
+import { Express } from 'express';
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { XMLParser } from 'fast-xml-parser';
 import { Client as Minio } from 'minio';
 import { ConfigService } from '@nestjs/config';
+import FormData from 'form-data';
 import fetch from 'node-fetch';
 import qs from 'query-string';
 import contentDisposition from 'content-disposition';
 
-import { KeyValueStorageBase, WXKF_KV_STORAGE, MinioService } from 'server/modules/storage';
+import { KeyValueStorageBase, WXKF_KV_STORAGE, MinioService, PrismaService } from 'server/modules/storage';
 
 import {
   WxkfCredentials,
   WxkfAccessToken,
   WxkfMessagePayload,
   WxkfSyncMsgResponse,
+  WxkfAccount,
+  WxkfAccountLink,
 } from './models';
 import { WxkfMsgCrypto } from './wxkf.crypto';
 import { plainToInstance } from 'class-transformer';
@@ -33,6 +37,7 @@ export class WxkfService {
     private readonly minioService: MinioService,
     @Inject(WXKF_KV_STORAGE)
     private readonly kvStorage: KeyValueStorageBase,
+    private readonly prisma: PrismaService,
   ) {
     this.credentials = this.configService.get<WxkfCredentials>('wxkf.credentials');
     this.assetsBucket = this.configService.get<string>('wxkf.assetsBucket');
@@ -55,6 +60,141 @@ export class WxkfService {
       'Content-Type': contentType,
     });
     return `s3://${this.assetsBucket}/${filename}`;
+  }
+
+  public async fetchAccountList(): Promise<WxkfAccount[]> {
+    const access_token = await this.getAccessToken();
+    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/list?access_token=${access_token}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data?.errcode === 0) {
+      return data.account_list;
+    }
+
+    this.logger.error(data.errmsg || 'fetch wxkf account list error');
+    return [];
+  }
+
+  public async createAccount(name: string, mediaId: string): Promise<string> {
+    const access_token = await this.getAccessToken();
+    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/add?access_token=${access_token}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+        media_id: mediaId,
+      }),
+    });
+    const data = await response.json();
+    if (data?.errcode === 0) {
+      return data.open_kfid;
+    }
+
+    this.logger.error(data.errmsg || `create wxkf account error: ${name} ${mediaId}`);
+    return null;
+  }
+
+  public async deleteAccount(id: string): Promise<boolean> {
+    const access_token = await this.getAccessToken();
+    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/del?access_token=${access_token}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        open_kfid: id,
+      }),
+    });
+    const data = await response.json();
+    if (data?.errcode === 0) {
+      return true;
+    }
+
+    this.logger.error(data.errmsg || `delete wxkf account error: ${id}`);
+    return false;
+  }
+
+  public async updateAccount(id: string, name: string, mediaId: string): Promise<boolean> {
+    const access_token = await this.getAccessToken();
+    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/update?access_token=${access_token}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        open_kfid: id,
+        name: name || undefined,
+        media_id: mediaId || undefined,
+      }),
+    });
+    const data = await response.json();
+    if (data?.errcode === 0) {
+      return true;
+    }
+
+    this.logger.error(data.errmsg || `update wxkf account error: ${id} ${name} ${mediaId}`);
+    return false;
+  }
+
+  public async getAccountLinks(id: string): Promise<WxkfAccountLink[]> {
+    return await this.prisma.wxkfAccountLink.findMany({
+      where: {
+        openKfId: id,
+      }
+    });
+  }
+
+  public async addAccountLink(id: string, scene: string, sceneParam: any): Promise<WxkfAccountLink> {
+    let link = await this.prisma.wxkfAccountLink.findFirst({
+      where: {
+        openKfId: id,
+        scene,
+        scene_param: {
+          equals: sceneParam,
+        },
+      }
+    });
+    if (link) {
+      return null;
+    }
+
+    const accountLink = await this.fetchAccountLink(id, scene);
+    if (!accountLink) {
+      return null;
+    }
+    const urlWithParam = accountLink + (Object.keys(sceneParam).length > 0 ? `${scene ? '&' : '?'}scene_param=${encodeURIComponent(qs.stringify(sceneParam))}` : '');
+    link = await this.prisma.wxkfAccountLink.create({
+      data: {
+        openKfId: id,
+        scene,
+        scene_param: sceneParam,
+        url: urlWithParam,
+      }
+    });
+    return link;
+  }
+
+  public async deleteAccountLink(id: number): Promise<WxkfAccountLink> {
+    return await this.prisma.wxkfAccountLink.delete({
+      where: {
+        id,
+      }
+    });
+  }
+
+  public async fetchAccountLink(id: string, scene: string): Promise<string> {
+    const access_token = await this.getAccessToken();
+    const url = `${WXKF_API_ROOT}/cgi-bin/kf/add_contact_way?access_token=${access_token}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        open_kfid: id,
+        scene: scene || undefined,
+      }),
+    });
+    const data = await response.json();
+    if (data?.errcode === 0) {
+      return data.url;
+    }
+
+    this.logger.error(data.errmsg || `fetch wxkf link error: ${id} ${scene}`);
+    return null;
   }
 
   public validateWxkfRequestSignature(
@@ -163,6 +303,38 @@ export class WxkfService {
   private async setLatestCursor(cursor: string): Promise<void> {
     const key = `${WXKF_LATEST_CURSOR}`;
     await this.kvStorage.set(key, cursor);
+  }
+
+  public async uploadAvatar(avatar: Express.Multer.File): Promise<string> {
+    const access_token = await this.getAccessToken();
+
+    try {
+      const form = new FormData();
+      form.append('media', avatar.buffer, {
+        filename: avatar.originalname,
+        contentType: avatar.mimetype,
+        knownLength: avatar.size || undefined,
+      });
+
+      const response = await fetch(`${WXKF_API_ROOT}/cgi-bin/media/upload?type=image&access_token=${access_token}`, {
+        headers: form.getHeaders(),
+        body: form,
+        method: 'POST',
+      });
+
+      const data: any = await response.json();
+
+      this.logger.debug(data);
+
+      await this.minioClient.putObject(this.assetsBucket, data.media_id, avatar.buffer, {
+        'Content-Type': avatar.mimetype,
+      });
+
+      return data.media_id;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 
   public async getAccessToken(): Promise<string> {
