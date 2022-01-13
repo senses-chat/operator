@@ -34,22 +34,22 @@ export class PrismaSessionStorage implements ISessionStorage {
 
     if (sessionStorage) {
       const { createdAt } = sessionStorage;
-      if (addSeconds(createdAt, this.sessionExpirationSeconds) >= new Date()) {
-        return {
-          id: sessionStorage.id,
-          source: {
-            type: sessionStorage.sourceType,
-            namespaces: sessionStorage.sourceNamespaces.split(':'),
-          },
-          destination: {
-            type: sessionStorage.destinationType,
-            namespaces: sessionStorage.destinationNamespaces.split(':'),
-          },
-          isDestination: false,
-        }
-      } else {
-        // expired, should create new session
+      if (addSeconds(createdAt, this.sessionExpirationSeconds) < new Date()) {
+        this.logger.verbose('source session expired');
         return undefined;
+      }
+
+      return {
+        id: sessionStorage.id,
+        source: {
+          type: sessionStorage.sourceType,
+          namespaces: sessionStorage.sourceNamespaces.split(':'),
+        },
+        destination: {
+          type: sessionStorage.destinationType,
+          namespaces: sessionStorage.destinationNamespaces.split(':'),
+        },
+        isDestination: false,
       }
     }
 
@@ -62,26 +62,26 @@ export class PrismaSessionStorage implements ISessionStorage {
 
     if (destSessionStorage) {
       const { createdAt: destCreatedAt } = destSessionStorage;
-      if (addSeconds(destCreatedAt, this.sessionExpirationSeconds) > new Date()) {
-        return {
-          id: destSessionStorage.id,
-          source: {
-            type: destSessionStorage.sourceType,
-            namespaces: destSessionStorage.sourceNamespaces.split(':'),
-          },
-          destination: {
-            type: destSessionStorage.destinationType,
-            namespaces: destSessionStorage.destinationNamespaces.split(':'),
-          },
-          isDestination: true,
-        }
-      } else {
-        // expired, should create new session
+      if (addSeconds(destCreatedAt, this.sessionExpirationSeconds) < new Date()) {
+        this.logger.verbose('destination session expired');
         return undefined;
+      }
+
+      return {
+        id: destSessionStorage.id,
+        source: {
+          type: destSessionStorage.sourceType,
+          namespaces: destSessionStorage.sourceNamespaces.split(':'),
+        },
+        destination: {
+          type: destSessionStorage.destinationType,
+          namespaces: destSessionStorage.destinationNamespaces.split(':'),
+        },
+        isDestination: true,
       }
     }
 
-    // couldn't find session
+    this.logger.verbose('no matching session found');
     return undefined;
   }
 

@@ -14,9 +14,9 @@ model KeyValueStorage {
   expires   Int?
   createdAt DateTime @default(now()) @db.Timestamptz(6)
 
+  @@unique([namespace, key])
   @@index([namespace])
   @@index([namespace, key])
-  @@unique([namespace, key])
 }
 
 model SessionStorage {
@@ -84,11 +84,11 @@ model WechatApp {
 }
 
 model WxkfAccountLink {
-  id              Int      @id @default(autoincrement())
-  openKfId        String   @db.VarChar
-  scene           String   @db.VarChar
-  scene_param     Json?    @db.Json
-  url             String   @db.VarChar @unique
+  id          Int    @id @default(autoincrement())
+  openKfId    String @db.VarChar
+  scene       String @db.VarChar
+  scene_param Json?  @db.Json
+  url         String @unique @db.VarChar
 }
 
 enum RouteType {

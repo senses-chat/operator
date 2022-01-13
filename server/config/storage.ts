@@ -3,7 +3,7 @@ import { DEFAULT_REDIS_NAMESPACE, RedisModuleOptions } from '@liaoliaots/nestjs-
 
 export default registerAs('storage', () => ({
   useRedis: process.env.STORAGE_USE_REDIS === 'true',
-  sessionExpiration: Number(process.env.STORAGE_SESSION_EXPIRATION || 3600),
+  sessionExpiration: Number(process.env.STORAGE_SESSION_EXPIRATION || 86400 * 2), // 2 days
   redis: {
     closeClient: true,
     commonOptions: {
