@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import { Express } from 'express';
 import {
   Controller,
   Get,
@@ -12,15 +9,21 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+import path from 'path';
+import fs from 'fs';
+
+import { WxkfService } from 'server/wxkf';
 
 import { WxkfAccountLink } from './models';
-import { WxkfService } from '../wxkf/wxkf.service';
 
 @Controller('/api/wxkf')
 export class WxkfApiController {
   private readonly logger = new Logger(WxkfApiController.name);
 
-  constructor(private readonly wxkfService: WxkfService) {}
+  constructor(
+    private readonly wxkfService: WxkfService,
+  ) {}
 
   @Get('/account')
   async getAccountList(): Promise<any[]> {

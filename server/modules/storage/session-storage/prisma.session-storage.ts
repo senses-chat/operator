@@ -21,6 +21,30 @@ export class PrismaSessionStorage implements ISessionStorage {
     );
   }
 
+  async getSessionDefinitionById(id: string): Promise<SessionDefinition | undefined> {
+    const sessionStorage = await this.prisma.sessionStorage.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!sessionStorage) {
+      return undefined;
+    }
+
+    return {
+      id: sessionStorage.id,
+      source: {
+        type: sessionStorage.sourceType,
+        namespaces: sessionStorage.sourceNamespaces.split(':'),
+      },
+      destination: {
+        type: sessionStorage.destinationType,
+        namespaces: sessionStorage.destinationNamespaces.split(':'),
+      },
+    };
+  }
+
   async getSessionDefinition(
     type: RouteType,
     namespaces: string[],

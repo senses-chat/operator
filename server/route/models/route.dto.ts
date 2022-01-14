@@ -1,4 +1,3 @@
-import { Observable, Subscriber } from 'rxjs';
 import { Type } from 'class-transformer';
 import { RouteType } from '@prisma/client';
 
@@ -59,10 +58,4 @@ export class RouteMessage {
     },
   })
   content: MessageContent;
-}
-
-export interface ChatRoute {
-  start(): void;
-  getRouteMessageObservable(): Observable<RouteMessage>;
-  routeMessageSubscriber(): Subscriber<RouteMessage>;
 }

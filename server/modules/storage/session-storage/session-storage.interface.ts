@@ -6,7 +6,6 @@ export interface ISessionStorage {
     type: RouteType,
     namespaces: string[],
   ): Promise<SessionDefinition | undefined>;
-  storeSessionDefinition(
-    definition: SessionDefinition,
-  ): Promise<void>;
+  getSessionDefinitionById(id: string): Promise<SessionDefinition | undefined>;
+  storeSessionDefinition(definition: SessionDefinition): Promise<void>;
 }

@@ -23,6 +23,11 @@ export class RedisSessionStorage implements ISessionStorage {
     this.redisClient = this.redisService.getClient('session');
   }
 
+  // TODO: implement if necessary
+  getSessionDefinitionById(id: string): Promise<SessionDefinition> {
+    throw new Error('Method not implemented.');
+  }
+
   async getSessionDefinition(
     type: RouteType,
     namespaces: string[],

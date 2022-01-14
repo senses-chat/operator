@@ -1,6 +1,10 @@
 import { IEvent } from '@nestjs/cqrs';
+
+import { Event } from 'server/event-store';
+
 import { WxIncomingMessage } from '../models';
 
+@Event()
 export class NewWechatMessageEvent implements WxIncomingMessage, IEvent {
   appNamespace: string;
   ToUserName: string;

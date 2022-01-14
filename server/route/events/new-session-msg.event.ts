@@ -1,6 +1,10 @@
 import { IEvent } from '@nestjs/cqrs';
+
+import { Event } from 'server/event-store';
+
 import { RouteMessage, SessionDefinition } from '../models';
 
+@Event()
 export class NewSessionMessageEvent implements IEvent {
   constructor(public readonly message: RouteMessage, public readonly session: SessionDefinition) {}
 
