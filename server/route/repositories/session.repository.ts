@@ -16,6 +16,10 @@ export class SessionRepository {
     private readonly sessionStorage: ISessionStorage,
   ) {}
 
+  public async refreshSession(sessionId: string): Promise<void> {
+    this.sessionStorage.refresh(sessionId);
+  }
+
   public async getSessionForIncomingRoute(sourceType: RouteType, namespaces: string[]): Promise<Session> {
     const session = await this.getSession(sourceType, namespaces);
 

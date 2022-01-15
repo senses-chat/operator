@@ -13,7 +13,6 @@ import {
 } from './event-storage';
 import {
   SESSION_STORAGE,
-  RedisSessionStorage,
   PrismaSessionStorage,
 } from './session-storage';
 import {
@@ -47,15 +46,13 @@ export class StorageModule {
               new PrismaEventStorage(prismaService),
       },
       {
+        // session storage is prisma only
         provide: SESSION_STORAGE,
-        inject: useRedis
-          ? [ConfigService, RedisService]
-          : [ConfigService, PrismaService],
-        useFactory: useRedis
-          ? (configService: ConfigService, redisService: RedisService) =>
-              new RedisSessionStorage(configService, redisService)
-          : (configService: ConfigService, prismaService: PrismaService) =>
-              new PrismaSessionStorage(configService, prismaService),
+        inject: [ConfigService, PrismaService],
+        useFactory: (
+          configService: ConfigService,
+          prismaService: PrismaService,
+        ) => new PrismaSessionStorage(configService, prismaService),
       },
       {
         provide: WECHAT_KV_STORAGE,

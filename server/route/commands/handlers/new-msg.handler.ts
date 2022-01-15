@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler, EventPublisher } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { NewRouteMessageCommand } from '../new-msg.command';
 import { Logger } from '@nestjs/common';

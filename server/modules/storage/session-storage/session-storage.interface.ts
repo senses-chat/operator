@@ -2,6 +2,7 @@ import { RouteType } from '@prisma/client';
 import { SessionDefinition } from 'server/route';
 
 export interface ISessionStorage {
+  refresh(id: string): Promise<void>;
   getSessionDefinition(
     type: RouteType,
     namespaces: string[],

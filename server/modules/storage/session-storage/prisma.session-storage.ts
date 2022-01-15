@@ -21,6 +21,27 @@ export class PrismaSessionStorage implements ISessionStorage {
     );
   }
 
+  async refresh(id: string): Promise<void> {
+    const sessionStorage = await this.prisma.sessionStorage.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!sessionStorage) {
+      return;
+    }
+
+    await this.prisma.sessionStorage.update({
+      where: {
+        id,
+      },
+      data: {
+        createdAt: new Date(),
+      },
+    });
+  }
+
   async getSessionDefinitionById(id: string): Promise<SessionDefinition | undefined> {
     const sessionStorage = await this.prisma.sessionStorage.findFirst({
       where: {
