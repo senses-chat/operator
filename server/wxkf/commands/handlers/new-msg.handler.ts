@@ -1,9 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { EventStoreService } from 'server/event-store';
+import { WxkfIncomingMessageType, WxkfIncomingEventMessage } from 'server/utils/wx-sdk';
 
 import { NewWxkfMessageCommand } from '../new-msg.command';
-import { WxkfMessageLog, WxkfIncomingMessageType, WxkfIncomingEventMessage } from '../../models';
+import { WxkfMessageLog } from '../../models';
 
 @CommandHandler(NewWxkfMessageCommand)
 export class NewWxkfMessageCommandHandler implements ICommandHandler<NewWxkfMessageCommand, void> {

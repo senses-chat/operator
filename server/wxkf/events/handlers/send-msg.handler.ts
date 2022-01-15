@@ -2,14 +2,22 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
-import { TextMessageContent, TextWithButtonsMessageContent, Button, ImageMessageContent, MessageContentType } from 'server/route';
+import {
+  TextMessageContent,
+  TextWithButtonsMessageContent,
+  Button,
+  ImageMessageContent,
+  MessageContentType,
+} from 'server/route';
+import { WxkfMessagePayload, WxkfMessageType } from 'server/utils/wx-sdk';
 
 import { WxkfService } from '../../wxkf.service';
 import { SendWxkfMessageEvent } from '../send-msg.event';
-import { WxkfMessagePayload, WxkfMessageType } from '../../models';
 
 @EventsHandler(SendWxkfMessageEvent)
-export class SendWxkfMessageEventHandler implements IEventHandler<SendWxkfMessageEvent> {
+export class SendWxkfMessageEventHandler
+  implements IEventHandler<SendWxkfMessageEvent>
+{
   private readonly logger = new Logger(SendWxkfMessageEventHandler.name);
 
   constructor(private readonly wxkfService: WxkfService) {}
@@ -37,7 +45,7 @@ export class SendWxkfMessageEventHandler implements IEventHandler<SendWxkfMessag
     this.logger.debug(JSON.stringify(payload));
 
     if (message.content.type === MessageContentType.Text) {
-      return this.wxkfService.sendMessage(
+      await this.wxkfService.sendMessage(
         plainToInstance(WxkfMessagePayload, {
           ...payload,
           msgtype: WxkfMessageType.Text,

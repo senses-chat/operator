@@ -18,7 +18,8 @@ import {
   WxkfIncomingFileMessage,
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
-} from '../models';
+} from 'server/utils/wx-sdk';
+
 import { SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent } from '../events';
 import { WxkfService } from '../wxkf.service';

@@ -1,30 +1,33 @@
-import { Express } from 'express';
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
-import { XMLParser } from 'fast-xml-parser';
-import { Client as Minio } from 'minio';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import FormData from 'form-data';
-import fetch from 'node-fetch';
+import { plainToInstance } from 'class-transformer';
+import { Client as Minio } from 'minio';
 import qs from 'query-string';
-import contentDisposition from 'content-disposition';
-import { lookup } from 'mime-types';
-
-import { KeyValueStorageBase, WXKF_KV_STORAGE, MinioService, PrismaService } from 'server/modules/storage';
 
 import {
-  WxkfCredentials,
-  WxkfAccessToken,
-  WxkfMessagePayload,
-  WxkfSyncMsgResponse,
+  KeyValueStorageBase,
+  WXKF_KV_STORAGE,
+  MinioService,
+  PrismaService,
+} from 'server/modules/storage';
+import {
   WxkfAccount,
-  WxkfAccountLink,
-} from './models';
-import { WxkfMsgCrypto } from './wxkf.crypto';
-import { plainToInstance } from 'class-transformer';
+  WxkfAccountAddInput,
+  WxkfAccountDeleteInput,
+  WxkfAddContactWayInput,
+  WxkfClient,
+  WxkfMediaType,
+  WxkfMediaUploadInput,
+  WxkfMessagePayload,
+  WxkfSendMsgResponse,
+  WxkfSyncMsgInput,
+  WxkfSyncMsgResponse,
+} from 'server/utils/wx-sdk';
+
+import { WxkfCredentials, WxkfAccountLink } from './models';
 
 const WXKF_ACCESS_TOKEN = 'wxkf:accessToken';
 const WXKF_LATEST_CURSOR = 'wxkf:latestCursor';
-const WXKF_API_ROOT = 'https://qyapi.weixin.qq.com';
 
 @Injectable()
 export class WxkfService {
@@ -32,6 +35,7 @@ export class WxkfService {
   private minioClient: Minio;
   private credentials: WxkfCredentials;
   private assetsBucket: string;
+  private wxkfClient: WxkfClient;
 
   constructor(
     private readonly configService: ConfigService,
@@ -40,9 +44,21 @@ export class WxkfService {
     private readonly kvStorage: KeyValueStorageBase,
     private readonly prisma: PrismaService,
   ) {
-    this.credentials = this.configService.get<WxkfCredentials>('wxkf.credentials');
+    this.credentials =
+      this.configService.get<WxkfCredentials>('wxkf.credentials');
     this.assetsBucket = this.configService.get<string>('wxkf.assetsBucket');
     this.minioClient = this.minioService.instance;
+
+    const { corpId, secret, token, aesKey } = this.credentials;
+    this.wxkfClient = new WxkfClient(
+      corpId,
+      secret,
+      token,
+      aesKey,
+      () => this.getAccessToken(),
+      (_, accessToken, expiresIn) =>
+        this.storeAccessToken(accessToken, expiresIn),
+    );
 
     // this.clearAccessTokens().then(() => {
     //   this.logger.debug('cleared wxkf access token');
@@ -50,98 +66,78 @@ export class WxkfService {
   }
 
   public async downloadMedia(mediaId: string): Promise<string> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/media/get?access_token=${access_token}&media_id=${mediaId}`;
-    const response = await fetch(url);
-    const contentType = response.headers.get('Content-Type');
-    const cdHeaderValue = response.headers.get('Content-Disposition');
-    const { filename } = contentDisposition.parse(cdHeaderValue).parameters;
-    const buffer = await response.buffer();
-    await this.minioClient.putObject(this.assetsBucket, filename, buffer, {
-      'Content-Type': lookup(filename) || contentType,
+    const { media, filename, contentType } = await this.wxkfClient.getMedia(
+      mediaId,
+    );
+    await this.minioClient.putObject(this.assetsBucket, filename, media, {
+      'Content-Type': contentType,
     });
     return `s3://${this.assetsBucket}/${filename}`;
   }
 
   public async fetchAccountList(): Promise<WxkfAccount[]> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/list?access_token=${access_token}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (data?.errcode === 0) {
-      return data.account_list;
-    }
-
-    this.logger.error(data.errmsg || 'fetch wxkf account list error');
-    return [];
+    const response = await this.wxkfClient.listAccounts();
+    return response.account_list;
   }
 
-  public async createAccount(name: string, mediaId: string): Promise<string> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/add?access_token=${access_token}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
+  public async createAccount(name: string, media_id: string): Promise<string> {
+    const response = await this.wxkfClient.addAccount(
+      plainToInstance(WxkfAccountAddInput, {
         name,
-        media_id: mediaId,
+        media_id,
       }),
-    });
-    const data = await response.json();
-    if (data?.errcode === 0) {
-      return data.open_kfid;
-    }
+    );
 
-    this.logger.error(data.errmsg || `create wxkf account error: ${name} ${mediaId}`);
-    return null;
+    return response.open_kfid;
   }
 
-  public async deleteAccount(id: string): Promise<boolean> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/del?access_token=${access_token}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        open_kfid: id,
-      }),
-    });
-    const data = await response.json();
-    if (data?.errcode === 0) {
+  public async deleteAccount(open_kfid: string): Promise<boolean> {
+    try {
+      await this.wxkfClient.deleteAccount(
+        plainToInstance(WxkfAccountDeleteInput, {
+          open_kfid,
+        }),
+      );
       return true;
+    } catch (err) {
+      this.logger.error(err);
+      return false;
     }
-
-    this.logger.error(data.errmsg || `delete wxkf account error: ${id}`);
-    return false;
   }
 
-  public async updateAccount(id: string, name: string, mediaId: string): Promise<boolean> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/kf/account/update?access_token=${access_token}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        open_kfid: id,
-        name: name || undefined,
-        media_id: mediaId || undefined,
-      }),
-    });
-    const data = await response.json();
-    if (data?.errcode === 0) {
+  public async updateAccount(
+    open_kfid: string,
+    name?: string,
+    media_id?: string,
+  ): Promise<boolean> {
+    try {
+      await this.wxkfClient.updateAccount(
+        plainToInstance(WxkfAddContactWayInput, {
+          open_kfid,
+          name,
+          media_id,
+        }),
+      );
       return true;
+    } catch (err) {
+      this.logger.error(err);
+      return false;
     }
-
-    this.logger.error(data.errmsg || `update wxkf account error: ${id} ${name} ${mediaId}`);
-    return false;
   }
 
   public async getAccountLinks(id: string): Promise<WxkfAccountLink[]> {
     return await this.prisma.wxkfAccountLink.findMany({
       where: {
         openKfId: id,
-      }
+      },
     });
   }
 
-  public async addAccountLink(id: string, scene: string, sceneParam: any): Promise<WxkfAccountLink> {
+  public async addAccountLink(
+    id: string,
+    scene: string,
+    sceneParam: any,
+  ): Promise<WxkfAccountLink> {
     let link = await this.prisma.wxkfAccountLink.findFirst({
       where: {
         openKfId: id,
@@ -149,7 +145,7 @@ export class WxkfService {
         scene_param: {
           equals: sceneParam,
         },
-      }
+      },
     });
     if (link) {
       return null;
@@ -159,14 +155,20 @@ export class WxkfService {
     if (!accountLink) {
       return null;
     }
-    const urlWithParam = accountLink + (Object.keys(sceneParam).length > 0 ? `${scene ? '&' : '?'}scene_param=${encodeURIComponent(qs.stringify(sceneParam))}` : '');
+    const urlWithParam =
+      accountLink +
+      (Object.keys(sceneParam).length > 0
+        ? `${scene ? '&' : '?'}scene_param=${encodeURIComponent(
+            qs.stringify(sceneParam),
+          )}`
+        : '');
     link = await this.prisma.wxkfAccountLink.create({
       data: {
         openKfId: id,
         scene,
         scene_param: sceneParam,
         url: urlWithParam,
-      }
+      },
     });
     return link;
   }
@@ -175,124 +177,46 @@ export class WxkfService {
     return await this.prisma.wxkfAccountLink.delete({
       where: {
         id,
-      }
-    });
-  }
-
-  public async fetchAccountLink(id: string, scene: string): Promise<string> {
-    const access_token = await this.getAccessToken();
-    const url = `${WXKF_API_ROOT}/cgi-bin/kf/add_contact_way?access_token=${access_token}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        open_kfid: id,
-        scene: scene || undefined,
-      }),
-    });
-    const data = await response.json();
-    if (data?.errcode === 0) {
-      return data.url;
-    }
-
-    this.logger.error(data.errmsg || `fetch wxkf link error: ${id} ${scene}`);
-    return null;
-  }
-
-  public validateWxkfRequestSignature(
-    signature: string,
-    timestamp: string,
-    nonce: string,
-    echostr: string,
-  ): boolean {
-    const { corpId, token, aesKey } = this.credentials;
-    const crypto = new WxkfMsgCrypto(corpId, token, aesKey);
-    const sign = crypto.getSignature(timestamp, nonce, echostr);
-    return sign === signature;
-  }
-
-  public decryptXmlMessage(encryptedXml: string): any {
-    const parser = new XMLParser();
-    return parser.parse(this.decryptMessage(encryptedXml)).xml;
-  }
-
-  public decryptMessage(encrypted: string): string {
-    const { corpId, token, aesKey } = this.credentials;
-    const crypto = new WxkfMsgCrypto(corpId, token, aesKey);
-    const { message, corpId: decryptedCorpId } = crypto.decrypt(encrypted);
-
-    if (decryptedCorpId !== corpId) {
-      throw new BadRequestException('invalid receiveID');
-    }
-
-    return message;
-  }
-
-  public async sendMessage(payload: WxkfMessagePayload): Promise<void> {
-    const access_token = await this.getAccessToken();
-
-    if (payload.code) {
-      const response = await fetch(
-        `${WXKF_API_ROOT}/cgi-bin/kf/send_msg_on_event?access_token=${access_token}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        },
-      );
-
-      return response.json();
-    }
-
-    const response = await fetch(
-      `${WXKF_API_ROOT}/cgi-bin/kf/send_msg?access_token=${access_token}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
       },
+    });
+  }
+
+  public async fetchAccountLink(
+    open_kfid: string,
+    scene?: string,
+  ): Promise<string> {
+    const response = await this.wxkfClient.addContactWay(
+      plainToInstance(WxkfAddContactWayInput, {
+        open_kfid,
+        scene,
+      }),
     );
 
-    return response.json();
+    return response.url;
+  }
+
+  public async sendMessage(
+    payload: WxkfMessagePayload,
+  ): Promise<WxkfSendMsgResponse> {
+    return this.wxkfClient.sendMessage(payload);
   }
 
   public async syncMessage(
     token?: string,
     limit = 1000,
+    recursive = true,
   ): Promise<WxkfSyncMsgResponse> {
-    const access_token = await this.getAccessToken();
     const cursor = await this.getLatestCursor();
-    let doneFetching = false;
-
-    let result: WxkfSyncMsgResponse;
-
-    while (!doneFetching) {
-      const response = await fetch(
-        `${WXKF_API_ROOT}/cgi-bin/kf/sync_msg?access_token=${access_token}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token,
-            cursor,
-            limit,
-          }),
-        },
-      );
-
-      const resultJson = await response.json();
-      this.logger.debug(JSON.stringify(resultJson));
-      result = plainToInstance(WxkfSyncMsgResponse, resultJson);
-
-      if (result.next_cursor) {
-        await this.setLatestCursor(result.next_cursor);
-      }
-
-      if (result.has_more === 0) {
-        doneFetching = true;
-      }
-    }
-
-    return result;
+    const response = await this.wxkfClient.syncMessage(
+      plainToInstance(WxkfSyncMsgInput, {
+        cursor,
+        token,
+        limit,
+      }),
+      recursive,
+    );
+    await this.setLatestCursor(response.next_cursor);
+    return response;
   }
 
   private async getLatestCursor(): Promise<string | null> {
@@ -307,75 +231,54 @@ export class WxkfService {
   }
 
   public async uploadAvatar(avatar: Express.Multer.File): Promise<string> {
-    const access_token = await this.getAccessToken();
-
-    try {
-      const form = new FormData();
-      form.append('media', avatar.buffer, {
+    const response = await this.wxkfClient.uploadMedia(
+      plainToInstance(WxkfMediaUploadInput, {
+        type: WxkfMediaType.Image,
+        media: avatar.buffer,
         filename: avatar.originalname,
         contentType: avatar.mimetype,
-        knownLength: avatar.size || undefined,
-      });
+        knownLength: avatar.size,
+      }),
+    );
 
-      const response = await fetch(`${WXKF_API_ROOT}/cgi-bin/media/upload?type=image&access_token=${access_token}`, {
-        headers: form.getHeaders(),
-        body: form,
-        method: 'POST',
-      });
-
-      const data: any = await response.json();
-
-      this.logger.debug(data);
-
-      await this.minioClient.putObject(this.assetsBucket, data.media_id, avatar.buffer, {
+    await this.minioClient.putObject(
+      this.assetsBucket,
+      response.media_id,
+      avatar.buffer,
+      {
         'Content-Type': avatar.mimetype,
-      });
+      },
+    );
 
-      return data.media_id;
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    return response.media_id;
   }
 
-  public async getAccessToken(): Promise<string> {
-    const key = `${WXKF_ACCESS_TOKEN}`;
-
-    const tokenData = await this.kvStorage.get(key);
-
-    if (!tokenData) {
-      this.logger.debug('no wxkf access token cached, fetching');
-
-      const { corpId, secret } = this.credentials;
-
-      // 请求token
-      const accessTokenResponse = await this.fetchAccessToken(corpId, secret);
-      const { access_token } = accessTokenResponse;
-      this.logger.debug(`fetched wxkf access token ${access_token}`);
-
-      await this.kvStorage.set(key, access_token, 7100);
-
-      return access_token;
-    }
-
-    return tokenData;
+  public validateWxkfRequestSignature(
+    signature: string,
+    timestamp: string,
+    nonce: string,
+    echostr: string,
+  ): boolean {
+    return this.wxkfClient.validateWxkfRequestSignature(signature, timestamp, nonce, echostr);
   }
 
-  private async fetchAccessToken(
-    corpid: string,
-    corpsecret: string,
-  ): Promise<WxkfAccessToken> {
-    return (await this.getRequest(`${WXKF_API_ROOT}/cgi-bin/gettoken`, {
-      corpid,
-      corpsecret,
-    })) as WxkfAccessToken;
+  public decryptXmlMessage(encryptedXml: string): any {
+    return this.wxkfClient.decryptXmlMessage(encryptedXml);
   }
 
-  private async getRequest(url: string, params: any): Promise<any> {
-    const response = await fetch(`${url}?${qs.stringify(params)}`, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return response.json();
+  public decryptMessage(encrypted: string): string {
+    return this.wxkfClient.decryptMessage(encrypted);
+  }
+
+  private async getAccessToken(): Promise<string> {
+    return this.kvStorage.get(WXKF_ACCESS_TOKEN);
+  }
+
+  private async storeAccessToken(
+    accessToken: string,
+    expiresIn: number,
+  ): Promise<void> {
+    await this.kvStorage.set(WXKF_ACCESS_TOKEN, accessToken, expiresIn);
   }
 
   // private async clearAccessTokens(): Promise<any> {
