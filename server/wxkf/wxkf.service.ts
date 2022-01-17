@@ -59,10 +59,6 @@ export class WxkfService {
       (_, accessToken, expiresIn) =>
         this.storeAccessToken(accessToken, expiresIn),
     );
-
-    // this.clearAccessTokens().then(() => {
-    //   this.logger.debug('cleared wxkf access token');
-    // });
   }
 
   public async downloadMedia(mediaId: string): Promise<string> {
@@ -280,17 +276,4 @@ export class WxkfService {
   ): Promise<void> {
     await this.kvStorage.set(WXKF_ACCESS_TOKEN, accessToken, expiresIn);
   }
-
-  // private async clearAccessTokens(): Promise<any> {
-  //   const keys = await this.redisClient.keys(`${WXKF_ACCESS_TOKEN}`);
-
-  //   if (keys.length <= 0) {
-  //     return;
-  //   }
-
-  //   const pipeline = this.redisClient.pipeline();
-  //   keys.forEach((key: string) => pipeline.del(key));
-
-  //   return pipeline.exec();
-  // }
 }
