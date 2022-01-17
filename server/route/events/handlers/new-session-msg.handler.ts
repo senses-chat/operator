@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
 import { SessionRepository } from 'server/route';
@@ -9,6 +9,7 @@ import { NewSessionMessageEvent } from '../new-session-msg.event';
 export class NewSessionMessageEventHandler implements IEventHandler<NewSessionMessageEvent> {
   private readonly logger = new Logger(NewSessionMessageEventHandler.name);
   constructor (
+    @Inject(forwardRef(() => SessionRepository))
     private readonly sessionRepository: SessionRepository,
   ) {}
 
