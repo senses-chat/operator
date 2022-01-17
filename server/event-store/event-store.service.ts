@@ -57,7 +57,7 @@ export class EventStoreService<
 
   async listAggregates(
     aggregateType: string,
-  ): Promise<any[]> {
+  ): Promise<AggregateMetadata[]> {
     const aggregations = await this.eventStorage.getByType(aggregateType);
     return aggregations.map((aggregate) => ({
       aggregateType,

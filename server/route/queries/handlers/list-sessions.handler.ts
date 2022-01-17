@@ -1,20 +1,61 @@
-import { Inject } from "@nestjs/common";
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
+import { Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { addSeconds } from 'date-fns';
 
-import { ISessionStorage, SESSION_STORAGE } from "server/modules/storage";
+import { EventStoreService } from 'server/event-store';
+import { ISessionStorage, SESSION_STORAGE } from 'server/modules/storage';
 
-import { SessionDefinition } from "../../models";
-import { ListSessionsQuery } from "../list-sessions.query";
+import { Session, SessionDefinition } from '../../models';
+import { ListSessionsQuery } from '../list-sessions.query';
 
 @QueryHandler(ListSessionsQuery)
-export class ListSessionsQueryHandler implements IQueryHandler<ListSessionsQuery> {
+export class ListSessionsQueryHandler
+  implements IQueryHandler<ListSessionsQuery>
+{
+  private sessionExpirationSeconds: number;
+
   constructor(
+    private readonly configService: ConfigService,
+    private readonly eventStore: EventStoreService,
     @Inject(SESSION_STORAGE)
     private readonly sessionStorage: ISessionStorage,
-  ) {}
+  ) {
+    this.sessionExpirationSeconds = this.configService.get<number>(
+      'storage.sessionExpiration',
+    );
+  }
 
-  public async execute(query: ListSessionsQuery): Promise<SessionDefinition[]> {
+  public async execute(query: ListSessionsQuery): Promise<
+    Array<
+      SessionDefinition & {
+        count: number;
+        expiredAt: Date;
+      }
+    >
+  > {
     // only returning session definitions
-    return this.sessionStorage.getAllSessionDefinitions();
+    const aggregations = await this.eventStore.listAggregates(Session.name);
+
+    return Promise.all(
+      aggregations.map(async (aggregation) => {
+        const sessionDefinition =
+          await this.sessionStorage.getSessionDefinitionById(
+            aggregation.aggregateId,
+          );
+        return {
+          ...sessionDefinition,
+          count: aggregation.count,
+          createdAt: sessionDefinition.createdAt || aggregation.createdAt,
+          updatedAt: aggregation.updatedAt,
+          expiredAt: sessionDefinition.updatedAt
+            ? addSeconds(
+                sessionDefinition.updatedAt,
+                this.sessionExpirationSeconds,
+              )
+            : addSeconds(aggregation.updatedAt, this.sessionExpirationSeconds),
+        };
+      }),
+    );
   }
 }

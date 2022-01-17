@@ -33,7 +33,14 @@ export class HistoryController {
   }
 
   @Get('/sessions')
-  async listAllSessions(): Promise<SessionDefinition[]> {
+  async listAllSessions(): Promise<
+    Array<
+      SessionDefinition & {
+        count: number;
+        expiredAt: Date;
+      }
+    >
+  > {
     return this.queryBus.execute(new ListSessionsQuery());
   }
 }
