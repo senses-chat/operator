@@ -1,7 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
-import { WxkfMessageLog, GetWxkfMessageLogQuery } from 'server/wxkf';
+import {
+  WxkfMessageLog,
+  GetWxkfMessageLogQuery,
+  ListWxkfMessageLogsQuery,
+} from 'server/wxkf';
 import {
   Session,
   GetSessionQuery,
@@ -13,9 +17,14 @@ import {
 export class HistoryController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get('/wxkf/:id')
-  async getMessageHistory(@Param('id') id: string): Promise<WxkfMessageLog> {
+  @Get('/wxkf_msg_logs/:id')
+  async getWxkfMessageLog(@Param('id') id: string): Promise<WxkfMessageLog> {
     return this.queryBus.execute(new GetWxkfMessageLogQuery(id));
+  }
+
+  @Get('/wxkf_msg_logs')
+  async listWxkfMessageLogs(): Promise<any[]> {
+    return this.queryBus.execute(new ListWxkfMessageLogsQuery());
   }
 
   @Get('/sessions/:id')

@@ -14,6 +14,7 @@ import { concatMap } from 'rxjs/operators';
 import { EVENT_STORAGE, IEventStorage } from 'server/modules/storage';
 
 import { AggregateRootWithId } from './aggregate-root-id';
+import { AggregateMetadata } from './aggregate-metadata';
 import { AggregateStore } from './aggregate.decorator';
 
 @Injectable()
@@ -52,6 +53,16 @@ export class EventStoreService<
   async onModuleDestroy(): Promise<void> {
     this.logger.debug('disconnecting service from event bus');
     this.subject$.complete();
+  }
+
+  async listAggregates(
+    aggregateType: string,
+  ): Promise<any[]> {
+    const aggregations = await this.eventStorage.getByType(aggregateType);
+    return aggregations.map((aggregate) => ({
+      aggregateType,
+      ...aggregate,
+    }));
   }
 
   async getAggregate<T extends AggregateBase>(

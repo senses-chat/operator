@@ -14,9 +14,38 @@ export class PrismaEventStorage<EventBase extends IEvent = IEvent>
   private logger = new Logger(PrismaEventStorage.name);
 
   constructor (private readonly prisma: PrismaService) {}
-
   get defaultInitialVersion(): string | number {
     return 0;
+  }
+
+  async getByType(aggregateType: string): Promise<Array<{
+    aggregateId: string;
+    count: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>> {
+    const aggregations = await this.prisma.eventStorage.groupBy({
+      by: ['aggregateId'],
+      _count: {
+        aggregateId: true,
+      },
+      _min: {
+        createdAt: true,
+      },
+      _max: {
+        createdAt: true,
+      },
+      where: {
+        aggregateType,
+      },
+    });
+
+    return aggregations.map((aggregation) => ({
+      aggregateId: aggregation.aggregateId,
+      count: aggregation._count.aggregateId,
+      createdAt: aggregation._min.createdAt,
+      updatedAt: aggregation._max.createdAt,
+    }));
   }
 
   async publishEvent(aggregateType: string, aggregateId: string, event: EventBase): Promise<string | number> {

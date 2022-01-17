@@ -24,6 +24,10 @@ export class RedisEventStorage<EventBase extends IEvent = IEvent>
     return '0';
   }
 
+  getByType(aggregateType: string): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
+
   async publishEvent(
     aggregateType: string,
     aggregateId: string,
