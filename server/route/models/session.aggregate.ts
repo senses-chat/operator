@@ -14,6 +14,8 @@ export interface SessionDefinition {
   id: string;
   source: SessionDefinitionComponent;
   destination: SessionDefinitionComponent;
+  createdAt?: Date;
+  updatedAt?: Date;
   isDestination?: boolean;
 }
 

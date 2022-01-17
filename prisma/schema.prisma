@@ -26,6 +26,7 @@ model SessionStorage {
   destinationType       RouteType
   destinationNamespaces String
   createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @db.Timestamptz(6)
 
   @@index([sourceType, sourceNamespaces])
   @@index([destinationType, destinationNamespaces])

@@ -37,9 +37,27 @@ export class PrismaSessionStorage implements ISessionStorage {
         id,
       },
       data: {
-        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
+  }
+
+  async getAllSessionDefinitions(): Promise<SessionDefinition[]> {
+    const items = await this.prisma.sessionStorage.findMany({});
+
+    return items.map((sessionStorage) => ({
+      id: sessionStorage.id,
+      source: {
+        type: sessionStorage.sourceType,
+        namespaces: sessionStorage.sourceNamespaces.split(':'),
+      },
+      destination: {
+        type: sessionStorage.destinationType,
+        namespaces: sessionStorage.destinationNamespaces.split(':'),
+      },
+      createdAt: sessionStorage.createdAt,
+      updatedAt: sessionStorage.updatedAt,
+    }));
   }
 
   async getSessionDefinitionById(id: string): Promise<SessionDefinition | undefined> {
@@ -63,6 +81,8 @@ export class PrismaSessionStorage implements ISessionStorage {
         type: sessionStorage.destinationType,
         namespaces: sessionStorage.destinationNamespaces.split(':'),
       },
+      createdAt: sessionStorage.createdAt,
+      updatedAt: sessionStorage.updatedAt,
     };
   }
 
@@ -78,8 +98,8 @@ export class PrismaSessionStorage implements ISessionStorage {
     });
 
     if (sessionStorage) {
-      const { createdAt } = sessionStorage;
-      if (addSeconds(createdAt, this.sessionExpirationSeconds) < new Date()) {
+      const { updatedAt } = sessionStorage;
+      if (addSeconds(updatedAt, this.sessionExpirationSeconds) < new Date()) {
         this.logger.verbose('source session expired');
         return undefined;
       }
@@ -95,6 +115,8 @@ export class PrismaSessionStorage implements ISessionStorage {
           namespaces: sessionStorage.destinationNamespaces.split(':'),
         },
         isDestination: false,
+        createdAt: sessionStorage.createdAt,
+        updatedAt: sessionStorage.updatedAt,
       }
     }
 
@@ -106,8 +128,8 @@ export class PrismaSessionStorage implements ISessionStorage {
     });
 
     if (destSessionStorage) {
-      const { createdAt: destCreatedAt } = destSessionStorage;
-      if (addSeconds(destCreatedAt, this.sessionExpirationSeconds) < new Date()) {
+      const { updatedAt: destUpdatedAt } = destSessionStorage;
+      if (addSeconds(destUpdatedAt, this.sessionExpirationSeconds) < new Date()) {
         this.logger.verbose('destination session expired');
         return undefined;
       }
@@ -123,6 +145,8 @@ export class PrismaSessionStorage implements ISessionStorage {
           namespaces: destSessionStorage.destinationNamespaces.split(':'),
         },
         isDestination: true,
+        createdAt: sessionStorage.createdAt,
+        updatedAt: sessionStorage.updatedAt,
       }
     }
 
