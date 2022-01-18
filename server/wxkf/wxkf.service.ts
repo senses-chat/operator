@@ -256,11 +256,11 @@ export class WxkfService {
     return this.wxkfClient.decryptMessage(encrypted);
   }
 
-  private async getAccessToken(): Promise<string> {
+  protected async getAccessToken(): Promise<string> {
     return this.kvStorage.get(WXKF_ACCESS_TOKEN);
   }
 
-  private async storeAccessToken(
+  protected async storeAccessToken(
     accessToken: string,
     expiresIn: number,
   ): Promise<void> {
