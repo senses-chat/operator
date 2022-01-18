@@ -127,8 +127,8 @@ export class PrismaSessionStorage implements ISessionStorage {
           namespaces: destSessionStorage.destinationNamespaces.split(':'),
         },
         isDestination: true,
-        createdAt: sessionStorage.createdAt,
-        updatedAt: sessionStorage.updatedAt,
+        createdAt: destSessionStorage.createdAt,
+        updatedAt: destSessionStorage.updatedAt,
       }
     }
 

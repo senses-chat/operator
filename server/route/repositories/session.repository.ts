@@ -21,13 +21,14 @@ export class SessionRepository {
   }
 
   public async getSessionForIncomingRoute(sourceType: RouteType, namespaces: string[]): Promise<Session> {
+    console.log(sourceType, namespaces);
     const session = await this.getSession(sourceType, namespaces);
 
     if (session) {
       return session;
     }
 
-    const route = await this.routeService.getActiveRouteForSource(sourceType, namespaces[0]);
+    const route = await this.routeService.getActiveRouteForSource(sourceType, namespaces.slice(0, -1));
 
     if (!route) {
       throw new NotFoundException('no active route found');
@@ -38,6 +39,7 @@ export class SessionRepository {
 
   private async getSession(type: RouteType, namespaces: string[]): Promise<Session | undefined> {
     const definition: SessionDefinition = await this.sessionStorage.getSessionDefinition(type, namespaces);
+    console.log(definition);
 
     if (!definition) {
       return undefined;

@@ -4,18 +4,20 @@ import { PrismaService } from 'server/modules/storage';
 
 import { Route, RouteType } from './models';
 
+const DELIMITER = ':';
+
 @Injectable()
 export class RouteService {
   constructor(
     private readonly prisma: PrismaService,
   ) {}
 
-  public async getActiveRouteForSource(sourceType: RouteType, sourceName: string): Promise<Route | undefined> {
+  public async getActiveRouteForSource(sourceType: RouteType, sourceNamespaces: string[]): Promise<Route | undefined> {
     return this.prisma.route.findFirst({
       where: {
         isActive: true,
         sourceType,
-        sourceName,
+        sourceName: sourceNamespaces.join(DELIMITER),
       },
     });
   }

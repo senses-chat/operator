@@ -31,7 +31,7 @@ const WXKF_LATEST_CURSOR = 'latestCursor';
 export class WxkfService {
   private logger: Logger;
   private wxkfClient: WxkfClient;
-  private readonly corpId: string;
+  protected readonly corpId: string;
 
   constructor(
     private readonly credentials: WxkfCredentials,

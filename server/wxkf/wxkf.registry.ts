@@ -15,7 +15,7 @@ import { WxkfService, wxkfServiceFactory } from './wxkf.service';
 @Injectable()
 export class WxkfServiceRegistry {
   public readonly defaultCorpId: string;
-  private readonly defaultService: WxkfService;
+  private defaultService: WxkfService;
   private readonly services: LRUCache<string, WxkfService>;
 
   constructor(
@@ -45,8 +45,16 @@ export class WxkfServiceRegistry {
   public registerService<T extends WxkfService>(
     credentials: WxkfCredentials,
     factory: (minio: MinioService, prisma: PrismaService, kvStorage: KeyValueStorageBase) => T,
-  ): void {
+  ): T {
     const service = factory(this.minio, this.prisma, this.kvStorage);
-    this.services.set(credentials.corpId, service);
+
+    // override default service if corpid's match
+    if (credentials.corpId === this.defaultCorpId) {
+      this.defaultService = service;
+    } else {
+      this.services.set(credentials.corpId, service);
+    }
+
+    return service;
   }
 }
