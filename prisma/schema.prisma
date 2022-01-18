@@ -86,10 +86,13 @@ model WechatApp {
 
 model WxkfAccountLink {
   id          Int    @id @default(autoincrement())
+  corpId      String @db.VarChar
   openKfId    String @db.VarChar
   scene       String @db.VarChar
   scene_param Json?  @db.Json
   url         String @unique @db.VarChar
+
+  @@index([corpId, openKfId])
 }
 
 enum RouteType {

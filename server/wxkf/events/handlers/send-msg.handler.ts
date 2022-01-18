@@ -11,7 +11,7 @@ import {
 } from 'server/route';
 import { WxkfMessagePayload, WxkfMessageType } from 'server/utils/wx-sdk';
 
-import { WxkfService } from '../../wxkf.service';
+import { WxkfServiceRegistry } from '../../wxkf.registry';
 import { SendWxkfMessageEvent } from '../send-msg.event';
 
 @EventsHandler(SendWxkfMessageEvent)
@@ -20,7 +20,7 @@ export class SendWxkfMessageEventHandler
 {
   private readonly logger = new Logger(SendWxkfMessageEventHandler.name);
 
-  constructor(private readonly wxkfService: WxkfService) {}
+  constructor(private readonly wxkfServiceRegistry: WxkfServiceRegistry) {}
 
   public async handle(event: SendWxkfMessageEvent): Promise<void> {
     this.logger.verbose(`send wxkf message event: ${JSON.stringify(event)}`);
@@ -32,11 +32,13 @@ export class SendWxkfMessageEventHandler
 
     if (content.metadata && content.metadata.welcome_code) {
       payload = {
+        corpid: message.namespaces[0],
         code: content.metadata.welcome_code,
       };
     } else {
-      const [open_kfid, touser] = message.namespaces;
+      const [corpid, open_kfid, touser] = message.namespaces;
       payload = {
+        corpid,
         touser,
         open_kfid,
       };
@@ -45,7 +47,7 @@ export class SendWxkfMessageEventHandler
     this.logger.debug(JSON.stringify(payload));
 
     if (message.content.type === MessageContentType.Text) {
-      await this.wxkfService.sendMessage(
+      await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
         plainToInstance(WxkfMessagePayload, {
           ...payload,
           msgtype: WxkfMessageType.Text,

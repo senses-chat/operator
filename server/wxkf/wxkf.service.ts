@@ -25,8 +25,8 @@ import {
 
 import { WxkfCredentials, WxkfAccountLink } from './models';
 
-const WXKF_ACCESS_TOKEN = 'wxkf:accessToken';
-const WXKF_LATEST_CURSOR = 'wxkf:latestCursor';
+const WXKF_ACCESS_TOKEN = 'accessToken';
+const WXKF_LATEST_CURSOR = 'latestCursor';
 
 export class WxkfService {
   private logger: Logger;
@@ -114,6 +114,7 @@ export class WxkfService {
   public async getAccountLinks(id: string): Promise<WxkfAccountLink[]> {
     return await this.prisma.wxkfAccountLink.findMany({
       where: {
+        corpId: this.corpId,
         openKfId: id,
       },
     });
@@ -126,6 +127,7 @@ export class WxkfService {
   ): Promise<WxkfAccountLink> {
     let link = await this.prisma.wxkfAccountLink.findFirst({
       where: {
+        corpId: this.corpId,
         openKfId: id,
         scene,
         scene_param: {
@@ -150,6 +152,7 @@ export class WxkfService {
         : '');
     link = await this.prisma.wxkfAccountLink.create({
       data: {
+        corpId: this.corpId,
         openKfId: id,
         scene,
         scene_param: sceneParam,
@@ -206,13 +209,13 @@ export class WxkfService {
   }
 
   private async getLatestCursor(): Promise<string | null> {
-    const key = `${WXKF_LATEST_CURSOR}`;
+    const key = `${WXKF_LATEST_CURSOR}:${this.corpId}`;
     const cursorData = await this.kvStorage.get(key);
     return cursorData;
   }
 
   private async setLatestCursor(cursor: string): Promise<void> {
-    const key = `${WXKF_LATEST_CURSOR}`;
+    const key = `${WXKF_LATEST_CURSOR}:${this.corpId}`;
     await this.kvStorage.set(key, cursor);
   }
 
@@ -257,18 +260,18 @@ export class WxkfService {
   }
 
   protected async getAccessToken(): Promise<string> {
-    return this.kvStorage.get(WXKF_ACCESS_TOKEN);
+    return this.kvStorage.get(`${WXKF_ACCESS_TOKEN}:${this.corpId}`);
   }
 
   protected async storeAccessToken(
     accessToken: string,
     expiresIn: number,
   ): Promise<void> {
-    await this.kvStorage.set(WXKF_ACCESS_TOKEN, accessToken, expiresIn);
+    await this.kvStorage.set(`${WXKF_ACCESS_TOKEN}:${this.corpId}`, accessToken, expiresIn);
   }
 }
 
-export function WxkfServiceFactory(
+export function wxkfServiceFactory(
   config: ConfigService,
   minio: MinioService,
   prisma: PrismaService,

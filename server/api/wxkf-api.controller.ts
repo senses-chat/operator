@@ -13,27 +13,28 @@ import { Express } from 'express';
 import path from 'path';
 import fs from 'fs';
 
-import { WxkfService } from 'server/wxkf';
-
 import { WxkfAccountLink } from './models';
+import { WxkfServiceRegistry } from 'server/wxkf/wxkf.registry';
 
 @Controller('/api/wxkf')
 export class WxkfApiController {
   private readonly logger = new Logger(WxkfApiController.name);
 
-  constructor(
-    private readonly wxkfService: WxkfService,
-  ) {}
+  constructor(private readonly wxkfServiceRegistry: WxkfServiceRegistry) {}
 
   @Get('/account')
-  async getAccountList(): Promise<any[]> {
-    const accountList = await this.wxkfService.fetchAccountList();
+  async getAccountList(@Query('corpId') corpId?: string): Promise<any[]> {
+    const accountList = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .fetchAccountList();
     return accountList;
   }
 
   @Post('/account/delete')
   async deleteAccount(@Body() body: any): Promise<boolean> {
-    return await this.wxkfService.deleteAccount(body.id);
+    return await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .deleteAccount(body.id);
   }
 
   @Post('/account/add')
@@ -47,44 +48,52 @@ export class WxkfApiController {
         originalname: 'default_avatar.png',
         mimetype: 'image/png',
       };
-      mediaId = await this.wxkfService.uploadAvatar(file);
+      mediaId = await this.wxkfServiceRegistry
+        .getService(body.corpId)
+        .uploadAvatar(file);
     }
-    return !!(await this.wxkfService.createAccount(body.name, mediaId));
+    return !!(await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .createAccount(body.name, mediaId));
   }
 
   @Post('/account/update')
   async updateAccount(@Body() body: any): Promise<boolean> {
-    return await this.wxkfService.updateAccount(
-      body.id,
-      body?.name || null,
-      body?.mediaId || null,
-    );
+    return await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .updateAccount(body.id, body?.name || null, body?.mediaId || null);
   }
 
   @Post('/account/avatar')
   @UseInterceptors(FileInterceptor('avatar'))
   async uploadAccountAvatar(
     @UploadedFile() file: Express.Multer.File,
+    @Query('corpId') corpId?: string,
   ): Promise<string> {
-    return await this.wxkfService.uploadAvatar(file);
+    return await this.wxkfServiceRegistry.getService(corpId).uploadAvatar(file);
   }
 
   @Get('/account/link')
-  async getAccountLinks(@Query() query: any): Promise<WxkfAccountLink[]> {
-    return await this.wxkfService.getAccountLinks(query.id);
+  async getAccountLinks(
+    @Query('id') id: string,
+    @Query('corpId') corpId?: string,
+  ): Promise<WxkfAccountLink[]> {
+    return await this.wxkfServiceRegistry
+      .getService(corpId)
+      .getAccountLinks(id);
   }
 
   @Post('/account/link/add')
   async addAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfService.addAccountLink(
-      body.id,
-      body.scene,
-      body.sceneParam,
-    ));
+    return !!(await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .addAccountLink(body.id, body.scene, body.sceneParam));
   }
 
   @Post('/account/link/delete')
   async deleteAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfService.deleteAccountLink(body.id));
+    return !!(await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .deleteAccountLink(body.id));
   }
 }

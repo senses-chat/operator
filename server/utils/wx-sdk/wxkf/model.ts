@@ -54,6 +54,7 @@ export class WxkfMsgSendFailEvent extends WxkfIncomingEvent {
 }
 
 export class WxkfIncomingMessage {
+  corpid: string;
   msgid: string;
   open_kfid: string;
   external_userid: string;

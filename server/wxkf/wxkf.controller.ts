@@ -1,14 +1,31 @@
-import { Controller, Get, Post, Body, Query, Logger, NotFoundException, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Logger,
+  NotFoundException,
+  HttpCode,
+} from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
+import { WxkfService } from '.';
 
 import { NewWxkfMessageCommand } from './commands/new-msg.command';
-import { WxkfService } from './wxkf.service';
+import { WxkfServiceRegistry } from './wxkf.registry';
 
 @Controller('wxkf')
 export class WxkfController {
   private readonly logger = new Logger(WxkfController.name);
-  constructor(private readonly commandBus: CommandBus, private readonly wxkfService: WxkfService) {}
+  private readonly wxkfService: WxkfService;
+
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly wxkfServiceRegistry: WxkfServiceRegistry,
+  ) {
+    this.wxkfService = this.wxkfServiceRegistry.getService();
+  }
 
   @Get()
   async validate(
@@ -19,7 +36,12 @@ export class WxkfController {
   ): Promise<string> {
     // https://open.work.weixin.qq.com/api/doc/90000/90135/90930
     // 根据已有的token，结合第1步获取的参数timestamp, nonce, echostr重新计算签名，然后与参数msg_signature检查是否一致，确认调用者的合法性。
-    const validated = this.wxkfService.validateWxkfRequestSignature(signature, timestamp, nonce, echostr);
+    const validated = this.wxkfService.validateWxkfRequestSignature(
+      signature,
+      timestamp,
+      nonce,
+      echostr,
+    );
 
     if (!validated) {
       throw new NotFoundException();
@@ -38,7 +60,12 @@ export class WxkfController {
     @Query('nonce') nonce: string,
     @Body('xml') body: any,
   ): Promise<string> {
-    const validated = this.wxkfService.validateWxkfRequestSignature(signature, timestamp, nonce, body.Encrypt);
+    const validated = this.wxkfService.validateWxkfRequestSignature(
+      signature,
+      timestamp,
+      nonce,
+      body.Encrypt,
+    );
 
     if (!validated) {
       throw new NotFoundException();
@@ -49,7 +76,7 @@ export class WxkfController {
 
     if (messages.msg_list) {
       messages.msg_list.forEach((message) => {
-        const command = plainToInstance(NewWxkfMessageCommand, message);
+        const command = plainToInstance(NewWxkfMessageCommand, { ...message, corpid: this.wxkfServiceRegistry.defaultCorpId });
         this.commandBus.execute(command);
       });
     }

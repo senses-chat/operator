@@ -22,13 +22,13 @@ import {
 
 import { SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent } from '../events';
-import { WxkfService } from '../wxkf.service';
+import { WxkfServiceRegistry } from '../wxkf.registry';
 
 @Injectable()
 export class WxkfSagas {
   private static logger = new Logger(WxkfSagas.name);
 
-  constructor(private readonly wxkfService: WxkfService) {}
+  constructor(private readonly wxkfServiceRegistry: WxkfServiceRegistry) {}
 
   @Saga()
   public newMessageSaga(events$: Observable<IEvent>): Observable<ICommand> {
@@ -39,13 +39,18 @@ export class WxkfSagas {
           const wxkfMessage = event as WxkfIncomingFileMessage;
           return of(wxkfMessage).pipe(
             concatMap((message: WxkfIncomingFileMessage) =>
-              from(this.wxkfService.downloadMedia(message.file.media_id)),
+              from(
+                this.wxkfServiceRegistry
+                  .getService(event.corpid)
+                  .downloadMedia(message.file.media_id),
+              ),
             ),
             concatMap((file_url) =>
               of(
                 plainToInstance(RouteMessage, {
                   type: RouteType.Wxkf,
                   namespaces: [
+                    event.corpid,
                     wxkfMessage.open_kfid,
                     wxkfMessage.external_userid,
                   ],
@@ -56,8 +61,13 @@ export class WxkfSagas {
                 }),
               ),
             ),
-            tap((routeMessage) => WxkfSagas.logger.debug(JSON.stringify(routeMessage))),
-            map((routeMessage: RouteMessage) => new NewRouteMessageCommand(routeMessage)),
+            tap((routeMessage) =>
+              WxkfSagas.logger.debug(JSON.stringify(routeMessage)),
+            ),
+            map(
+              (routeMessage: RouteMessage) =>
+                new NewRouteMessageCommand(routeMessage),
+            ),
           );
         }
 
@@ -74,6 +84,7 @@ export class WxkfSagas {
             routeMessage = plainToInstance(RouteMessage, {
               type: RouteType.Wxkf,
               namespaces: [
+                event.corpid,
                 messageEvent.open_kfid,
                 messageEvent.external_userid,
               ],
@@ -94,7 +105,11 @@ export class WxkfSagas {
           const wxkfMessage = event as WxkfIncomingTextMessage;
           routeMessage = plainToInstance(RouteMessage, {
             type: RouteType.Wxkf,
-            namespaces: [wxkfMessage.open_kfid, wxkfMessage.external_userid],
+            namespaces: [
+              event.corpid,
+              wxkfMessage.open_kfid,
+              wxkfMessage.external_userid,
+            ],
             content: {
               type: MessageContentType.Text,
               text: wxkfMessage.text.content,
