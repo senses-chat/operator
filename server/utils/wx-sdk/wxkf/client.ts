@@ -24,24 +24,46 @@ import { WxMsgCrypto } from '../crypto';
 import { plainToInstance } from 'class-transformer';
 import { WxkfAccountDeleteInput, WxkfAddContactWayResponse } from '.';
 
+export interface WxkfClientOptions {
+  corpId: string;
+  secret?: string;
+  token?: string;
+  aesKey?: string;
+  getAccessTokenFromCache?: (corpId: string) => Promise<string | undefined>;
+  storeAccessTokenToCache?: (
+    corpId: string,
+    accessToken: string,
+    expiresIn: number,
+  ) => Promise<void>;
+}
+
 export class WxkfClient extends WxBaseClient {
   private static URL_PREFIX = 'https://qyapi.weixin.qq.com/cgi-bin';
 
+  private readonly corpId: string;
+  private readonly corpSecret: string | undefined;
+  private readonly token?: string;
+  private readonly aesKey?: string;
+  private readonly getAccessTokenFromCache?: (
+    corpId: string,
+  ) => Promise<string | undefined>;
+  private readonly storeAccessTokenToCache?: (
+    corpId: string,
+    accessToken: string,
+    expiresIn: number,
+  ) => Promise<void>;
+
   constructor(
-    private readonly corpId: string,
-    private readonly corpSecret: string,
-    private readonly token?: string,
-    private readonly aesKey?: string,
-    private readonly getAccessTokenFromCache?: (
-      corpId: string,
-    ) => Promise<string | undefined>,
-    private readonly storeAccessTokenToCache?: (
-      corpId: string,
-      accessToken: string,
-      expiresIn: number,
-    ) => Promise<void>,
+    options: WxkfClientOptions,
   ) {
     super(WxkfClient.URL_PREFIX);
+
+    this.corpId = options.corpId;
+    this.corpSecret = options.secret;
+    this.token = options.token;
+    this.aesKey = options.aesKey;
+    this.getAccessTokenFromCache = options.getAccessTokenFromCache;
+    this.storeAccessTokenToCache = options.storeAccessTokenToCache;
   }
 
   public async listAccounts(): Promise<WxkfAccountListResponse> {
@@ -209,6 +231,10 @@ export class WxkfClient extends WxBaseClient {
       if (cachedAccessToken) {
         return cachedAccessToken;
       }
+    }
+
+    if (!this.corpSecret) {
+      throw new Error('cannot get access token without corp secret');
     }
 
     const url = this.url('/gettoken', {

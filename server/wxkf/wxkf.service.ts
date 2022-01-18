@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { Client as Minio } from 'minio';
@@ -6,7 +6,6 @@ import qs from 'query-string';
 
 import {
   KeyValueStorageBase,
-  WXKF_KV_STORAGE,
   MinioService,
   PrismaService,
 } from 'server/modules/storage';
@@ -29,46 +28,37 @@ import { WxkfCredentials, WxkfAccountLink } from './models';
 const WXKF_ACCESS_TOKEN = 'wxkf:accessToken';
 const WXKF_LATEST_CURSOR = 'wxkf:latestCursor';
 
-@Injectable()
 export class WxkfService {
-  private readonly logger = new Logger(WxkfService.name);
-  private minioClient: Minio;
-  private credentials: WxkfCredentials;
-  private assetsBucket: string;
+  private logger: Logger;
   private wxkfClient: WxkfClient;
+  private readonly corpId: string;
 
   constructor(
-    private readonly configService: ConfigService,
-    private readonly minioService: MinioService,
-    @Inject(WXKF_KV_STORAGE)
-    private readonly kvStorage: KeyValueStorageBase,
+    private readonly credentials: WxkfCredentials,
+    private readonly assetsBucket: string,
+    private readonly minioClient: Minio,
     private readonly prisma: PrismaService,
+    private readonly kvStorage: KeyValueStorageBase,
   ) {
-    this.credentials =
-      this.configService.get<WxkfCredentials>('wxkf.credentials');
-    this.assetsBucket = this.configService.get<string>('wxkf.assetsBucket');
-    this.minioClient = this.minioService.instance;
-
-    const { corpId, secret, token, aesKey } = this.credentials;
-    this.wxkfClient = new WxkfClient(
-      corpId,
-      secret,
-      token,
-      aesKey,
-      () => this.getAccessToken(),
-      (_, accessToken, expiresIn) =>
+    const { corpId } = this.credentials;
+    this.corpId = corpId;
+    this.logger = new Logger(`${WxkfService.name}-${corpId}`);
+    this.wxkfClient = new WxkfClient({
+      ...this.credentials,
+      getAccessTokenFromCache: () => this.getAccessToken(),
+      storeAccessTokenToCache: (_, accessToken, expiresIn) =>
         this.storeAccessToken(accessToken, expiresIn),
-    );
+    });
   }
 
   public async downloadMedia(mediaId: string): Promise<string> {
     const { media, filename, contentType } = await this.wxkfClient.getMedia(
       mediaId,
     );
-    await this.minioClient.putObject(this.assetsBucket, filename, media, {
+    await this.minioClient.putObject(this.assetsBucket, `${this.corpId}/${filename}`, media, {
       'Content-Type': contentType,
     });
-    return `s3://${this.assetsBucket}/${filename}`;
+    return `s3://${this.assetsBucket}/${this.corpId}/${filename}`;
   }
 
   public async fetchAccountList(): Promise<WxkfAccount[]> {
@@ -239,7 +229,7 @@ export class WxkfService {
 
     await this.minioClient.putObject(
       this.assetsBucket,
-      response.media_id,
+      `${this.corpId}/${response.media_id}`,
       avatar.buffer,
       {
         'Content-Type': avatar.mimetype,
@@ -276,4 +266,22 @@ export class WxkfService {
   ): Promise<void> {
     await this.kvStorage.set(WXKF_ACCESS_TOKEN, accessToken, expiresIn);
   }
+}
+
+export function WxkfServiceFactory(
+  config: ConfigService,
+  minio: MinioService,
+  prisma: PrismaService,
+  kvStorage: KeyValueStorageBase,
+): WxkfService {
+  const credentials = config.get<WxkfCredentials>('wxkf.credentials');
+  const assetsBucket = config.get<string>('wxkf.assetsBucket');
+  const minioClient = minio.instance;
+  return new WxkfService(
+    credentials,
+    assetsBucket,
+    minioClient,
+    prisma,
+    kvStorage,
+  );
 }
