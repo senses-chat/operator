@@ -1,6 +1,7 @@
 import { plainToInstance, instanceToPlain } from 'class-transformer';
 
-import { Aggregate, AggregateRootWithId } from 'server/event-store';
+import { AggregateRootWithId } from 'server/common';
+import { Aggregate } from 'server/event-store';
 
 import { NewWechatMessageCommand, SendWechatMessageCommand } from '../commands';
 import { NewWechatMessageEvent, SendWechatMessageEvent } from '../events';

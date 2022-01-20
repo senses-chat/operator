@@ -1,18 +1,19 @@
 import { Logger, Type } from '@nestjs/common';
-import { IEvent } from '@nestjs/cqrs';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Redis } from 'ioredis';
 
-import { EventMetadataStore } from 'server/event-store/event.decorator';
+import { IEventWithMetadata } from 'server/common';
+import { EventMetadataStore } from 'server/event-store';
 
 import { IEventStorage } from './event-storage.interface';
 
 const PREFIX = 'events';
 const DELIMITER = ':';
 
-export class RedisEventStorage<EventBase extends IEvent = IEvent>
-  implements IEventStorage<EventBase>
+export class RedisEventStorage<
+  EventBase extends IEventWithMetadata = IEventWithMetadata,
+> implements IEventStorage<EventBase>
 {
   private logger = new Logger(RedisEventStorage.name);
   private redisClient: Redis;
@@ -72,11 +73,18 @@ export class RedisEventStorage<EventBase extends IEvent = IEvent>
   private convertRedisMessageToEvent<T extends EventBase>(
     message: [string, string[]],
   ): T {
-    const [, object] = message;
+    const [version, object] = message;
     const [, eventType, , eventData] = object;
     const data = JSON.parse(eventData);
     const clazz = EventMetadataStore.get(eventType) as Type<T>;
-    const event = plainToInstance(clazz, data);
+    const event = plainToInstance(
+      clazz,
+      Object.assign(data, {
+        metadata: {
+          version,
+        },
+      }),
+    );
     return event;
   }
 

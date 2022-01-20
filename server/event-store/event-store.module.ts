@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { ConfigModule, StorageModule } from 'server/modules';
@@ -6,7 +6,11 @@ import { ConfigModule, StorageModule } from 'server/modules';
 import { EventStoreService } from './event-store.service';
 
 @Module({
-  imports: [CqrsModule, ConfigModule, StorageModule.register()],
+  imports: [
+    CqrsModule,
+    ConfigModule,
+    forwardRef(() => StorageModule.register()),
+  ],
   providers: [EventStoreService],
   exports: [EventStoreService],
 })

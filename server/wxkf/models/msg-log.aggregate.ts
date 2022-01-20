@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { plainToInstance, instanceToPlain } from 'class-transformer';
 
-import { Aggregate, AggregateRootWithId } from 'server/event-store';
+import { AggregateRootWithId } from 'server/common';
+import { Aggregate } from 'server/event-store';
 
 import { NewWxkfMessageCommand, SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent, SendWxkfMessageEvent } from '../events';

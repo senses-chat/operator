@@ -1,11 +1,12 @@
-import { IEvent } from '@nestjs/cqrs';
-
+import { IEventWithMetadata, EventMetadata } from 'server/common';
 import { Event } from 'server/event-store';
 
 import { WxIncomingMessage } from '../models';
 
 @Event()
-export class NewWechatMessageEvent implements WxIncomingMessage, IEvent {
+export class NewWechatMessageEvent
+  implements WxIncomingMessage, IEventWithMetadata
+{
   appNamespace: string;
   ToUserName: string;
   FromUserName: string;
@@ -14,4 +15,5 @@ export class NewWechatMessageEvent implements WxIncomingMessage, IEvent {
   Event?: string;
   Content?: string;
   SessionFrom?: string;
+  metadata?: EventMetadata;
 }

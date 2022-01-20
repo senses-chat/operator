@@ -1,12 +1,15 @@
-import { IEvent } from '@nestjs/cqrs';
-
+import { EventMetadata, IEventWithMetadata } from 'server/common';
 import { Event } from 'server/event-store';
 
 import { RouteMessage, SessionDefinition } from '../models';
 
 @Event()
-export class NewSessionMessageEvent implements IEvent {
-  constructor(public readonly message: RouteMessage, public readonly session: SessionDefinition) {}
+export class NewSessionMessageEvent implements IEventWithMetadata {
+  constructor(
+    public readonly message: RouteMessage,
+    public readonly session: SessionDefinition,
+    public readonly metadata?: EventMetadata,
+  ) {}
 
   public isMessageFromSource(): boolean {
     if (this.session.isDestination) {
@@ -36,7 +39,9 @@ export class NewSessionMessageEvent implements IEvent {
     }
 
     for (let i = 0; i < this.message.namespaces.length; i++) {
-      if (this.message.namespaces[i] !== this.session.destination.namespaces[i]) {
+      if (
+        this.message.namespaces[i] !== this.session.destination.namespaces[i]
+      ) {
         return false;
       }
     }

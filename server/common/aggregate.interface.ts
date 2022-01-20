@@ -1,6 +1,9 @@
-import { AggregateRoot, IEvent } from '@nestjs/cqrs';
+import { AggregateRoot } from '@nestjs/cqrs';
+import { IEventWithMetadata } from './event.interface';
 
-export class AggregateRootWithId<EventBase extends IEvent = IEvent> extends AggregateRoot<EventBase> {
+export class AggregateRootWithId<
+  EventBase extends IEventWithMetadata = IEventWithMetadata,
+> extends AggregateRoot<EventBase> {
   protected _id: string;
   protected _version: string | number;
 

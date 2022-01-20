@@ -1,9 +1,10 @@
-import { Aggregate, AggregateRootWithId } from 'server/event-store';
+import { Logger } from '@nestjs/common';
+import { AggregateRootWithId } from 'server/common';
+import { Aggregate } from 'server/event-store';
 
 import { RouteType } from './route.dto';
 import { NewRouteMessageCommand } from '../commands';
 import { NewSessionMessageEvent } from '../events';
-import { Logger } from '@nestjs/common';
 
 export interface SessionDefinitionComponent {
   type: RouteType;

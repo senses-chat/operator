@@ -5,21 +5,21 @@ import {
   OnModuleDestroy,
   OnModuleInit,
   Inject,
+  forwardRef,
 } from '@nestjs/common';
-import { IEvent, EventBus } from '@nestjs/cqrs';
+import { EventBus } from '@nestjs/cqrs';
 import { from, lastValueFrom, Subject } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 // import ArrayKeyedMap from 'array-keyed-map';
 
+import { IEventWithMetadata, AggregateRootWithId, AggregateMetadata } from 'server/common';
 import { EVENT_STORAGE, IEventStorage } from 'server/modules/storage';
 
-import { AggregateRootWithId } from './aggregate-root-id';
-import { AggregateMetadata } from './aggregate-metadata';
 import { AggregateStore } from './aggregate.decorator';
 
 @Injectable()
 export class EventStoreService<
-  EventBase extends IEvent = IEvent,
+  EventBase extends IEventWithMetadata = IEventWithMetadata,
   AggregateBase extends AggregateRootWithId<EventBase> = AggregateRootWithId<EventBase>,
 > implements OnModuleInit, OnModuleDestroy
 {
@@ -29,7 +29,7 @@ export class EventStoreService<
 
   constructor(
     private readonly eventBus: EventBus<EventBase>,
-    @Inject(EVENT_STORAGE)
+    @Inject(forwardRef(() => EVENT_STORAGE))
     private readonly eventStorage: IEventStorage<EventBase>,
   ) {
     // this.aggregates = new ArrayKeyedMap();
@@ -55,9 +55,7 @@ export class EventStoreService<
     this.subject$.complete();
   }
 
-  async listAggregates(
-    aggregateType: string,
-  ): Promise<AggregateMetadata[]> {
+  async listAggregates(aggregateType: string): Promise<AggregateMetadata[]> {
     const aggregations = await this.eventStorage.getByType(aggregateType);
     return aggregations.map((aggregate) => ({
       aggregateType,
