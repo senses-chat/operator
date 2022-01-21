@@ -15,6 +15,7 @@ import {
   WxkfIncomingEventMessage,
   WxkfIncomingEventType,
   WxkfIncomingFileMessage,
+  WxkfIncomingImageMessage,
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
 } from 'server/utils/wx-sdk';
@@ -57,6 +58,42 @@ export class WxkfSagas {
                   content: {
                     type: MessageContentType.File,
                     file_url,
+                  },
+                }),
+              ),
+            ),
+            tap((routeMessage) =>
+              WxkfSagas.logger.debug(JSON.stringify(routeMessage)),
+            ),
+            map(
+              (routeMessage: RouteMessage) =>
+                new NewRouteMessageCommand(routeMessage),
+            ),
+          );
+        }
+
+        if (event.msgtype === WxkfIncomingMessageType.Image) {
+          const wxkfMessage = event as WxkfIncomingImageMessage;
+          return of(wxkfMessage).pipe(
+            concatMap((message: WxkfIncomingImageMessage) =>
+              from(
+                this.wxkfServiceRegistry
+                  .getService(event.corpid)
+                  .downloadMedia(message.image.media_id),
+              ),
+            ),
+            concatMap((image_url) =>
+              of(
+                plainToInstance(RouteMessage, {
+                  type: RouteType.Wxkf,
+                  namespaces: [
+                    event.corpid,
+                    wxkfMessage.open_kfid,
+                    wxkfMessage.external_userid,
+                  ],
+                  content: {
+                    type: MessageContentType.Image,
+                    image_url,
                   },
                 }),
               ),

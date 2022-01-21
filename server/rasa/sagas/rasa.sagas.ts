@@ -11,6 +11,7 @@ import {
   RouteType,
   TextMessageContent,
   FileMessageContent,
+  ImageMessageContent,
 } from 'server/route';
 import { plainToInstance } from 'server/utils/transformer';
 
@@ -121,6 +122,12 @@ export class RasaSagas {
     if (content.type === MessageContentType.File) {
       message = `/file_uploaded{"file_url":"${
         (content as FileMessageContent).file_url
+      }"}`;
+    }
+
+    if (content.type === MessageContentType.Image) {
+      message = `/image_uploaded{"image_url":"${
+        (content as ImageMessageContent).image_url
       }"}`;
     }
 

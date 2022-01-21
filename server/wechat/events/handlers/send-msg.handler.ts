@@ -47,7 +47,7 @@ export class SendWechatMessageEventHandler implements IEventHandler<SendWechatMe
     }
 
     if (message.content instanceof ImageMessageContent) {
-      const media_id = await this.wechatService.uploadImage(appNamespace, message.content.image);
+      const media_id = await this.wechatService.uploadImage(appNamespace, message.content.image_url);
 
       return this.wechatService.sendMessage(
         appNamespace,

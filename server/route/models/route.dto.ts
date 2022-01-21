@@ -27,7 +27,7 @@ export class TextMessageContent extends MessageContent {
 }
 
 export class ImageMessageContent extends MessageContent {
-  image: string;
+  image_url: string;
 }
 
 export class TextWithButtonsMessageContent extends TextMessageContent {
