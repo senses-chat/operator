@@ -3,6 +3,7 @@ import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 
 import { EventStoreService } from "server/event-store";
 import { ISessionStorage, SESSION_STORAGE } from "server/modules/storage";
+import { instanceToPlain } from "server/utils/transformer";
 
 import { Session } from "../../models";
 import { GetSessionQuery } from "../get-session.query";
@@ -15,8 +16,9 @@ export class GetSessionQueryHandler implements IQueryHandler<GetSessionQuery> {
     private readonly eventStore: EventStoreService,
   ) {}
 
-  public async execute(query: GetSessionQuery): Promise<Session> {
+  public async execute(query: GetSessionQuery): Promise<any> {
     const definition = await this.sessionStorage.getSessionDefinitionById(query.id);
-    return this.eventStore.getAggregate<Session>(Session.name, query.id, definition);
+    const session = await this.eventStore.getAggregate<Session>(Session.name, query.id, definition);
+    return instanceToPlain(session);
   }
 }

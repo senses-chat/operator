@@ -3,9 +3,10 @@ import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, of } from 'rxjs';
 import { filter, concatMap } from 'rxjs/operators';
 
+import { plainToInstance } from 'server/utils/transformer';
+
 import { NewSessionMessageEvent } from '../events';
 import { RouteType, MessageContentType, TextMessageContent, RouteMessage } from '../models';
-import { plainToInstance } from 'class-transformer';
 import { NewRouteMessageCommand } from '../commands';
 
 @Injectable()

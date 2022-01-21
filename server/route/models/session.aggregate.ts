@@ -22,7 +22,7 @@ export interface SessionDefinition {
 
 @Aggregate()
 export class Session extends AggregateRootWithId {
-  private logger = new Logger(Session.name);
+  private _logger = new Logger(Session.name);
   public messages: Array<NewSessionMessageEvent> = [];
 
   constructor(public readonly definition: SessionDefinition) {
@@ -34,7 +34,7 @@ export class Session extends AggregateRootWithId {
   }
 
   onNewSessionMessageEvent(event: NewSessionMessageEvent): void {
-    this.logger.verbose(`onNewSessionMessageEvent: ${JSON.stringify(event)}`);
+    // this._logger.verbose(`onNewSessionMessageEvent: ${JSON.stringify(event)}`);
     this.messages.push(event);
   }
 }

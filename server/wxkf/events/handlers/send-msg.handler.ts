@@ -1,6 +1,5 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 
 import {
   TextMessageContent,
@@ -9,6 +8,7 @@ import {
   ImageMessageContent,
   MessageContentType,
 } from 'server/route';
+import { plainToInstance } from 'server/utils/transformer';
 import { WxkfMessagePayload, WxkfMessageType } from 'server/utils/wx-sdk';
 
 import { WxkfServiceRegistry } from '../../wxkf.registry';

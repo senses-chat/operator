@@ -1,3 +1,5 @@
+import { Expose } from 'class-transformer';
+
 import { EventMetadata, IEventWithMetadata } from 'server/common';
 import { Event } from 'server/event-store';
 
@@ -5,23 +7,32 @@ import { RouteMessage, SessionDefinition } from '../models';
 
 @Event()
 export class NewSessionMessageEvent implements IEventWithMetadata {
+  @Expose({ name: 'session' })
+  private readonly _session: SessionDefinition;
+
   constructor(
     public readonly message: RouteMessage,
-    public readonly session: SessionDefinition,
+    session: SessionDefinition,
     public readonly metadata?: EventMetadata,
-  ) {}
+  ) {
+    this._session = session;
+  }
+
+  public get session(): SessionDefinition {
+    return this._session;
+  }
 
   public isMessageFromSource(): boolean {
-    if (this.session.isDestination) {
+    if (this._session.isDestination) {
       return false;
     }
 
-    if (this.message.type !== this.session.source.type) {
+    if (this.message.type !== this._session.source.type) {
       return false;
     }
 
     for (let i = 0; i < this.message.namespaces.length; i++) {
-      if (this.message.namespaces[i] !== this.session.source.namespaces[i]) {
+      if (this.message.namespaces[i] !== this._session.source.namespaces[i]) {
         return false;
       }
     }
@@ -29,18 +40,19 @@ export class NewSessionMessageEvent implements IEventWithMetadata {
     return true;
   }
 
+  @Expose({ name: 'isDestination' })
   public isMessageFromDestination(): boolean {
-    if (!this.session.isDestination) {
+    if (!this._session || !this._session.isDestination) {
       return false;
     }
 
-    if (this.message.type !== this.session.destination.type) {
+    if (this.message.type !== this._session.destination.type) {
       return false;
     }
 
     for (let i = 0; i < this.message.namespaces.length; i++) {
       if (
-        this.message.namespaces[i] !== this.session.destination.namespaces[i]
+        this.message.namespaces[i] !== this._session.destination.namespaces[i]
       ) {
         return false;
       }

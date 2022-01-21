@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'server/utils/transformer';
 
 export interface Wechat3rdPartyCredentials {
   appId: string;

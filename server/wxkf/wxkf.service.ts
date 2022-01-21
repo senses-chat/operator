@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { plainToInstance } from 'class-transformer';
 import { Client as Minio } from 'minio';
 import qs from 'query-string';
 
@@ -22,6 +21,7 @@ import {
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
 } from 'server/utils/wx-sdk';
+import { plainToInstance } from 'server/utils/transformer';
 
 import { WxkfCredentials, WxkfAccountLink } from './models';
 

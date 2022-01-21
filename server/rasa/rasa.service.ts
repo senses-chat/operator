@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ConfigService } from '@nestjs/config';
-import { plainToInstance } from 'class-transformer';
 import { of, from, zip, interval } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
 import fetch from 'node-fetch';
 
+import { plainToInstance } from 'server/utils/transformer';
 import { PrismaService } from 'server/modules/storage';
 
 import { RasaResponsePayload, RasaWebhookPayload } from './models';

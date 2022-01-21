@@ -1,7 +1,7 @@
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
-import { plainToClass } from 'class-transformer';
 import qs from 'query-string';
 
+import { plainToInstance } from 'server/utils/transformer';
 import { Constructor, WxResponse } from './model';
 
 export abstract class WxBaseClient {
@@ -32,7 +32,7 @@ export abstract class WxBaseClient {
       throw new Error(`Wx Error code ${json.errcode}: ${json.errmsg}`);
     }
 
-    return plainToClass(clazz, json);
+    return plainToInstance(clazz, json);
   }
 
   protected headers(): { [key: string]: string } {

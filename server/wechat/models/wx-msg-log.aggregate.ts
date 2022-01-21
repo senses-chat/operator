@@ -1,4 +1,4 @@
-import { plainToInstance, instanceToPlain } from 'class-transformer';
+import { plainToInstance, instanceToPlain } from 'server/utils/transformer';
 
 import { AggregateRootWithId } from 'server/common';
 import { Aggregate } from 'server/event-store';

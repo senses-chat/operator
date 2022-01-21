@@ -15,7 +15,7 @@ export class NewSessionMessageEventHandler implements IEventHandler<NewSessionMe
 
   public async handle(event: NewSessionMessageEvent): Promise<void> {
     this.logger.verbose(`new session message event: ${JSON.stringify(event)}`);
-    if (!event.session.isDestination) {
+    if (!event.isMessageFromDestination()) {
       // only refresh when the session has incoming messages
       await this.sessionRepository.refreshSession(event.session.id);
     }

@@ -9,10 +9,11 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { plainToInstance } from 'class-transformer';
-import { WxkfService } from '.';
+
+import { plainToInstance } from 'server/utils/transformer';
 
 import { NewWxkfMessageCommand } from './commands/new-msg.command';
+import { WxkfService } from './wxkf.service';
 import { WxkfServiceRegistry } from './wxkf.registry';
 
 @Controller('wxkf')

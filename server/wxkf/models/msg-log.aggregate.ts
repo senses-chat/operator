@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { plainToInstance, instanceToPlain } from 'class-transformer';
+import { plainToInstance, instanceToPlain } from 'server/utils/transformer';
 
 import { AggregateRootWithId } from 'server/common';
 import { Aggregate } from 'server/event-store';
@@ -9,7 +9,7 @@ import { NewWxkfMessageEvent, SendWxkfMessageEvent } from '../events';
 
 @Aggregate()
 export class WxkfMessageLog extends AggregateRootWithId {
-  private logger = new Logger(WxkfMessageLog.name);
+  private _logger = new Logger(WxkfMessageLog.name);
 
   public messages: Array<NewWxkfMessageEvent | SendWxkfMessageEvent> = [];
 
@@ -22,12 +22,12 @@ export class WxkfMessageLog extends AggregateRootWithId {
   }
 
   onNewWxkfMessageEvent(event: NewWxkfMessageEvent): void {
-    this.logger.verbose(`onNewWxkfMessageEvent: ${JSON.stringify(event)}`);
+    // this._logger.verbose(`onNewWxkfMessageEvent: ${JSON.stringify(event)}`);
     this.messages.push(event);
   }
 
   onSendWxkfMessageEvent(event: SendWxkfMessageEvent): void {
-    this.logger.verbose(`onSendWxkfMessageEvent: ${JSON.stringify(event)}`);
+    // this._logger.verbose(`onSendWxkfMessageEvent: ${JSON.stringify(event)}`);
     this.messages.push(event);
   }
 }

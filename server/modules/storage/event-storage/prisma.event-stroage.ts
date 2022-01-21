@@ -1,7 +1,7 @@
 import { Logger, Type } from '@nestjs/common';
 import { EventStorage } from '@prisma/client';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
 
+import { instanceToPlain, plainToInstance } from 'server/utils/transformer';
 import { IEventWithMetadata } from 'server/common';
 import { EventMetadataStore } from 'server/event-store';
 import { PrismaService } from 'server/modules/storage';

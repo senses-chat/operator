@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of, from } from 'rxjs';
 import { concatMap, filter, map, tap } from 'rxjs/operators';
-import { plainToInstance, instanceToPlain } from 'class-transformer';
 
 import {
   RouteMessage,
@@ -19,6 +18,7 @@ import {
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
 } from 'server/utils/wx-sdk';
+import { plainToInstance, instanceToPlain } from 'server/utils/transformer';
 
 import { SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent } from '../events';

@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-
+import { Type } from 'server/utils/transformer';
 import { IEventWithMetadata, EventMetadata } from 'server/common';
 import { Event } from 'server/event-store';
 import { RouteMessage } from 'server/route';

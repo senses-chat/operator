@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
-import { plainToInstance } from 'class-transformer';
 
 import {
   RouteMessage,
@@ -13,6 +12,8 @@ import {
   TextMessageContent,
   FileMessageContent,
 } from 'server/route';
+import { plainToInstance } from 'server/utils/transformer';
+
 import { NewRasaMessageEvent } from '../events';
 import { SendRasaMessageCommand } from '../commands';
 

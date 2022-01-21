@@ -1,8 +1,8 @@
 import { Logger, Type } from '@nestjs/common';
 import { RedisService } from '@liaoliaots/nestjs-redis';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Redis } from 'ioredis';
 
+import { instanceToPlain, plainToInstance } from 'server/utils/transformer';
 import { IEventWithMetadata } from 'server/common';
 import { EventMetadataStore } from 'server/event-store';
 

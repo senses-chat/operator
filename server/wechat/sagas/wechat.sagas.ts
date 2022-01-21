@@ -2,9 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
-import { plainToInstance, instanceToPlain } from 'class-transformer';
 
+import { plainToInstance, instanceToPlain } from 'server/utils/transformer';
 import { RouteMessage, NewRouteMessageCommand, NewSessionMessageEvent, RouteType } from 'server/route';
+
 import { SendWechatMessageCommand } from '../commands';
 import { NewWechatMessageEvent } from '../events';
 

@@ -21,7 +21,6 @@ export class SessionRepository {
   }
 
   public async getSessionForIncomingRoute(sourceType: RouteType, namespaces: string[]): Promise<Session> {
-    console.log(sourceType, namespaces);
     const session = await this.getSession(sourceType, namespaces);
 
     if (session) {
@@ -39,7 +38,6 @@ export class SessionRepository {
 
   private async getSession(type: RouteType, namespaces: string[]): Promise<Session | undefined> {
     const definition: SessionDefinition = await this.sessionStorage.getSessionDefinition(type, namespaces);
-    console.log(definition);
 
     if (!definition) {
       return undefined;

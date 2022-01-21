@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post, Body, Query, Logger, NotFoundException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { plainToInstance } from 'class-transformer';
+
+import { plainToInstance } from 'server/utils/transformer';
 
 import { WechatService } from './wechat.service';
 import { Wechat3rdPartyService } from './3rdparty.service';

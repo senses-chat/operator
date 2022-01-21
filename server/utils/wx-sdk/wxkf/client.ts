@@ -4,6 +4,8 @@ import contentDisposition from 'content-disposition';
 import { lookup as lookupMimeType } from 'mime-types';
 import { XMLParser } from 'fast-xml-parser';
 
+import { plainToInstance } from 'server/utils/transformer';
+
 import {
   WxkfMessagePayload,
   WxkfSyncMsgInput,
@@ -17,12 +19,12 @@ import {
   WxkfAccountAddInput,
   WxkfAccountAddResponse,
   WxkfAccountListResponse,
+  WxkfAccountDeleteInput,
+  WxkfAddContactWayResponse,
 } from './model';
 import { WxBaseClient } from '../client';
 import { WxResponse, WxAccessTokenResponse } from '../model';
 import { WxMsgCrypto } from '../crypto';
-import { plainToInstance } from 'class-transformer';
-import { WxkfAccountDeleteInput, WxkfAddContactWayResponse } from '.';
 
 export interface WxkfClientOptions {
   corpId: string;
@@ -53,9 +55,7 @@ export class WxkfClient extends WxBaseClient {
     expiresIn: number,
   ) => Promise<void>;
 
-  constructor(
-    options: WxkfClientOptions,
-  ) {
+  constructor(options: WxkfClientOptions) {
     super(WxkfClient.URL_PREFIX);
 
     this.corpId = options.corpId;

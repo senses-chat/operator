@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'server/utils/transformer';
 import { Readable } from 'stream';
 
 import { WxResponse } from '../model';
