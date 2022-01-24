@@ -36,6 +36,12 @@ export const SideNav: FC<SideNavProps> = ({
       <Menu.Item key="/ui/wxkf/account" icon={<CustomerServiceOutlined />}>
         <Link href="/ui/wxkf/account">WXKF Account Management</Link>
       </Menu.Item>
+      <Menu.Item key="/ui/wxkf/log" icon={<CustomerServiceOutlined />}>
+        <Link href="/ui/wxkf/log">WXKF Log Management</Link>
+      </Menu.Item>
+      <Menu.Item key="/ui/session" icon={<CustomerServiceOutlined />}>
+        <Link href="/ui/session">Session Management</Link>
+      </Menu.Item>
     </Menu>
   </Sider>
 );
