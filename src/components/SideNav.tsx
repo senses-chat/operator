@@ -6,6 +6,7 @@ import {
   CustomerServiceOutlined,
   RobotOutlined,
   LinkOutlined,
+  MessageOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -40,6 +41,12 @@ export const SideNav: FC<SideNavProps> = ({
       </Menu.Item>
       <Menu.Item key="/ui/wxkf/account" icon={<CustomerServiceOutlined />}>
         <Link href="/ui/wxkf/account">WXKF Account Management</Link>
+      </Menu.Item>
+      <Menu.Item key="/ui/wxkf/log" icon={<MessageOutlined />}>
+        <Link href="/ui/wxkf/log">WXKF Log Management</Link>
+      </Menu.Item>
+      <Menu.Item key="/ui/session" icon={<MessageOutlined />}>
+        <Link href="/ui/session">Session Management</Link>
       </Menu.Item>
       <Menu.Item key="/ui/rasa-server" icon={<RobotOutlined />}>
         <Link href="/ui/rasa-server">Rasa Server Management</Link>
