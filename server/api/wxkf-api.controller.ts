@@ -75,7 +75,7 @@ export class WxkfApiController {
 
   @Get('/account/link')
   async getAccountLinks(
-    @Query('id') id: string,
+    @Query('id') id?: string,
     @Query('corpId') corpId?: string,
   ): Promise<WxkfAccountLink[]> {
     return await this.wxkfServiceRegistry
