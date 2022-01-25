@@ -43,3 +43,7 @@ export function handleWxkfIncomeMessageContent(msg): ReactNode {
       return <p className="mb-0">{`event: ${msg.event.event_type}`}</p>;
   }
 }
+
+export function getCorpId() {
+  return 'wwb3e9f81ebbe83dbc';
+}
