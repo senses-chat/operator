@@ -30,7 +30,7 @@ interface Account {
 
 export default function AccountLinksPage() {
   const router = useRouter();
-  const { id: accountId, name: accountName } = router.query;
+  const { id: accountId, name: accountName, page } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editScene, setEditScene] = useState('');
@@ -224,6 +224,14 @@ export default function AccountLinksPage() {
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
 
+  function onChangePage(pagination) {
+    router.push(
+      `/ui/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      `/ui/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      { shallow: true },
+    );
+  }
+
   return (
     <AppLayout>
       <Head>
@@ -238,10 +246,22 @@ export default function AccountLinksPage() {
       </div>
 
       <Table
-        dataSource={data || []}
+        dataSource={
+          (data &&
+            data.slice(
+              ((+page || 1) - 1) * 10,
+              ((+page || 1) - 1) * 10 + 10,
+            )) ||
+          []
+        }
         columns={columns}
         rowKey="open_kfid"
-        pagination={false}
+        onChange={onChangePage}
+        pagination={{
+          pageSize: 10,
+          current: +page || 1,
+          total: data?.length || 0,
+        }}
       />
 
       <Modal

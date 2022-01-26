@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import useSWR, { SWRResponse } from 'swr';
 import { format } from 'date-fns';
 
@@ -26,6 +27,8 @@ interface SessionData {
 }
 
 export default function IndexPage() {
+  const router = useRouter();
+  const { page } = router.query;
   const { data }: SWRResponse<SessionData[], Error> = useSWR(
     url(`/api/history/sessions`),
     fetcher,
@@ -79,7 +82,7 @@ export default function IndexPage() {
       dataIndex: 'expiredAt',
       key: 'expiredAt',
       render: (expiredAt) => (
-        <p>{format(new Date(expiredAt), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{expiredAt && format(new Date(expiredAt), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -87,7 +90,7 @@ export default function IndexPage() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
-        <p>{format(new Date(createdAt), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{createdAt && format(new Date(createdAt), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -95,7 +98,7 @@ export default function IndexPage() {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (
-        <p>{format(new Date(updatedAt), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{updatedAt && format(new Date(updatedAt), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -114,6 +117,14 @@ export default function IndexPage() {
     },
   ];
 
+  function onChangePage(pagination) {
+    router.push(
+      `/ui/session?page=${pagination.current}`,
+      `/ui/session?page=${pagination.current}`,
+      { shallow: true },
+    );
+  }
+
   return (
     <AppLayout>
       <Head>
@@ -121,10 +132,22 @@ export default function IndexPage() {
       </Head>
 
       <Table
-        dataSource={data || []}
+        dataSource={
+          (data &&
+            data.slice(
+              ((+page || 1) - 1) * 10,
+              ((+page || 1) - 1) * 10 + 10,
+            )) ||
+          []
+        }
         columns={columns}
         rowKey="id"
-        pagination={false}
+        onChange={onChangePage}
+        pagination={{
+          pageSize: 10,
+          current: +page || 1,
+          total: data?.length || 0,
+        }}
       />
     </AppLayout>
   );

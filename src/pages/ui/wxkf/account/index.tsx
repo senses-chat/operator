@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import useSWR, { SWRResponse, mutate } from 'swr';
 
 import {
@@ -27,6 +28,8 @@ interface Account {
 }
 
 export default function IndexPage() {
+  const router = useRouter();
+  const { page } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState('');
@@ -176,6 +179,14 @@ export default function IndexPage() {
     mutate(url(`/api/wxkf/account`));
   }
 
+  function onChangePage(pagination) {
+    router.push(
+      `/ui/wxkf/account?page=${pagination.current}`,
+      `/ui/wxkf/account?page=${pagination.current}`,
+      { shallow: true },
+    );
+  }
+
   return (
     <AppLayout>
       <Head>
@@ -189,10 +200,22 @@ export default function IndexPage() {
       </div>
 
       <Table
-        dataSource={data || []}
+        dataSource={
+          (data &&
+            data.slice(
+              ((+page || 1) - 1) * 10,
+              ((+page || 1) - 1) * 10 + 10,
+            )) ||
+          []
+        }
         columns={columns}
         rowKey="open_kfid"
-        pagination={false}
+        onChange={onChangePage}
+        pagination={{
+          pageSize: 10,
+          current: +page || 1,
+          total: data?.length || 0,
+        }}
       />
 
       <Modal
