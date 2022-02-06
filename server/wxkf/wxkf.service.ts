@@ -115,7 +115,7 @@ export class WxkfService {
     return await this.prisma.wxkfAccountLink.findMany({
       where: {
         corpId: this.corpId,
-        openKfId: id,
+        openKfId: id || undefined,
       },
     });
   }
