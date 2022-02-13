@@ -13,8 +13,7 @@
     "clean": "rimraf dist",
     "format": "prettier --write",
     "lint": "eslint --fix",
-    "docgen": "compodoc -p tsconfig.json",
-    "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d"
+    "docgen": "compodoc -p tsconfig.json"
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^5.2.0",

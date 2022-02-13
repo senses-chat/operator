@@ -14,7 +14,8 @@
     "dev": "turbo run dev --no-cache --parallel --continue",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d"
   },
   "devDependencies": {
     "husky": "^7.0.4",
