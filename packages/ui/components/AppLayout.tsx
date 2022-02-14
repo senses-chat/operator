@@ -1,6 +1,7 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useEffect } from 'react';
 import { Layout } from 'antd';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import createPersistedState from 'use-persisted-state';
 
 import { SideNav } from './SideNav';
@@ -17,7 +18,14 @@ interface AppLayoutProps {
 
 export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [collapsed, setCollapsed] = useCollapsedState(false);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push('/api/auth/signin');
+    }
+  }, [router, status]);
 
   return (
     <Layout

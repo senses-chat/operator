@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import nc from 'next-connect';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
+import { getSession } from 'next-auth/react';
 
 function onError(err, req, res) {
   console.error(err);
@@ -18,10 +19,16 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 });
 
 // redirect to backend
-handler.all('*', async (req, res) =>
-  httpProxyMiddleware(req, res, {
+handler.all('*', async (req, res) =>{
+  const session = await getSession({ req })
+
+  if (!session) {
+    return res.status(403).end('Forbidden');
+  }
+
+  return httpProxyMiddleware(req, res, {
     target: process.env.UI_API_URL,
-  }),
-);
+  })
+});
 
 export default handler;
