@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR, { SWRResponse } from 'swr';
 
-// import { RouteMessage } from 'chat-operator-backend/server/route/models/route.dto';
+import { RouteMessage } from 'chat-operator-backend/server/route/models/route.dto';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
@@ -16,7 +16,7 @@ interface sessionDetailData {
 }
 
 interface sessionMessageData {
-  message: any;
+  message: RouteMessage;
   metadata: {
     timestamp: string;
   };

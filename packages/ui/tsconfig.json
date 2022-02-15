@@ -18,7 +18,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "./"
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "paths": {
+      "server/*": ["../backend/server/*"],
+    },
   },
   "include": [
     "next-env.d.ts",
@@ -27,5 +31,5 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

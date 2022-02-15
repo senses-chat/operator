@@ -1,5 +1,6 @@
 import 'tailwindcss/tailwind.css';
 import 'antd/dist/antd.css';
+import 'reflect-metadata';
 
 import React from 'react';
 import { AppProps } from 'next/app';
