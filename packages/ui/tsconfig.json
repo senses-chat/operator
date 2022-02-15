@@ -21,7 +21,7 @@
     "experimentalDecorators": true,
     "baseUrl": "./",
     "paths": {
-      "server/*": ["../backend/server/*"],
+      "src/*": ["../server/src/*"],
     },
   },
   "include": [

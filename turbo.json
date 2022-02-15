@@ -18,7 +18,7 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^chat-operator-backend#db:generate"
+        "^@senses-chat/operator-server#db:generate"
       ]
     },
     "clean": {

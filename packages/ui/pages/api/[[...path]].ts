@@ -19,16 +19,16 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 });
 
 // redirect to backend
-handler.all('*', async (req, res) =>{
-  const session = await getSession({ req })
+handler.all('*', async (req, res) => {
+  const session = await getSession({ req });
 
   if (!session) {
-    return res.status(403).end('Forbidden');
+    return res.status(401).end('Unauthorized');
   }
 
   return httpProxyMiddleware(req, res, {
     target: process.env.UI_API_URL,
-  })
+  });
 });
 
 export default handler;

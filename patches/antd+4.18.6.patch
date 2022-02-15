@@ -1,0 +1,46 @@
+diff --git a/node_modules/antd/lib/typography/Base/Ellipsis.js b/node_modules/antd/lib/typography/Base/Ellipsis.js
+index 5870e9f..6c30753 100644
+--- a/node_modules/antd/lib/typography/Base/Ellipsis.js
++++ b/node_modules/antd/lib/typography/Base/Ellipsis.js
+@@ -119,20 +119,22 @@ var Ellipsis = function Ellipsis(_ref) {
+     return children(sliceNodes(nodeList, midLen), midLen < totalLen);
+   }, [enabledMeasure, walkingState, children, nodeList, midLen, totalLen]); // ======================== Walk ========================
+ 
+-  React.useLayoutEffect(function () {
++  var useIsomorphicEffectPatched = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
++
++  useIsomorphicEffectPatched(function () {
+     if (enabledMeasure && width && totalLen) {
+       setWalkingState(PREPARE);
+       setCutLength([0, Math.ceil(totalLen / 2), totalLen]);
+     }
+   }, [enabledMeasure, width, text, totalLen, rows]);
+-  React.useLayoutEffect(function () {
++  useIsomorphicEffectPatched(function () {
+     var _a;
+ 
+     if (walkingState === PREPARE) {
+       setSingleRowHeight(((_a = singleRowRef.current) === null || _a === void 0 ? void 0 : _a.offsetHeight) || 0);
+     }
+   }, [walkingState]);
+-  React.useLayoutEffect(function () {
++  useIsomorphicEffectPatched(function () {
+     var _a, _b;
+ 
+     if (singleRowHeight) {
+diff --git a/node_modules/antd/lib/typography/Base/index.js b/node_modules/antd/lib/typography/Base/index.js
+index 33f453f..1e1ec43 100644
+--- a/node_modules/antd/lib/typography/Base/index.js
++++ b/node_modules/antd/lib/typography/Base/index.js
+@@ -278,7 +278,10 @@ var Base = /*#__PURE__*/React.forwardRef(function (props, ref) {
+       ellipsisConfig.expandable || enableEdit || enableCopy
+     );
+   }, [mergedEnableEllipsis, ellipsisConfig, enableEdit, enableCopy]);
+-  React.useLayoutEffect(function () {
++
++  var useIsomorphicEffectPatched = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
++
++  useIsomorphicEffectPatched(function () {
+     if (enableEllipsis && !needMeasureEllipsis) {
+       setIsLineClampSupport((0, _styleChecker.isStyleSupport)('webkitLineClamp'));
+       setIsTextOverflowSupport((0, _styleChecker.isStyleSupport)('textOverflow'));
