@@ -41,5 +41,3 @@ lerna-debug.log*
 
 login_ssh.sh
 *.pem
-
-.turbo

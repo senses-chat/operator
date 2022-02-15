@@ -1,0 +1,101 @@
+{
+  "name": "@senses-chat/operator-server",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Simon Liang <simon@x-tech.io>",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "yarn clean && yarn db:generate",
+    "build": "NODE_ENV=production nest build",
+    "db:generate": "prisma generate",
+    "dev": "NODE_ENV=development nest start --watch",
+    "start": "NODE_ENV=production node dist/main",
+    "clean": "rimraf dist",
+    "format": "prettier --write",
+    "lint": "eslint --fix",
+    "docgen": "compodoc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@liaoliaots/nestjs-redis": "^5.2.0",
+    "@nestjs/axios": "^0.0.3",
+    "@nestjs/common": "^8.2.4",
+    "@nestjs/config": "^1.1.5",
+    "@nestjs/core": "^8.2.4",
+    "@nestjs/cqrs": "^8.0.1",
+    "@nestjs/microservices": "^8.2.4",
+    "@nestjs/platform-express": "^8.2.4",
+    "@nestjs/serve-static": "^2.2.2",
+    "@nestjs/swagger": "^5.1.5",
+    "@nestjs/terminus": "^8.0.3",
+    "@nestjs/typeorm": "^8.0.2",
+    "@prisma/client": "^3.9.2",
+    "array-keyed-map": "^2.1.2",
+    "body-parser-xml": "^2.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "content-disposition": "^0.5.4",
+    "core-js": "^3.20.1",
+    "date-fns": "^2.28.0",
+    "fast-xml-parser": "^4.0.0-beta.8",
+    "form-data": "^4.0.0",
+    "ioredis": "^4.28.2",
+    "lru-cache": "^6.0.0",
+    "mime-types": "^2.1.34",
+    "minio": "^7.0.25",
+    "node-fetch": "^2",
+    "pg": "^8.7.1",
+    "query-string": "^7.1.1",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.0",
+    "rxjs": "^7.4.0",
+    "uniqid": "^5.4.0"
+  },
+  "devDependencies": {
+    "@compodoc/compodoc": "^1.1.16",
+    "@nestjs/cli": "^8.1.6",
+    "@nestjs/schematics": "^8.0.5",
+    "@nestjs/testing": "^8.2.4",
+    "@types/body-parser": "^1.19.2",
+    "@types/body-parser-xml": "^2.0.2",
+    "@types/content-disposition": "^0.5.4",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/express-xml-bodyparser": "^0.3.2",
+    "@types/ioredis": "^4.28.5",
+    "@types/lru-cache": "^5.1.1",
+    "@types/mime-types": "^2.1.1",
+    "@types/minio": "^7.0.11",
+    "@types/multer": "^1.4.7",
+    "@types/node": "17.0.4",
+    "@types/node-fetch": "^2",
+    "@types/uniqid": "^5.3.2",
+    "prisma": "^3.7.0",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.12.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "volta": {
+    "node": "16.13.1",
+    "yarn": "1.22.17"
+  },
+  "lint-staged": {
+    "./src/**/*{.ts,.tsx}": [
+      "npm run lint",
+      "npm run format"
+    ]
+  }
+}

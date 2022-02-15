@@ -2,7 +2,7 @@
 
 ## 介绍
 
-`chat-operator` 是一个消息中间件服务器，用于集中接收不同渠道的消息（微信、企业微信、微信小程序、B站等），并转发到对应的渠道（Rasa，Bot Framework等）。
+`chat-operator` 是一个消息中间件服务器，用于集中接收不同渠道的消息（微信、企业微信、微信小程序、B 站等），并转发到对应的渠道（Rasa，Bot Framework 等）。
 
 Demo (微信扫描二维码):
 
@@ -22,10 +22,10 @@ Demo (微信扫描二维码):
 - 企业微信
 - Bilibili
 - 字节跳动系客服通道
-- WebSocket通道（SocketIO）
+- WebSocket 通道（SocketIO）
 - Microsoft BotFramework
 
-目前所有收发的消息均可在Redis Stream或者SQL（通过Prisma）中存储。
+目前所有收发的消息均可在 Redis Stream 或者 SQL（通过 Prisma）中存储。
 
 ## 安装
 
