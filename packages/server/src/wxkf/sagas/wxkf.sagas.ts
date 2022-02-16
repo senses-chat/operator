@@ -19,7 +19,7 @@ import {
   WxkfIncomingImageMessage,
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
-} from 'src/utils/wx-sdk';
+} from '@senses-chat/wx-sdk';
 
 import { SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent } from '../events';

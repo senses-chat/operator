@@ -26,7 +26,7 @@ export abstract class WxBaseClient {
 
     const response = await fetch(path, init);
 
-    const json = await response.json();
+    const json: any = await response.json();
 
     if (json.errcode > 0) {
       throw new Error(`Wx Error code ${json.errcode}: ${json.errmsg}`);

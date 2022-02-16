@@ -20,7 +20,7 @@ import {
   WxkfSendMsgResponse,
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
-} from 'src/utils/wx-sdk';
+} from '@senses-chat/wx-sdk';
 import { plainToInstance } from '@senses-chat/operator-common';
 
 import { WxkfCredentials, WxkfAccountLink } from './models';

@@ -4,7 +4,7 @@ import { EventStoreService } from 'src/event-store';
 import {
   WxkfIncomingMessageType,
   WxkfIncomingEventMessage,
-} from 'src/utils/wx-sdk';
+} from '@senses-chat/wx-sdk';
 
 import { NewWxkfMessageCommand } from '../new-msg.command';
 import { WxkfMessageLog } from '../../models';

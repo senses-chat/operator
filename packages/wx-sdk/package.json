@@ -1,0 +1,40 @@
+{
+  "name": "@senses-chat/wx-sdk",
+  "version": "0.1.0",
+  "description": "Wechat SDK focused for chat-related operations",
+  "author": "Simon Liang <simon@x-tech.io>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "format": "prettier --write",
+    "lint": "eslint --fix"
+  },
+  "dependencies": {
+    "@senses-chat/operator-common": "0.1.0",
+    "content-disposition": "^0.5.4",
+    "fast-xml-parser": "^4.0.3",
+    "form-data": "^4.0.0",
+    "mime-types": "^2.1.34",
+    "node-fetch": "^3.2.0",
+    "query-string": "^7.1.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/content-disposition": "^0.5.4",
+    "@types/form-data": "^2.5.0",
+    "@types/node": "^16",
+    "rimraf": "^3.0.0"
+  },
+  "volta": {
+    "node": "16.13.1",
+    "yarn": "1.22.17"
+  }
+}

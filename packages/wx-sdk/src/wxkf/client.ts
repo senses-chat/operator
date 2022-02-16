@@ -126,7 +126,7 @@ export class WxkfClient extends WxBaseClient {
 
     if (contentType === 'application/json' || !cdHeaderValue) {
       // should be error response
-      const json = await response.json();
+      const json: any = await response.json();
       throw new Error(
         `Wxkf Media Get Error code ${json.errcode}: ${json.errmsg}`,
       );

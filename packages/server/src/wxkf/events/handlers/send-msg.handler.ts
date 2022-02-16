@@ -9,7 +9,7 @@ import {
   MessageContentType,
 } from 'src/route';
 import { plainToInstance } from '@senses-chat/operator-common';
-import { WxkfMessagePayload, WxkfMessageType } from 'src/utils/wx-sdk';
+import { WxkfMessagePayload, WxkfMessageType } from '@senses-chat/wx-sdk';
 
 import { WxkfServiceRegistry } from '../../wxkf.registry';
 import { SendWxkfMessageEvent } from '../send-msg.event';

@@ -1,6 +1,6 @@
 import { IEventWithMetadata, EventMetadata } from '@senses-chat/operator-common';
 import { Event } from '@senses-chat/operator-common';
-import { WxkfIncomingMessage } from 'src/utils/wx-sdk';
+import { WxkfIncomingMessage } from '@senses-chat/wx-sdk';
 
 @Event()
 export class NewWxkfMessageEvent
