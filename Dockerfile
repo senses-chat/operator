@@ -1,15 +1,27 @@
-FROM node:16
+FROM node:16-alpine AS builder
 
-EXPOSE 3000
+WORKDIR /opt/src
+
+ADD . /opt/src
+
+RUN yarn install
+RUN yarn build
+RUN yarn workspace @senses-chat/operator-server build --webpack
+
+FROM node:16-alpine AS runner
+
+EXPOSE 3001
 
 WORKDIR /opt/server
 
-ADD ./package.json /opt/server
-ADD ./yarn.lock /opt/server
-RUN yarn install --frozen-lockfile
+COPY --from=builder /opt/src/packages/server/dist/main.* /opt/server
 
-ADD . /opt/server
-ENV NODE_ENV production
-RUN yarn build:prod
+RUN mkdir -p /opt/server/node_modules
 
-CMD ["npm", "run", "start:prod"]
+COPY --from=builder /opt/src/node_modules/.prisma /opt/server/node_modules
+
+RUN mkdir -p /opt/server/node_modules/@prisma
+
+COPY --from=builder /opt/src/node_modules/@prisma/client /opt/server/node_modules/@prisma
+
+CMD ["node", "main.js"]

@@ -1,8 +1,9 @@
 # compiled output
-/data
-/.next
-/dist
-/node_modules
+.turbo
+data
+.next
+dist
+node_modules
 
 # Logs
 logs
@@ -36,8 +37,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 *.env*
-
-/server/seeds/*.ts
 
 login_ssh.sh
 *.pem
