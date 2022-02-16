@@ -2,10 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import uniqid from 'uniqid';
 
 import { EventStoreService } from 'src/event-store';
-import { SESSION_STORAGE, ISessionStorage } from 'src/modules/storage';
+import { SESSION_STORAGE, ISessionStorage, RouteType, SessionDefinition } from '@senses-chat/operator-database';
 
 import { RouteService } from '../route.service';
-import { Route, RouteType, SessionDefinition, Session } from '../models';
+import { Route, Session } from '../models';
 
 @Injectable()
 export class SessionRepository {

@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 import {
   TextMessageContent,
   TextWithButtonsMessageContent,

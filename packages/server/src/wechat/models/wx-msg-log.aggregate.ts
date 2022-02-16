@@ -1,7 +1,7 @@
-import { plainToInstance, instanceToPlain } from 'src/utils/transformer';
+import { plainToInstance, instanceToPlain } from '@senses-chat/operator-common';
 
-import { AggregateRootWithId } from 'src/common';
-import { Aggregate } from 'src/event-store';
+import { AggregateRootWithId } from '@senses-chat/operator-common';
+import { Aggregate } from '@senses-chat/operator-common';
 
 import { NewWechatMessageCommand, SendWechatMessageCommand } from '../commands';
 import { NewWechatMessageEvent, SendWechatMessageEvent } from '../events';

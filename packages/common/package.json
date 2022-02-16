@@ -1,0 +1,36 @@
+{
+  "name": "@senses-chat/operator-common",
+  "version": "0.1.0",
+  "description": "Common Code for Senses Chat Operator",
+  "author": "Simon Liang <simon@x-tech.io>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "format": "prettier --write",
+    "lint": "eslint --fix"
+  },
+  "dependencies": {
+    "@nestjs/common": "^8.3.0",
+    "@nestjs/core": "^8.3.0",
+    "@nestjs/cqrs": "^8.0.2",
+    "class-transformer": "^0.5.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16",
+    "rimraf": "^3.0.0"
+  },
+  "volta": {
+    "node": "16.13.1",
+    "yarn": "1.22.17"
+  }
+}

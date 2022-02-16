@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
-import { StorageModule } from 'src/modules';
+import { StorageModule } from '@senses-chat/operator-database';
 import { EventStoreModule } from 'src/event-store';
 
 import { CommandHandlers } from './commands';

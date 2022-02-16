@@ -1,4 +1,4 @@
-import { EventMetadata, IEventWithMetadata } from 'src/common';
+import { EventMetadata, IEventWithMetadata } from '@senses-chat/operator-common';
 import { RasaResponsePayload } from '../models';
 
 export class NewRasaMessageEvent

@@ -1,0 +1,43 @@
+{
+  "name": "@senses-chat/operator-database",
+  "version": "0.1.0",
+  "description": "Storage-Related Modules for Senses Chat Operator",
+  "author": "Simon Liang <simon@x-tech.io>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "prebuild": "npm run clean && npm run db:generate",
+    "build": "tsc -p tsconfig.json",
+    "db:generate": "prisma generate",
+    "clean": "rimraf dist",
+    "format": "prettier --write",
+    "lint": "eslint --fix"
+  },
+  "dependencies": {
+    "@liaoliaots/nestjs-redis": "^5.2.0",
+    "@nestjs/common": "^8.2.4",
+    "@nestjs/config": "^1.1.5",
+    "@prisma/client": "^3.9.2",
+    "@senses-chat/operator-common": "0.1.0",
+    "ioredis": "^4.28.2",
+    "lru-cache": "^6.0.0",
+    "minio": "^7.0.25"
+  },
+  "devDependencies": {
+    "@types/ioredis": "^4.28.5",
+    "@types/lru-cache": "^5.1.1",
+    "@types/minio": "^7.0.11",
+    "@types/node": "^16",
+    "prisma": "^3.9.2",
+    "rimraf": "^3.0.0"
+  },
+  "volta": {
+    "node": "16.13.1",
+    "yarn": "1.22.17"
+  }
+}

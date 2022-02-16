@@ -1,4 +1,4 @@
-import { IEventWithMetadata } from 'src/common';
+import { IEventWithMetadata } from '@senses-chat/operator-common';
 
 export interface IEventStorage<
   EventBase extends IEventWithMetadata = IEventWithMetadata,

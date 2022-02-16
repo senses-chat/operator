@@ -1,6 +1,6 @@
-import { Type } from 'src/utils/transformer';
-import { IEventWithMetadata, EventMetadata } from 'src/common';
-import { Event } from 'src/event-store';
+import { Type } from '@senses-chat/operator-common';
+import { IEventWithMetadata, EventMetadata } from '@senses-chat/operator-common';
+import { Event } from '@senses-chat/operator-common';
 import { RouteMessage } from 'src/route';
 
 @Event()

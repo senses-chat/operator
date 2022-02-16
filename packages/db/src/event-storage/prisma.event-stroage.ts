@@ -1,12 +1,14 @@
 import { Logger, Type } from '@nestjs/common';
 import { EventStorage } from '@prisma/client';
-
-import { instanceToPlain, plainToInstance } from 'src/utils/transformer';
-import { IEventWithMetadata } from 'src/common';
-import { EventMetadataStore } from 'src/event-store';
-import { PrismaService } from 'src/modules/storage';
+import {
+  instanceToPlain,
+  plainToInstance,
+  EventMetadataStore,
+  IEventWithMetadata,
+} from '@senses-chat/operator-common';
 
 import { IEventStorage } from './event-storage.interface';
+import { PrismaService } from '../prisma';
 
 export class PrismaEventStorage<
   EventBase extends IEventWithMetadata = IEventWithMetadata,

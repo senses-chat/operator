@@ -2,7 +2,7 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { XMLParser } from 'fast-xml-parser';
 
-import { KeyValueStorageBase, WECHAT_KV_STORAGE } from 'src/modules/storage';
+import { KeyValueStorageBase, WECHAT_KV_STORAGE } from '@senses-chat/operator-database';
 
 import { WXMsgCrypto } from './wechat.crypto';
 import { Wechat3rdPartyCredentials } from './models';

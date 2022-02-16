@@ -1,10 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
+import { SessionDefinition } from '@senses-chat/operator-database';
 import { GetWxkfMessageLogQuery, ListWxkfMessageLogsQuery } from 'src/wxkf';
 import {
   GetSessionQuery,
-  SessionDefinition,
   ListSessionsQuery,
 } from 'src/route';
 

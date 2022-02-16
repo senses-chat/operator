@@ -12,14 +12,13 @@ import { from, lastValueFrom, Subject } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 // import ArrayKeyedMap from 'array-keyed-map';
 
+import { EVENT_STORAGE, IEventStorage } from '@senses-chat/operator-database';
 import {
   IEventWithMetadata,
   AggregateRootWithId,
   AggregateMetadata,
-} from 'src/common';
-import { EVENT_STORAGE, IEventStorage } from 'src/modules/storage';
-
-import { AggregateStore } from './aggregate.decorator';
+  AggregateStore,
+} from '@senses-chat/operator-common';
 
 @Injectable()
 export class EventStoreService<

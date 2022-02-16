@@ -8,7 +8,6 @@
         ".next/**"
       ],
       "dependsOn": [
-        "^prebuild",
         "^build"
       ]
     },
@@ -18,7 +17,7 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@senses-chat/operator-server#db:generate"
+        "^@senses-chat/operator-database#db:generate"
       ]
     },
     "clean": {

@@ -7,7 +7,7 @@ import {
   PrismaService,
   KeyValueStorageBase,
   WXKF_KV_STORAGE,
-} from 'src/modules/storage';
+} from '@senses-chat/operator-database';
 import { WxkfCredentials } from '.';
 
 import { WxkfService, wxkfServiceFactory } from './wxkf.service';

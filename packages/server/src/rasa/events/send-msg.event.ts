@@ -1,4 +1,4 @@
-import { EventMetadata, IEventWithMetadata } from 'src/common';
+import { EventMetadata, IEventWithMetadata } from '@senses-chat/operator-common';
 import { RasaWebhookPayload } from '../models';
 
 export class SendRasaMessageEvent

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from 'src/modules/storage';
+import { PrismaService, RouteType } from '@senses-chat/operator-database';
 
-import { Route, RouteType } from './models';
+import { Route } from './models';
 
 const DELIMITER = ':';
 

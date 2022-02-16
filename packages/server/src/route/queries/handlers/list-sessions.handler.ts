@@ -4,9 +4,9 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { addSeconds } from 'date-fns';
 
 import { EventStoreService } from 'src/event-store';
-import { ISessionStorage, SESSION_STORAGE } from 'src/modules/storage';
+import { ISessionStorage, SESSION_STORAGE, SessionDefinition } from '@senses-chat/operator-database';
 
-import { Session, SessionDefinition } from '../../models';
+import { Session } from '../../models';
 import { ListSessionsQuery } from '../list-sessions.query';
 
 @QueryHandler(ListSessionsQuery)

@@ -1,5 +1,5 @@
 import { RouteType } from '@prisma/client';
-import { SessionDefinition } from 'src/route';
+import { SessionDefinition } from './session-definition.interface';
 
 export interface ISessionStorage {
   refresh(id: string): Promise<void>;

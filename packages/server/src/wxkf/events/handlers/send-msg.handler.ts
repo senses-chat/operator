@@ -8,7 +8,7 @@ import {
   ImageMessageContent,
   MessageContentType,
 } from 'src/route';
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 import { WxkfMessagePayload, WxkfMessageType } from 'src/utils/wx-sdk';
 
 import { WxkfServiceRegistry } from '../../wxkf.registry';

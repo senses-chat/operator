@@ -1,8 +1,5 @@
 import { Controller, Get, Logger, Query, Post, Body } from '@nestjs/common';
-
-import { PrismaService } from 'src/modules/storage';
-
-import { RasaServer, Route, RouteType } from 'prisma/prisma-client/index';
+import { PrismaService, RasaServer, Route, RouteType } from '@senses-chat/operator-database';
 
 @Controller('/api/bot/config')
 export class BotConfigApiController {

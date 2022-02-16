@@ -2,9 +2,12 @@ import { Logger, Type } from '@nestjs/common';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 
-import { instanceToPlain, plainToInstance } from 'src/utils/transformer';
-import { IEventWithMetadata } from 'src/common';
-import { EventMetadataStore } from 'src/event-store';
+import {
+  instanceToPlain,
+  plainToInstance,
+  EventMetadataStore,
+  IEventWithMetadata,
+} from '@senses-chat/operator-common';
 
 import { IEventStorage } from './event-storage.interface';
 

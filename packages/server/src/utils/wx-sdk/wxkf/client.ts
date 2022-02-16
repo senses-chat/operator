@@ -4,7 +4,7 @@ import contentDisposition from 'content-disposition';
 import { lookup as lookupMimeType } from 'mime-types';
 import { XMLParser } from 'fast-xml-parser';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 
 import {
   WxkfMessagePayload,

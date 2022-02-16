@@ -1,9 +1,10 @@
 import { Expose } from 'class-transformer';
 
-import { EventMetadata, IEventWithMetadata } from 'src/common';
-import { Event } from 'src/event-store';
+import { EventMetadata, IEventWithMetadata } from '@senses-chat/operator-common';
+import { Event } from '@senses-chat/operator-common';
+import { SessionDefinition } from '@senses-chat/operator-database';
 
-import { RouteMessage, SessionDefinition } from '../models';
+import { RouteMessage } from '../models';
 
 @Event()
 export class NewSessionMessageEvent implements IEventWithMetadata {

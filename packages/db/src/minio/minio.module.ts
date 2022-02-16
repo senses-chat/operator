@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
-import { ConfigModule } from 'src/modules';
+import minioConfig from './config';
 import { MinioService } from './minio.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule.forFeature(minioConfig)],
   providers: [MinioService],
   exports: [MinioService],
 })

@@ -5,8 +5,8 @@ import { of, from, zip, interval } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
 import fetch from 'node-fetch';
 
-import { plainToInstance } from 'src/utils/transformer';
-import { PrismaService } from 'src/modules/storage';
+import { plainToInstance } from '@senses-chat/operator-common';
+import { PrismaService } from '@senses-chat/operator-database';
 
 import { RasaResponsePayload, RasaWebhookPayload } from './models';
 import { SendRasaMessageEvent } from './events';

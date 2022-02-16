@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 
-import { Module as ConfigModule } from '../config.module';
+import storageConfig from './config';
 import { MinioModule } from './minio';
 import { PrismaModule, PrismaService } from './prisma';
 import { Module as RedisModule } from './redis.module';
@@ -25,7 +25,7 @@ import {
 @Module({})
 export class StorageModule {
   public static register(): DynamicModule {
-    const modules: any[] = [ConfigModule, MinioModule, PrismaModule];
+    const modules: any[] = [ConfigModule.forFeature(storageConfig), MinioModule, PrismaModule];
 
     const useRedis = process.env.STORAGE_USE_REDIS === 'true';
 

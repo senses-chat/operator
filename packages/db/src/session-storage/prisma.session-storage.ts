@@ -3,9 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { RouteType } from '@prisma/client';
 import { addSeconds } from 'date-fns';
 
-import { SessionDefinition } from 'src/route';
-
 import { PrismaService } from '../prisma';
+import { SessionDefinition } from './session-definition.interface';
 import { ISessionStorage } from './session-storage.interface';
 
 export class PrismaSessionStorage implements ISessionStorage {

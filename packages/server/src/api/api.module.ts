@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
+import { PrismaModule } from '@senses-chat/operator-database';
 import { WxkfModule } from 'src/wxkf';
-import { PrismaModule } from 'src/modules/storage/prisma';
 
 import { WxkfApiController } from './wxkf-api.controller';
 import { HistoryController } from './history.controller';
