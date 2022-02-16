@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model KeyValueStorage {
+  namespace String
+  key       String
+  value     String
+  expires   Int?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([namespace, key])
+  @@index([namespace])
+  @@index([namespace, key])
+}
+
+model SessionStorage {
+  id                    String    @id
+  sourceType            RouteType
+  sourceNamespaces      String
+  destinationType       RouteType
+  destinationNamespaces String
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([sourceType, sourceNamespaces])
+  @@index([destinationType, destinationNamespaces])
+}
+
+model EventStorage {
+  id            Int      @id @default(autoincrement())
+  aggregateId   String
+  aggregateType String
+  version       Int
+  eventType     String
+  eventData     Json
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([aggregateId, aggregateType, version])
+  @@index([aggregateId, aggregateType])
+  @@index([aggregateId])
+}
+
+model RasaServer {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar
+  url       String   @db.VarChar
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model Route {
+  id              Int       @id @default(autoincrement())
+  sourceType      RouteType
+  sourceName      String    @db.VarChar
+  destinationType RouteType
+  destinationName String    @db.VarChar
+  isActive        Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@unique([sourceType, sourceName, destinationType, destinationName])
+  @@index([destinationName])
+  @@index([sourceName])
+  @@index([isActive])
+  @@index([sourceType])
+  @@index([destinationType])
+}
+
+model WechatApp {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar
+  appId     String   @db.VarChar
+  appSecret String   @db.VarChar
+  token     String?  @db.VarChar
+  aesKey    String?  @db.VarChar
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model WxkfAccountLink {
+  id          Int    @id @default(autoincrement())
+  corpId      String @db.VarChar
+  openKfId    String @db.VarChar
+  scene       String @db.VarChar
+  scene_param Json?  @db.Json
+  url         String @unique @db.VarChar
+
+  @@index([corpId, openKfId])
+}
+
+enum RouteType {
+  Rasa
+  WechatApp
+  Wxkf
+  Saga
+}
