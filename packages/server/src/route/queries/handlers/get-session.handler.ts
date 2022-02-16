@@ -2,8 +2,8 @@ import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 import { EventStoreService } from 'src/event-store';
-import { ISessionStorage, SESSION_STORAGE } from 'src/modules/storage';
-import { instanceToPlain } from 'src/utils/transformer';
+import { ISessionStorage, SESSION_STORAGE } from '@senses-chat/operator-database';
+import { instanceToPlain } from '@senses-chat/operator-common';
 
 import { Session } from '../../models';
 import { GetSessionQuery } from '../get-session.query';

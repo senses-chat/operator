@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
+import { StorageModule } from '@senses-chat/operator-database';
 import { EventStoreModule } from 'src/event-store';
-import { ConfigModule, StorageModule } from 'src/modules';
+
+import { ConfigModule } from 'src/modules';
 
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';

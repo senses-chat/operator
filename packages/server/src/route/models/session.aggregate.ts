@@ -1,24 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { AggregateRootWithId } from 'src/common';
-import { Aggregate } from 'src/event-store';
+import { AggregateRootWithId, Aggregate } from '@senses-chat/operator-common';
+import { SessionDefinition } from '@senses-chat/operator-database';
 
-import { RouteType } from './route.dto';
 import { NewRouteMessageCommand } from '../commands';
 import { NewSessionMessageEvent } from '../events';
-
-export interface SessionDefinitionComponent {
-  type: RouteType;
-  namespaces: string[];
-}
-
-export interface SessionDefinition {
-  id: string;
-  source: SessionDefinitionComponent;
-  destination: SessionDefinitionComponent;
-  createdAt?: Date;
-  updatedAt?: Date;
-  isDestination?: boolean;
-}
 
 @Aggregate()
 export class Session extends AggregateRootWithId {

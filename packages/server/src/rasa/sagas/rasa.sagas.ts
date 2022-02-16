@@ -3,17 +3,18 @@ import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
 
+import { RouteType } from '@senses-chat/operator-database';
+import { plainToInstance } from '@senses-chat/operator-common';
+
 import {
   RouteMessage,
   NewRouteMessageCommand,
   MessageContentType,
   NewSessionMessageEvent,
-  RouteType,
   TextMessageContent,
   FileMessageContent,
   ImageMessageContent,
 } from 'src/route';
-import { plainToInstance } from 'src/utils/transformer';
 
 import { NewRasaMessageEvent } from '../events';
 import { SendRasaMessageCommand } from '../commands';

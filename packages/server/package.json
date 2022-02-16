@@ -1,19 +1,18 @@
 {
   "name": "@senses-chat/operator-server",
   "version": "0.1.0",
-  "description": "",
+  "description": "Senses Chat Operator Main Server",
   "author": "Simon Liang <simon@x-tech.io>",
   "license": "MIT",
   "scripts": {
-    "prebuild": "yarn clean && yarn db:generate",
-    "build": "NODE_ENV=production nest build",
+    "prebuild": "yarn clean",
+    "build": "nest build",
     "db:generate": "prisma generate",
     "dev": "NODE_ENV=development nest start --watch",
     "start": "NODE_ENV=production node dist/main",
     "clean": "rimraf dist",
     "format": "prettier --write",
-    "lint": "eslint --fix",
-    "docgen": "compodoc -p tsconfig.json"
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^5.2.0",
@@ -29,6 +28,8 @@
     "@nestjs/terminus": "^8.0.3",
     "@nestjs/typeorm": "^8.0.2",
     "@prisma/client": "^3.9.2",
+    "@senses-chat/operator-common": "0.1.0",
+    "@senses-chat/operator-database": "0.1.0",
     "array-keyed-map": "^2.1.2",
     "body-parser-xml": "^2.0.3",
     "class-transformer": "^0.5.1",
@@ -51,7 +52,6 @@
     "uniqid": "^5.4.0"
   },
   "devDependencies": {
-    "@compodoc/compodoc": "^1.1.16",
     "@nestjs/cli": "^8.1.6",
     "@nestjs/schematics": "^8.0.5",
     "@nestjs/testing": "^8.2.4",
@@ -74,28 +74,8 @@
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  },
   "volta": {
     "node": "16.13.1",
     "yarn": "1.22.17"
-  },
-  "lint-staged": {
-    "./src/**/*{.ts,.tsx}": [
-      "npm run lint",
-      "npm run format"
-    ]
   }
 }

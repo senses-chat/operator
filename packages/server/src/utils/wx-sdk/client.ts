@@ -1,7 +1,7 @@
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import qs from 'query-string';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 import { Constructor, WxResponse } from './model';
 
 export abstract class WxBaseClient {

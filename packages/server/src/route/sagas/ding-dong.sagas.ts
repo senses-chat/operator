@@ -3,11 +3,11 @@ import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, of } from 'rxjs';
 import { filter, concatMap } from 'rxjs/operators';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
+import { RouteType } from '@senses-chat/operator-database';
 
 import { NewSessionMessageEvent } from '../events';
 import {
-  RouteType,
   MessageContentType,
   TextMessageContent,
   RouteMessage,

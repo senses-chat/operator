@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 
 import { WechatService } from './wechat.service';
 import { Wechat3rdPartyService } from './3rdparty.service';

@@ -3,11 +3,12 @@ import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of, from } from 'rxjs';
 import { concatMap, filter, map, tap } from 'rxjs/operators';
 
+import { plainToInstance, instanceToPlain } from '@senses-chat/operator-common';
+import { RouteType } from '@senses-chat/operator-database';
 import {
   RouteMessage,
   NewRouteMessageCommand,
   NewSessionMessageEvent,
-  RouteType,
   MessageContentType,
 } from 'src/route';
 import {
@@ -19,7 +20,6 @@ import {
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
 } from 'src/utils/wx-sdk';
-import { plainToInstance, instanceToPlain } from 'src/utils/transformer';
 
 import { SendWxkfMessageCommand } from '../commands';
 import { NewWxkfMessageEvent } from '../events';

@@ -1,7 +1,5 @@
-import { Type } from 'src/utils/transformer';
-import { RouteType } from '@prisma/client';
-
-export { RouteType };
+import { Type } from '@senses-chat/operator-common';
+import { RouteType } from '@senses-chat/operator-database';
 
 export enum MessageContentType {
   Text = 'text',

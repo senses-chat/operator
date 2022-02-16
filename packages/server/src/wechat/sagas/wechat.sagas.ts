@@ -3,12 +3,12 @@ import { Saga, ICommand, IEvent, ofType } from '@nestjs/cqrs';
 import { Observable, EMPTY, of } from 'rxjs';
 import { concatMap, filter } from 'rxjs/operators';
 
-import { plainToInstance, instanceToPlain } from 'src/utils/transformer';
+import { plainToInstance, instanceToPlain } from '@senses-chat/operator-common';
+import { RouteType } from '@senses-chat/operator-database';
 import {
   RouteMessage,
   NewRouteMessageCommand,
   NewSessionMessageEvent,
-  RouteType,
 } from 'src/route';
 
 import { SendWechatMessageCommand } from '../commands';

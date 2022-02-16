@@ -1,5 +1,5 @@
-import { IEventWithMetadata, EventMetadata } from 'src/common';
-import { Event } from 'src/event-store';
+import { IEventWithMetadata, EventMetadata } from '@senses-chat/operator-common';
+import { Event } from '@senses-chat/operator-common';
 import { WxkfIncomingMessage } from 'src/utils/wx-sdk';
 
 @Event()

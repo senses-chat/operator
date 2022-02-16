@@ -7,7 +7,7 @@ import {
   KeyValueStorageBase,
   MinioService,
   PrismaService,
-} from 'src/modules/storage';
+} from '@senses-chat/operator-database';
 import {
   WxkfAccount,
   WxkfAccountAddInput,
@@ -21,7 +21,7 @@ import {
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
 } from 'src/utils/wx-sdk';
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 
 import { WxkfCredentials, WxkfAccountLink } from './models';
 

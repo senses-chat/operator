@@ -1,4 +1,4 @@
-import { Type } from 'src/utils/transformer';
+import { Type } from '@senses-chat/operator-common';
 
 export interface Wechat3rdPartyCredentials {
   appId: string;

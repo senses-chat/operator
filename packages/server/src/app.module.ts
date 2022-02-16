@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 
 import { ConfigModule } from './modules';
 import { HealthModule } from './health';
@@ -13,6 +14,7 @@ import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule,
+    CqrsModule,
     HealthModule,
     RouteModule,
     WechatModule,

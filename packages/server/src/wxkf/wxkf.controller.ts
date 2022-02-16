@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 
-import { plainToInstance } from 'src/utils/transformer';
+import { plainToInstance } from '@senses-chat/operator-common';
 
 import { NewWxkfMessageCommand } from './commands/new-msg.command';
 import { WxkfService } from './wxkf.service';

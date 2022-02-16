@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 import { EventStoreService } from 'src/event-store';
-import { instanceToPlain } from 'src/utils/transformer';
+import { instanceToPlain } from '@senses-chat/operator-common';
 
 import { WxkfMessageLog } from '../../models';
 import { GetWxkfMessageLogQuery } from '../get-msg-log.query';

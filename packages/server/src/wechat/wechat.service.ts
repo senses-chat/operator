@@ -16,7 +16,7 @@ import {
   KeyValueStorageBase,
   MinioService,
   PrismaService,
-} from 'src/modules/storage';
+} from '@senses-chat/operator-database';
 
 import {
   WxACodeUnlimitedDto,

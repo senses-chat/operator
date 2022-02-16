@@ -1,5 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { plainToInstance, instanceToPlain } from 'src/utils/transformer';
+import { plainToInstance, instanceToPlain } from '@senses-chat/operator-common';
 
 import { SendRasaMessageCommand, NewRasaMessageCommand } from '../commands';
 import { SendRasaMessageEvent, NewRasaMessageEvent } from '../events';
