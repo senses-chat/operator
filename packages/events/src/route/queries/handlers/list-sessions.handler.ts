@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { addSeconds } from 'date-fns';
 
-import { EventStoreService } from 'src/event-store';
 import { ISessionStorage, SESSION_STORAGE, SessionDefinition } from '@senses-chat/operator-database';
 
+import { EventStoreService } from '../../../event-sourcing';
 import { Session } from '../../models';
 import { ListSessionsQuery } from '../list-sessions.query';
 

@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
-
 import { StorageModule } from '@senses-chat/operator-database';
-import { EventStoreModule } from 'src/event-store';
+
+import { EventSourcingModule } from '../event-sourcing';
 
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
@@ -12,7 +11,7 @@ import { SessionRepository } from './repositories';
 import { RouteService } from './route.service';
 
 @Module({
-  imports: [CqrsModule, EventStoreModule, StorageModule.register()],
+  imports: [EventSourcingModule, StorageModule.register()],
   providers: [
     RouteService,
     SessionRepository,

@@ -7,7 +7,7 @@ import {
   Button,
   ImageMessageContent,
   MessageContentType,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 import { plainToInstance } from '@senses-chat/operator-common';
 import { WxkfMessagePayload, WxkfMessageType } from '@senses-chat/wx-sdk';
 

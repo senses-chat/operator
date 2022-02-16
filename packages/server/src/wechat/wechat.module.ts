@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { StorageModule } from '@senses-chat/operator-database';
-import { EventStoreModule } from 'src/event-store';
+import { EventSourcingModule } from '@senses-chat/operator-events';
 
 import { ConfigModule } from 'src/modules';
 
@@ -17,7 +17,7 @@ import { Wechat3rdPartyService } from './3rdparty.service';
 @Module({
   imports: [
     CqrsModule,
-    EventStoreModule,
+    EventSourcingModule,
     ConfigModule,
     StorageModule.register(),
   ],

@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { EventStoreService } from 'src/event-store';
+import { EventStoreService } from '@senses-chat/operator-events';
 
 import { WxkfMessageLog } from '../../models';
 import { ListWxkfMessageLogsQuery } from '../list-msg-logs.query';

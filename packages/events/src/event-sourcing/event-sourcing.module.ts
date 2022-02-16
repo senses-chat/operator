@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-
 import { StorageModule } from '@senses-chat/operator-database';
 
 import { EventStoreService } from './event-store.service';
 
+// Re-importing CQRS Module services so module ref can work
 @Module({
   imports: [
     CqrsModule,
@@ -13,4 +13,4 @@ import { EventStoreService } from './event-store.service';
   providers: [EventStoreService],
   exports: [EventStoreService],
 })
-export class EventStoreModule {}
+export class EventSourcingModule {}

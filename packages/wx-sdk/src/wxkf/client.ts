@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import FormData from 'form-data';
 import contentDisposition from 'content-disposition';
 import { lookup as lookupMimeType } from 'mime-types';
@@ -25,6 +24,7 @@ import {
 import { WxBaseClient } from '../client';
 import { WxResponse, WxAccessTokenResponse } from '../model';
 import { WxMsgCrypto } from '../crypto';
+import fetch from '../fetch';
 
 export interface WxkfClientOptions {
   corpId: string;

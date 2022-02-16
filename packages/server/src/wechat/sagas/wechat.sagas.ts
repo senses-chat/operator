@@ -9,7 +9,7 @@ import {
   RouteMessage,
   NewRouteMessageCommand,
   NewSessionMessageEvent,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 
 import { SendWechatMessageCommand } from '../commands';
 import { NewWechatMessageEvent } from '../events';

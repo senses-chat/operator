@@ -1,7 +1,7 @@
 import { Type } from '@senses-chat/operator-common';
 import { IEventWithMetadata, EventMetadata } from '@senses-chat/operator-common';
 import { Event } from '@senses-chat/operator-common';
-import { RouteMessage } from 'src/route';
+import { RouteMessage } from '@senses-chat/operator-events';
 
 @Event()
 export class SendWxkfMessageEvent implements IEventWithMetadata {

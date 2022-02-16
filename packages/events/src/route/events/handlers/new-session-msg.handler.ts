@@ -1,8 +1,7 @@
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
-import { SessionRepository } from 'src/route';
-
+import { SessionRepository } from '../../repositories';
 import { NewSessionMessageEvent } from '../new-session-msg.event';
 
 @EventsHandler(NewSessionMessageEvent)

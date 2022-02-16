@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { EventStoreService } from 'src/event-store';
+import { EventStoreService } from '@senses-chat/operator-events';
 
 import { NewWechatMessageCommand } from '../new-msg.command';
 import { WechatMessageLog } from '../../models';

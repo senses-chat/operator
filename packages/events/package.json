@@ -1,7 +1,7 @@
 {
-  "name": "@senses-chat/operator-database",
+  "name": "@senses-chat/operator-events",
   "version": "0.1.0",
-  "description": "Storage-Related Modules for Senses Chat Operator",
+  "description": "Event-Driven Related Modules for Senses Chat Operator",
   "author": "Simon Liang <simon@x-tech.io>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -11,34 +11,26 @@
     "src"
   ],
   "scripts": {
-    "prebuild": "npm run clean && npm run db:generate",
+    "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.json",
-    "db:generate": "prisma generate",
     "clean": "rimraf dist",
     "format": "prettier --write",
     "lint": "eslint --fix"
   },
   "dependencies": {
-    "@liaoliaots/nestjs-redis": "^5.2.0",
-    "@prisma/client": "^3.9.2",
     "@senses-chat/operator-common": "0.1.0",
-    "ioredis": "^4.28.2",
-    "lru-cache": "^6.0.0",
-    "minio": "^7.0.25"
+    "@senses-chat/operator-database": "0.1.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
-    "@nestjs/config": "^1.1.5",
     "@nestjs/core": "^8.3.0",
+    "@nestjs/cqrs": "^8.0.2",
+    "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.4.0"
   },
   "devDependencies": {
-    "@types/ioredis": "^4.28.5",
-    "@types/lru-cache": "^5.1.1",
-    "@types/minio": "^7.0.11",
     "@types/node": "^16",
-    "prisma": "^3.9.2",
     "rimraf": "^3.0.0"
   },
   "volta": {

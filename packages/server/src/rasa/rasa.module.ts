@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { StorageModule } from '@senses-chat/operator-database';
+import { EventSourcingModule } from '@senses-chat/operator-events';
 
 import { ConfigModule } from 'src/modules';
 
@@ -10,7 +11,7 @@ import { RasaSagas } from './sagas';
 import { RasaService } from './rasa.service';
 
 @Module({
-  imports: [CqrsModule, ConfigModule, StorageModule.register()],
+  imports: [CqrsModule, EventSourcingModule, ConfigModule, StorageModule.register()],
   providers: [RasaService, RasaSagas, ...CommandHandlers, ...EventHandlers],
 })
 export class RasaModule {}

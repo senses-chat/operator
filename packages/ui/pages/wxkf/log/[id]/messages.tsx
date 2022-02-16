@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useSWR, { SWRResponse } from 'swr';
 
-import { RouteMessage } from '@senses-chat/operator-server/dist/route/models/route.dto';
+import { RouteMessage } from '@senses-chat/operator-events/dist/route/models/route.dto';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';

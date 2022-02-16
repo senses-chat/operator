@@ -10,7 +10,7 @@ import {
   NewRouteMessageCommand,
   NewSessionMessageEvent,
   MessageContentType,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 import {
   WxkfEnterSessionEvent,
   WxkfIncomingEventMessage,

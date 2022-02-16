@@ -14,7 +14,7 @@ import {
   TextMessageContent,
   FileMessageContent,
   ImageMessageContent,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 
 import { NewRasaMessageEvent } from '../events';
 import { SendRasaMessageCommand } from '../commands';

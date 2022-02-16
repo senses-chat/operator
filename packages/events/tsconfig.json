@@ -10,7 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "target": "es2017",
+    "target": "es6",
     "sourceMap": false,
     "outDir": "./dist"
   },

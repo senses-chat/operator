@@ -1,10 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { EventStoreService } from 'src/event-store';
 import { ISessionStorage, SESSION_STORAGE } from '@senses-chat/operator-database';
 import { instanceToPlain } from '@senses-chat/operator-common';
 
+import { EventStoreService } from '../../../event-sourcing';
 import { Session } from '../../models';
 import { GetSessionQuery } from '../get-session.query';
 

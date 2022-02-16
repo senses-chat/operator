@@ -1,9 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import uniqid from 'uniqid';
 
-import { EventStoreService } from 'src/event-store';
 import { SESSION_STORAGE, ISessionStorage, RouteType, SessionDefinition } from '@senses-chat/operator-database';
 
+import { EventStoreService } from '../../event-sourcing';
 import { RouteService } from '../route.service';
 import { Route, Session } from '../models';
 

@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { RouteModule } from '@senses-chat/operator-events';
 
 import { ConfigModule } from './modules';
-import { HealthModule } from './health';
-import { RouteModule } from './route';
 import { WechatModule } from './wechat';
 import { WxkfModule } from './wxkf';
 import { RasaModule } from './rasa';
@@ -14,8 +12,6 @@ import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule,
-    CqrsModule,
-    HealthModule,
     RouteModule,
     WechatModule,
     WxkfModule,

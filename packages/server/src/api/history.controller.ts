@@ -6,7 +6,7 @@ import { GetWxkfMessageLogQuery, ListWxkfMessageLogsQuery } from 'src/wxkf';
 import {
   GetSessionQuery,
   ListSessionsQuery,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 
 @Controller('/api/history')
 export class HistoryController {

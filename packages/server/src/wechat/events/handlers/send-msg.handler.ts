@@ -7,7 +7,7 @@ import {
   TextWithButtonsMessageContent,
   Button,
   ImageMessageContent,
-} from 'src/route';
+} from '@senses-chat/operator-events';
 
 import { WechatService } from '../../wechat.service';
 import { SendWechatMessageEvent } from '../send-msg.event';

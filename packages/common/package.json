@@ -18,10 +18,12 @@
     "lint": "eslint --fix"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1"
+  },
+  "peerDependencies": {
     "@nestjs/common": "^8.3.0",
     "@nestjs/core": "^8.3.0",
     "@nestjs/cqrs": "^8.0.2",
-    "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.4.0"
   },
