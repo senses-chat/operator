@@ -149,7 +149,11 @@ export class WxkfSagas {
             ],
             content: {
               type: MessageContentType.Text,
-              text: wxkfMessage.text.content,
+              text: wxkfMessage.text.menu_id || wxkfMessage.text.content,
+              metadata: {
+                menuText: wxkfMessage.text.content,
+                menuId: wxkfMessage.text.menu_id,
+              },
             },
           });
         }
