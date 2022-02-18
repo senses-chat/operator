@@ -50,19 +50,22 @@ export class SendWxkfMessageEventHandler
 
     this.logger.debug(JSON.stringify(payload));
 
-    if (message.content.type === MessageContentType.Text) {
-      await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
-        plainToInstance(WxkfMessagePayload, {
-          ...payload,
-          msgtype: WxkfMessageType.Text,
-          text: {
-            content: (content as TextMessageContent).text,
-          },
-        }),
-      );
+    if (content.type === MessageContentType.Text) {
+      const textMessageContent = content as TextMessageContent;
+      if (textMessageContent.text) {
+        await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
+          plainToInstance(WxkfMessagePayload, {
+            ...payload,
+            msgtype: WxkfMessageType.Text,
+            text: {
+              content: textMessageContent.text,
+            },
+          }),
+        );
+      }
     }
 
-    if (message.content.type === MessageContentType.TextWithButtons) {
+    if (content.type === MessageContentType.TextWithButtons) {
       const textWithButtonsContent = content as TextWithButtonsMessageContent;
       await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
         plainToInstance(WxkfMessagePayload, {
@@ -99,12 +102,12 @@ export class SendWxkfMessageEventHandler
     //   );
     // }
 
-    if (message.content.metadata && message.content.metadata.service_state) {
+    if (content.metadata && content.metadata.service_state) {
       await this.wxkfServiceRegistry.getService(payload.corpid).transferServiceState(
         payload.open_kfid,
         payload.touser,
-        message.content.metadata.service_state,
-        message.content.metadata.servicer_userid,
+        content.metadata.service_state,
+        content.metadata.servicer_userid,
       )
     }
   }
