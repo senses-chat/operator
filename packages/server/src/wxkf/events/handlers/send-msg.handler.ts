@@ -98,5 +98,14 @@ export class SendWxkfMessageEventHandler
     //     }),
     //   );
     // }
+
+    if (message.content.metadata && message.content.metadata.service_state) {
+      await this.wxkfServiceRegistry.getService(payload.corpid).transferServiceState(
+        payload.open_kfid,
+        payload.touser,
+        message.content.metadata.service_state,
+        message.content.metadata.servicer_userid,
+      )
+    }
   }
 }

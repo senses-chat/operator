@@ -381,3 +381,25 @@ export class WxkfAccountListResponse extends WxResponse {
   @Type(() => WxkfAccount)
   account_list: WxkfAccount[];
 }
+
+export class WxkfServiceStateGetInput {
+  open_kfid: string;
+  external_userid: string;
+}
+
+export class WxkfServiceStateGetResponse extends WxResponse {
+  service_state: number;
+  servicer_userid?: string;
+}
+
+export class WxkfServiceStateTransInput {
+  open_kfid: string;
+  external_userid: string;
+  // TODO: make enum
+  service_state: number;
+  servicer_userid?: string;
+}
+
+export class WxkfServiceStateTransResponse extends WxResponse {
+  msg_code?: string;
+}

@@ -18,6 +18,10 @@ import {
   WxkfMediaUploadInput,
   WxkfMessagePayload,
   WxkfSendMsgResponse,
+  WxkfServiceStateGetInput,
+  WxkfServiceStateGetResponse,
+  WxkfServiceStateTransInput,
+  WxkfServiceStateTransResponse,
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
 } from '@senses-chat/wx-sdk';
@@ -187,6 +191,35 @@ export class WxkfService {
     );
 
     return response.url;
+  }
+
+  public async getServiceState(
+    open_kfid: string,
+    external_userid: string,
+  ): Promise<WxkfServiceStateGetResponse> {
+    return this.wxkfClient.getServiceState(
+      plainToInstance(WxkfServiceStateGetInput, {
+        open_kfid,
+        external_userid,
+      }),
+    );
+  }
+
+  public async transferServiceState(
+    open_kfid: string,
+    external_userid: string,
+    // TODO: enum
+    service_state: number,
+    servicer_userid?: string,
+  ): Promise<WxkfServiceStateTransResponse> {
+    return this.wxkfClient.transferServiceState(
+      plainToInstance(WxkfServiceStateTransInput, {
+        open_kfid,
+        external_userid,
+        service_state,
+        servicer_userid,
+      }),
+    );
   }
 
   public async sendMessage(

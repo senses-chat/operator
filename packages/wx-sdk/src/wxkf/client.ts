@@ -20,6 +20,10 @@ import {
   WxkfAccountListResponse,
   WxkfAccountDeleteInput,
   WxkfAddContactWayResponse,
+  WxkfServiceStateGetInput,
+  WxkfServiceStateGetResponse,
+  WxkfServiceStateTransInput,
+  WxkfServiceStateTransResponse,
 } from './model';
 import { WxBaseClient } from '../client';
 import { WxResponse, WxAccessTokenResponse } from '../model';
@@ -111,6 +115,28 @@ export class WxkfClient extends WxBaseClient {
     const access_token = await this.fetchAccessToken();
     const url = this.url('/kf/add_contact_way', { access_token });
     return this.request(WxkfAddContactWayResponse, url, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  }
+
+  public async getServiceState(
+    input: WxkfServiceStateGetInput,
+  ): Promise<WxkfServiceStateGetResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/service_state/get', { access_token });
+    return this.request(WxkfServiceStateGetResponse, url, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  }
+
+  public async transferServiceState(
+    input: WxkfServiceStateTransInput,
+  ): Promise<WxkfServiceStateTransResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/service_state/trans', { access_token });
+    return this.request(WxkfServiceStateGetResponse, url, {
       method: 'POST',
       body: JSON.stringify(input),
     });
