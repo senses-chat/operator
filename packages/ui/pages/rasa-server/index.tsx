@@ -55,23 +55,23 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: 'Name',
+      title: '名字',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'URL',
+      title: '链接',
       dataIndex: 'url',
       key: 'url',
     },
     {
-      title: 'isActive',
+      title: '是否激活',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? 'Yes' : 'No'),
+      render: (isActive: boolean) => (isActive ? '是' : '否'),
     },
     {
-      title: 'createdAt',
+      title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date) => (
@@ -79,7 +79,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'updatedAt',
+      title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date) => (
@@ -104,16 +104,16 @@ export default function IndexPage() {
               )
             }
           >
-            Update
+            更新
           </Button>
           <Popconfirm
-            title="Are you sure to delete this rasa server?"
+            title="确认删除该 Rasa 服务吗？"
             onConfirm={() => onDeleteRasaServer(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText="确认"
+            cancelText="取消"
           >
             <Button className="mr-2" type="primary" danger>
-              Delete
+              删除
             </Button>
           </Popconfirm>
         </div>
@@ -148,9 +148,9 @@ export default function IndexPage() {
       }),
     });
     if (res) {
-      message.success('Delete rasa server successful');
+      message.success('删除 Rasa 服务成功');
     } else {
-      message.error('Delete rasa server failed');
+      message.error('删除 Rasa 服务失败');
     }
     mutate(
       url(
@@ -164,7 +164,7 @@ export default function IndexPage() {
 
   async function onConfirmRasaServer() {
     if (!editName || !editURL) {
-      message.error('Missing Param');
+      message.error('请填写完整参数');
       return;
     }
 
@@ -184,10 +184,10 @@ export default function IndexPage() {
       },
     );
     if (res) {
-      message.success(`${editId ? 'Update' : 'Create'} rasa server successful`);
+      message.success(`${editId ? '更新' : '新建'} Rasa 服务成功`);
       setIsModalVisible(false);
     } else {
-      message.error(`${editId ? 'Update' : 'Create'} rasa server failed`);
+      message.error(`${editId ? '更新' : '新建'} Rasa 服务失败`);
     }
     mutate(
       url(
@@ -210,12 +210,12 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Rasa Server Management</title>
+        <title>Rasa 服务管理</title>
       </Head>
 
       <div className="flex flex-row justify-end mb-2">
         <Button type="primary" onClick={onCreateAccount}>
-          Create
+          新建
         </Button>
       </div>
 
@@ -232,27 +232,27 @@ export default function IndexPage() {
       />
 
       <Modal
-        title={`${editId ? 'Update' : 'Create'} Rasa Server`}
+        title={`${editId ? '更新' : '新建'} Rasa 服务`}
         visible={isModalVisible}
         onOk={onConfirmRasaServer}
         onCancel={() => setIsModalVisible(false)}
       >
         <Form>
-          <Form.Item label="Name">
+          <Form.Item label="名字">
             <Input
-              placeholder="Name"
+              placeholder="名字"
               value={editName}
               onChange={(ev) => setEditName(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="URL">
+          <Form.Item label="链接">
             <Input
-              placeholder="URL"
+              placeholder="链接"
               value={editURL}
               onChange={(ev) => setEditURL(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Is Active">
+          <Form.Item label="是否激活">
             <Switch
               checked={editIsActive}
               onChange={(value) => setEditIsActive(value)}

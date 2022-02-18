@@ -46,25 +46,25 @@ export default function AccountLinksPage() {
 
   const columns = [
     {
-      title: 'Scene',
+      title: '场景',
       dataIndex: 'scene',
       key: 'scene',
     },
     {
-      title: 'Scene Param',
+      title: '场景参数',
       dataIndex: 'scene_param',
       key: 'scene_param',
       render: (sceneParam: JSON) => qs.stringify(sceneParam),
     },
     {
-      title: 'Url',
+      title: '链接',
       dataIndex: 'url',
       key: 'url',
       render: (url: string) => (
         <div>
           <p className="mb-1">{url}</p>
-          <CopyToClipboard text={url} onCopy={() => message.success('Copied')}>
-            <Tooltip title={'Copy'}>
+          <CopyToClipboard text={url} onCopy={() => message.success('复制成功')}>
+            <Tooltip title={'复制'}>
               <CopyOutlined className="mr-2 text-sky-500 hover:scale-110" />
             </Tooltip>
           </CopyToClipboard>
@@ -81,13 +81,13 @@ export default function AccountLinksPage() {
       render: (_, record) => (
         <div>
           <Popconfirm
-            title="Are you sure to delete this link?"
+            title="确认删除这个链接？"
             onConfirm={() => onDeleteLink(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText="确认"
+            cancelText="取消"
           >
             <Button className="mr-2" type="link" danger>
-              Delete
+              删除
             </Button>
           </Popconfirm>
         </div>
@@ -97,12 +97,12 @@ export default function AccountLinksPage() {
 
   const columnsSceneParam = [
     {
-      title: 'Key',
+      title: 'Key 值',
       dataIndex: 'key',
       key: 'key',
     },
     {
-      title: 'Value',
+      title: 'Value 值',
       dataIndex: 'value',
       key: 'value',
     },
@@ -117,16 +117,16 @@ export default function AccountLinksPage() {
             className="mr-2"
             type="link"
           >
-            Update
+            更新
           </Button>
           <Popconfirm
-            title="Are you sure to delete this param?"
+            title="确认删除这个参数？"
             onConfirm={() => onDeleteParam(record.key)}
-            okText="Yes"
-            cancelText="No"
+            okText="确认"
+            cancelText="取消"
           >
             <Button className="mr-2" type="link" danger>
-              Delete
+              删除
             </Button>
           </Popconfirm>
         </div>
@@ -165,7 +165,7 @@ export default function AccountLinksPage() {
     }
 
     if (temp.find((item) => item.key === editKey)) {
-      message.error('Key already exists');
+      message.error('Key 值已经存在');
       return;
     }
 
@@ -198,10 +198,10 @@ export default function AccountLinksPage() {
       }),
     });
     if (res) {
-      message.success('Create account link successful');
+      message.success('新建账号链接成功');
       setIsModalVisible(false);
     } else {
-      message.error('Create account link failed');
+      message.error('新建账号链接失败');
     }
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
@@ -217,9 +217,9 @@ export default function AccountLinksPage() {
       }),
     });
     if (res) {
-      message.success('Delete account link successful');
+      message.success('删除账号链接成功');
     } else {
-      message.error('Delete account link failed');
+      message.error('删除账号链接失败');
     }
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
@@ -235,13 +235,13 @@ export default function AccountLinksPage() {
   return (
     <AppLayout>
       <Head>
-        <title>WXKF Account Management</title>
+        <title>微信客服账号管理</title>
       </Head>
 
       <div className="flex flex-row justify-between items-center mb-2">
-        <p className="mb-0">Name: {accountName}</p>
+        <p className="mb-0">名字: {accountName}</p>
         <Button type="primary" onClick={onCreateAccountLink}>
-          Create
+          新建
         </Button>
       </div>
 
@@ -265,20 +265,20 @@ export default function AccountLinksPage() {
       />
 
       <Modal
-        title={`${editId ? 'Update' : 'Create'} Account Link`}
+        title={`${editId ? '更新' : '新建'}账号链接`}
         visible={isModalVisible}
         onOk={onConfirmLink}
         onCancel={() => setIsModalVisible(false)}
       >
         <Form layout="vertical">
-          <Form.Item label="Scene">
+          <Form.Item label="场景">
             <Input
-              placeholder="Scene"
+              placeholder="场景"
               value={editScene}
               onChange={(ev) => setEditScene(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Scene Param">
+          <Form.Item label="场景参数">
             <Table
               dataSource={editSceneParam}
               columns={columnsSceneParam}
@@ -290,29 +290,29 @@ export default function AccountLinksPage() {
               type="link"
               className="block w-full mt-4 text-center border border-dashed border-blue-400 hover:border-solid"
             >
-              Add New Param
+              添加新参数
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title="Add New Param"
+        title="添加新参数"
         visible={isModalVisibleParam}
         onOk={onConfirmSceneParam}
         onCancel={() => setIsModalVisibleParam(false)}
       >
         <Form>
-          <Form.Item label="Key">
+          <Form.Item label="Key 值">
             <Input
-              placeholder="Key"
+              placeholder="Key 值"
               value={editKey}
               onChange={(ev) => setEditKey(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Value">
+          <Form.Item label="Value 值">
             <Input
-              placeholder="Value"
+              placeholder="Value 值"
               value={editValue}
               onChange={(ev) => setEditValue(ev.target.value)}
             />

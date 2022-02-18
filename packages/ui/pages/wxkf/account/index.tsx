@@ -48,13 +48,13 @@ export default function IndexPage() {
       key: 'open_kfid',
     },
     {
-      title: 'Avatar',
+      title: '头像',
       dataIndex: 'avatar',
       key: 'avatar',
       render: (url: string) => <Image src={url} width={50} height={50} />,
     },
     {
-      title: 'Name',
+      title: '名字',
       dataIndex: 'name',
       key: 'name',
     },
@@ -69,7 +69,7 @@ export default function IndexPage() {
             passHref
           >
             <Button className="mr-2" type="primary">
-              Links
+              链接管理
             </Button>
           </Link>
           <Button
@@ -82,13 +82,13 @@ export default function IndexPage() {
             Update
           </Button>
           <Popconfirm
-            title="Are you sure to delete this account?"
+            title="确认删除这个账户？"
             onConfirm={() => onDeleteAccount(record.open_kfid)}
-            okText="Yes"
-            cancelText="No"
+            okText="确认"
+            cancelText="取消"
           >
             <Button className="mr-2" type="primary" danger>
-              Delete
+              删除
             </Button>
           </Popconfirm>
         </div>
@@ -123,9 +123,9 @@ export default function IndexPage() {
       }),
     });
     if (res) {
-      message.success('Delete account successful');
+      message.success('删除账号成功');
     } else {
-      message.error('Delete account failed');
+      message.error('删除账号失败');
     }
     mutate(url(`/api/wxkf/account`));
   }
@@ -147,12 +147,12 @@ export default function IndexPage() {
 
   async function onConfirmAccount() {
     if (!editName) {
-      message.error('Missing Name');
+      message.error('缺少名字');
       return;
     }
 
     if (isLoading) {
-      message.error('Uploading avatar');
+      message.error('上传头像中，请稍后');
       return;
     }
 
@@ -171,10 +171,10 @@ export default function IndexPage() {
       },
     );
     if (res) {
-      message.success(`${editId ? 'Update' : 'Create'} account successful`);
+      message.success(`${editId ? '更新' : '新建'}账号成功`);
       setIsModalVisible(false);
     } else {
-      message.error(`${editId ? 'Update' : 'Create'} account failed`);
+      message.error(`${editId ? '更新' : '新建'}账号失败`);
     }
     mutate(url(`/api/wxkf/account`));
   }
@@ -190,12 +190,12 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>WXKF Account Management</title>
+        <title>微信客服账号管理</title>
       </Head>
 
       <div className="flex flex-row justify-end mb-2">
         <Button type="primary" onClick={onCreateAccount}>
-          Create
+          新建
         </Button>
       </div>
 
@@ -219,20 +219,22 @@ export default function IndexPage() {
       />
 
       <Modal
-        title={`${editId ? 'Update' : 'Create'} Account`}
+        title={`${editId ? '更新' : '新建'}账号`}
+        okText="确定"
+        cancelText="取消"
         visible={isModalVisible}
         onOk={onConfirmAccount}
         onCancel={() => setIsModalVisible(false)}
       >
         <Form>
-          <Form.Item label="Name">
+          <Form.Item label="名字">
             <Input
-              placeholder="Name"
+              placeholder="名字"
               value={editName}
               onChange={(ev) => setEditName(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Avatar">
+          <Form.Item label="头像">
             <Upload
               name="avatar"
               listType="picture-card"
@@ -245,12 +247,12 @@ export default function IndexPage() {
               ) : (
                 <div>
                   {isLoading ? <LoadingOutlined /> : <PlusOutlined />}
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                  <div style={{ marginTop: 8 }}>上传</div>
                 </div>
               )}
             </Upload>
             <p className="text-red-400">
-              If you don&apos;t upload avatar, it will use default avatar
+              如果没有上传头像，将会使用默认头像
             </p>
           </Form.Item>
         </Form>

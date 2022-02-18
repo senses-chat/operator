@@ -76,33 +76,33 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: 'Source Type',
+      title: '来源类型',
       dataIndex: 'sourceType',
       key: 'sourceType',
     },
     {
-      title: 'Source Name',
+      title: '来源名字',
       dataIndex: 'sourceName',
       key: 'sourceName',
     },
     {
-      title: 'Destination Type',
+      title: '目标类型',
       dataIndex: 'destinationType',
       key: 'destinationType',
     },
     {
-      title: 'Destination Name',
+      title: '目标名字',
       dataIndex: 'destinationName',
       key: 'destinationName',
     },
     {
-      title: 'isActive',
+      title: '是否激活',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? 'Yes' : 'No'),
+      render: (isActive: boolean) => (isActive ? '是' : '否'),
     },
     {
-      title: 'createdAt',
+      title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date) => (
@@ -110,7 +110,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'updatedAt',
+      title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date) => (
@@ -137,16 +137,16 @@ export default function IndexPage() {
               )
             }
           >
-            Update
+            更新
           </Button>
           <Popconfirm
-            title="Are you sure to delete this route?"
+            title="确认删除该路由？"
             onConfirm={() => onDeleteRoute(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText="确认"
+            cancelText="取消"
           >
             <Button className="mr-2" type="primary" danger>
-              Delete
+              删除
             </Button>
           </Popconfirm>
         </div>
@@ -194,9 +194,9 @@ export default function IndexPage() {
       }),
     });
     if (res) {
-      message.success('Delete route successful');
+      message.success('删除路由成功');
     } else {
-      message.error('Delete route failed');
+      message.error('删除路由失败');
     }
     mutate(
       url(
@@ -215,7 +215,7 @@ export default function IndexPage() {
       !editDestinationType ||
       !editDestinationName
     ) {
-      message.error('Missing Param');
+      message.error('请填写完整参数');
       return;
     }
 
@@ -237,10 +237,10 @@ export default function IndexPage() {
       },
     );
     if (res) {
-      message.success(`${editId ? 'Update' : 'Create'} route successful`);
+      message.success(`${editId ? '更新' : '新建'}路由成功`);
       setIsModalVisible(false);
     } else {
-      message.error(`${editId ? 'Update' : 'Create'} route failed`);
+      message.error(`${editId ? '更新' : '新建'}路由失败`);
     }
     mutate(
       url(
@@ -263,7 +263,7 @@ export default function IndexPage() {
         break;
     }
     if (!url) {
-      message.error('Invalid type');
+      message.error('非法类型');
       return;
     }
 
@@ -284,12 +284,12 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Route Management</title>
+        <title>路由管理</title>
       </Head>
 
       <div className="flex flex-row justify-end mb-2">
         <Button type="primary" onClick={onCreateRoute}>
-          Create
+          新建
         </Button>
       </div>
 
@@ -306,13 +306,13 @@ export default function IndexPage() {
       />
 
       <Modal
-        title={`${editId ? 'Update' : 'Create'} Route`}
+        title={`${editId ? '更新' : '新建'}路由`}
         visible={isModalVisible}
         onOk={onConfirmRasaServer}
         onCancel={() => setIsModalVisible(false)}
       >
         <Form>
-          <Form.Item label="Source Type">
+          <Form.Item label="来源类型">
             <Select
               value={editSourceType}
               onChange={(value) => {
@@ -327,7 +327,7 @@ export default function IndexPage() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Source">
+          <Form.Item label="来源">
             <Select
               value={editSourceName}
               onChange={(value) => setEditSourceName(value)}
@@ -342,7 +342,7 @@ export default function IndexPage() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Destination Type">
+          <Form.Item label="目标类型">
             <Select
               value={editDestinationType}
               onChange={(value) => {
@@ -357,7 +357,7 @@ export default function IndexPage() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Destination">
+          <Form.Item label="目标">
             <Select
               value={editDestinationName}
               onChange={(value) => setEditDestinationName(value)}
@@ -369,7 +369,7 @@ export default function IndexPage() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Is Active">
+          <Form.Item label="是否激活">
             <Switch
               checked={editIsActive}
               onChange={(value) => setEditIsActive(value)}

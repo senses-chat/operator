@@ -37,22 +37,22 @@ export const SideNav: FC<SideNavProps> = ({
     <div className="h-8 m-4 text-white">Chat Operator</div>
     <Menu theme="dark" mode="inline" defaultSelectedKeys={[selected]}>
       <Menu.Item key="/" icon={<HomeOutlined />}>
-        <Link href="/">Home</Link>
+        <Link href="/">首页</Link>
       </Menu.Item>
       <Menu.Item key="/wxkf/account" icon={<CustomerServiceOutlined />}>
-        <Link href="/wxkf/account">WXKF Account Management</Link>
+        <Link href="/wxkf/account">微信客服账号管理</Link>
       </Menu.Item>
       <Menu.Item key="/wxkf/log" icon={<MessageOutlined />}>
-        <Link href="/wxkf/log">WXKF Log Management</Link>
+        <Link href="/wxkf/log">微信客服日志管理</Link>
       </Menu.Item>
       <Menu.Item key="/session" icon={<MessageOutlined />}>
-        <Link href="/session">Session Management</Link>
+        <Link href="/session">会话管理</Link>
       </Menu.Item>
       <Menu.Item key="/rasa-server" icon={<RobotOutlined />}>
-        <Link href="/rasa-server">Rasa Server Management</Link>
+        <Link href="/rasa-server">Rasa 服务管理</Link>
       </Menu.Item>
       <Menu.Item key="/route" icon={<LinkOutlined />}>
-        <Link href="/route">Route Management</Link>
+        <Link href="/route">路由管理</Link>
       </Menu.Item>
     </Menu>
   </Sider>

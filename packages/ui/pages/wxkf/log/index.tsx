@@ -33,17 +33,17 @@ export default function IndexPage() {
       key: 'aggregateId',
     },
     {
-      title: 'Type',
+      title: '类型',
       dataIndex: 'aggregateType',
       key: 'aggregateType',
     },
     {
-      title: 'Count',
+      title: '消息数量',
       dataIndex: 'count',
       key: 'count',
     },
     {
-      title: 'CreatedAt',
+      title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
@@ -51,7 +51,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'UpdatedAt',
+      title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (
@@ -66,7 +66,7 @@ export default function IndexPage() {
         <div>
           <Link href={`/ui/wxkf/log/${record.aggregateId}/messages`} passHref>
             <Button className="mr-2" type="primary">
-              Messages
+              消息
             </Button>
           </Link>
         </div>
@@ -85,7 +85,7 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Wxkf Log Management</title>
+        <title>微信日志管理</title>
       </Head>
 
       <Table
