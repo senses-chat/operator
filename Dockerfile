@@ -16,12 +16,12 @@ WORKDIR /opt/server
 
 COPY --from=builder /opt/src/packages/server/dist/main.* /opt/server
 
-RUN mkdir -p /opt/server/node_modules
+RUN mkdir -p /opt/server/node_modules/.prisma
 
-COPY --from=builder /opt/src/node_modules/.prisma /opt/server/node_modules
+COPY --from=builder /opt/src/node_modules/.prisma /opt/server/node_modules/.prisma
 
-RUN mkdir -p /opt/server/node_modules/@prisma
+RUN mkdir -p /opt/server/node_modules/@prisma/client
 
-COPY --from=builder /opt/src/node_modules/@prisma/client /opt/server/node_modules/@prisma
+COPY --from=builder /opt/src/node_modules/@prisma/client /opt/server/node_modules/@prisma/client
 
 CMD ["node", "main.js"]
