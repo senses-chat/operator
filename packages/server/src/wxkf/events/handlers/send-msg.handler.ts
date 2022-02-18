@@ -9,7 +9,11 @@ import {
   MessageContentType,
 } from '@senses-chat/operator-events';
 import { plainToInstance } from '@senses-chat/operator-common';
-import { WxkfMessagePayload, WxkfMessageType } from '@senses-chat/wx-sdk';
+import {
+  WxkfMenuType,
+  WxkfMessagePayload,
+  WxkfMessageType,
+} from '@senses-chat/wx-sdk';
 
 import { WxkfServiceRegistry } from '../../wxkf.registry';
 import { SendWxkfMessageEvent } from '../send-msg.event';
@@ -53,6 +57,28 @@ export class SendWxkfMessageEventHandler
           msgtype: WxkfMessageType.Text,
           text: {
             content: (content as TextMessageContent).text,
+          },
+        }),
+      );
+    }
+
+    if (message.content.type === MessageContentType.TextWithButtons) {
+      const textWithButtonsContent = content as TextWithButtonsMessageContent;
+      await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
+        plainToInstance(WxkfMessagePayload, {
+          ...payload,
+          msgtype: WxkfMessageType.Menu,
+          msgmenu: {
+            head_content: textWithButtonsContent.text,
+            tail_content: textWithButtonsContent.textAfterButtons,
+            list: textWithButtonsContent.buttons.map((button: Button) => ({
+              // TODO: make more different types than click
+              type: WxkfMenuType.Click,
+              click: {
+                id: button.payload,
+                content: button.title,
+              },
+            })),
           },
         }),
       );

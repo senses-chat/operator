@@ -265,8 +265,8 @@ export class WxkfMiniprogramMenuItem extends WxkfMenuItem {
 }
 
 export class WxkfMsgMenu {
-  head_content: string;
-  tail_content: string;
+  head_content?: string;
+  tail_content?: string;
 
   @Type(() => WxkfMenuItem, {
     keepDiscriminatorProperty: true,
