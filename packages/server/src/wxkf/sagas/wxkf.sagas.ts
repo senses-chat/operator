@@ -17,8 +17,10 @@ import {
   WxkfIncomingEventType,
   WxkfIncomingFileMessage,
   WxkfIncomingImageMessage,
+  WxkfIncomingMessageOrigin,
   WxkfIncomingMessageType,
   WxkfIncomingTextMessage,
+  WxkfSessionStatusChangeEvent,
 } from '@senses-chat/wx-sdk';
 
 import { SendWxkfMessageCommand } from '../commands';
@@ -36,6 +38,11 @@ export class WxkfSagas {
     return events$.pipe(
       ofType(NewWxkfMessageEvent),
       concatMap((event: NewWxkfMessageEvent) => {
+        if (event.origin === WxkfIncomingMessageOrigin.FromServicer) {
+          // do not process incoming message from servicer
+          return EMPTY;
+        }
+
         if (event.msgtype === WxkfIncomingMessageType.File) {
           const wxkfMessage = event as WxkfIncomingFileMessage;
           return of(wxkfMessage).pipe(
@@ -135,6 +142,30 @@ export class WxkfSagas {
                 },
               },
             });
+          }
+
+          if (wxkfMessage.event.event_type === WxkfIncomingEventType.SessionStatusChange) {
+            const messageEvent = wxkfMessage.event as WxkfSessionStatusChangeEvent;
+            if (messageEvent.change_type === 3) {
+              // change_type 3 is agent session end
+              // fake /bye
+              // TODO: make this into a configuration somehow
+              routeMessage = plainToInstance(RouteMessage, {
+                type: RouteType.Wxkf,
+                namespaces: [
+                  event.corpid,
+                  messageEvent.open_kfid,
+                  messageEvent.external_userid,
+                ],
+                content: {
+                  type: MessageContentType.Text,
+                  text: '/bye',
+                  metadata: {
+                    msg_code: messageEvent.msg_code,
+                  },
+                },
+              });
+            }
           }
         }
 

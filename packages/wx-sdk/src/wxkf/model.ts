@@ -17,6 +17,7 @@ export class WxkfMedia {
 export enum WxkfIncomingMessageOrigin {
   FromUser = 3,
   FromSystem = 4,
+  FromServicer = 5,
 }
 
 export enum WxkfIncomingMessageType {
@@ -32,6 +33,8 @@ export enum WxkfIncomingMessageType {
 export enum WxkfIncomingEventType {
   EnterSession = 'enter_session',
   MsgSendFail = 'msg_send_fail',
+  ServicerStatusChange = 'servicer_status_change',
+  SessionStatusChange = 'session_status_change',
 }
 
 export class WxkfIncomingEvent {
@@ -51,6 +54,23 @@ export class WxkfMsgSendFailEvent extends WxkfIncomingEvent {
   event_type: WxkfIncomingEventType.MsgSendFail;
   fail_msgid: string;
   fail_type: number; // TODO: enum?
+}
+
+export class WxkfServicerStatusChangeEvent extends WxkfIncomingEvent {
+  event_type: WxkfIncomingEventType.ServicerStatusChange;
+  servicer_userid: string;
+  status: number; // TODO: enum?
+  open_kfid: string;
+}
+
+export class WxkfSessionStatusChangeEvent extends WxkfIncomingEvent {
+  event_type: WxkfIncomingEventType.SessionStatusChange;
+  open_kfid: string;
+  external_userid: string;
+  change_type: number; // TODO: enum?
+  old_servicer_userid?: string;
+  new_servicer_userid?: string;
+  msg_code?: string;
 }
 
 export class WxkfIncomingMessage {
@@ -78,6 +98,14 @@ export class WxkfIncomingEventMessage extends WxkfIncomingMessage {
         {
           value: WxkfMsgSendFailEvent,
           name: WxkfIncomingEventType.MsgSendFail,
+        },
+        {
+          value: WxkfServicerStatusChangeEvent,
+          name: WxkfIncomingEventType.ServicerStatusChange,
+        },
+        {
+          value: WxkfSessionStatusChangeEvent,
+          name: WxkfIncomingEventType.SessionStatusChange,
         },
       ],
     },
