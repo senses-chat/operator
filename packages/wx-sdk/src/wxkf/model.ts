@@ -39,8 +39,8 @@ export enum WxkfIncomingEventType {
 
 export class WxkfIncomingEvent {
   event_type: WxkfIncomingEventType;
-  open_kfid: string;
-  external_userid: string;
+  open_kfid?: string;
+  external_userid?: string;
 }
 
 export class WxkfEnterSessionEvent extends WxkfIncomingEvent {

@@ -136,7 +136,7 @@ export class WxkfSagas {
                 type: MessageContentType.Text,
                 text: '/greet',
                 metadata: {
-                  welcome_code: messageEvent.welcome_code,
+                  msg_code: messageEvent.welcome_code,
                   scene: messageEvent.scene,
                   scene_param: messageEvent.scene_param,
                 },
@@ -144,8 +144,12 @@ export class WxkfSagas {
             });
           }
 
-          if (wxkfMessage.event.event_type === WxkfIncomingEventType.SessionStatusChange) {
-            const messageEvent = wxkfMessage.event as WxkfSessionStatusChangeEvent;
+          if (
+            wxkfMessage.event.event_type ===
+            WxkfIncomingEventType.SessionStatusChange
+          ) {
+            const messageEvent =
+              wxkfMessage.event as WxkfSessionStatusChangeEvent;
             if (messageEvent.change_type === 3) {
               // change_type 3 is agent session end
               // fake /bye
@@ -195,7 +199,25 @@ export class WxkfSagas {
           return EMPTY;
         }
 
-        return of(new NewRouteMessageCommand(routeMessage));
+        return from(
+          this.wxkfServiceRegistry
+            .getService(event.corpid)
+            .getServiceState(
+              event.open_kfid ||
+                (event as WxkfIncomingEventMessage).event.open_kfid,
+              event.external_userid ||
+                (event as WxkfIncomingEventMessage).event.external_userid,
+            ),
+        ).pipe(
+          concatMap((response) => {
+            WxkfSagas.logger.debug(JSON.stringify(response));
+            if (response.service_state === 0 || response.service_state === 1 || routeMessage.content.metadata?.msg_code) {
+              return of(new NewRouteMessageCommand(routeMessage));
+            }
+
+            return EMPTY;
+          }),
+        );
       }),
     );
   }
