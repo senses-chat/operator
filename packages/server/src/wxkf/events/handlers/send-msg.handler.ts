@@ -34,10 +34,10 @@ export class SendWxkfMessageEventHandler
 
     let payload: any = {};
 
-    if (content.metadata && content.metadata.welcome_code) {
+    if (content.metadata && content.metadata.msg_code) {
       payload = {
         corpid: message.namespaces[0],
-        code: content.metadata.welcome_code,
+        code: content.metadata.msg_code,
       };
     } else {
       const [corpid, open_kfid, touser] = message.namespaces;
