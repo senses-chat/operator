@@ -13,9 +13,9 @@ export default function IndexPage(props: { body: string }) {
       <Head>
         <title>Chat Operator</title>
       </Head>
-      <Title level={2}>Hello!</Title>
+      <Title level={2}>你好!</Title>
       <Paragraph>
-        This is a middleware module for connecting different chat systems.
+        这是一个用于连接不同对话机器人系统的中间模块。
       </Paragraph>
     </AppLayout>
   );

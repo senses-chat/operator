@@ -44,7 +44,7 @@ export default function SessionMessagesPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Session Management</title>
+        <title>会话管理</title>
       </Head>
 
       <Messages messages={messages} />

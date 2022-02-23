@@ -49,7 +49,7 @@ export default function WxkfMessagesPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Wxkf Log Management</title>
+        <title>微信日志管理</title>
       </Head>
 
       <Messages messages={messages} />

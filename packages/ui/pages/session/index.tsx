@@ -41,13 +41,13 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: 'Source',
+      title: '来源',
       dataIndex: 'source',
       key: 'source',
       render: (source) => (
         <div>
-          <p>Type: {source.type}</p>
-          <p className="mb-0">Namespace:</p>
+          <p>类型: {source.type}</p>
+          <p className="mb-0">命名空间:</p>
           {source.namespaces.map((namespace, index) => (
             <p className="mb-0" key={index}>
               {namespace}
@@ -57,13 +57,13 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'Destination',
+      title: '目标',
       dataIndex: 'destination',
       key: 'destination',
       render: (destination) => (
         <div>
-          <p>Type: {destination.type}</p>
-          <p className="mb-0">Namespace:</p>
+          <p>类型: {destination.type}</p>
+          <p className="mb-0">命名空间:</p>
           {destination.namespaces.map((namespace, index) => (
             <p className="mb-0" key={index}>
               {namespace}
@@ -73,12 +73,12 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'Count',
+      title: '消息数量',
       dataIndex: 'count',
       key: 'count',
     },
     {
-      title: 'ExpiredAt',
+      title: '过期时间',
       dataIndex: 'expiredAt',
       key: 'expiredAt',
       render: (expiredAt) => (
@@ -86,7 +86,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'CreatedAt',
+      title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
@@ -94,7 +94,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: 'UpdatedAt',
+      title: '更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (
@@ -109,7 +109,7 @@ export default function IndexPage() {
         <div>
           <Link href={`/ui/session/${record.id}/messages`} passHref>
             <Button className="mr-2" type="primary">
-              Messages
+              消息
             </Button>
           </Link>
         </div>
@@ -128,7 +128,7 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Session Management</title>
+        <title>会话管理</title>
       </Head>
 
       <Table
