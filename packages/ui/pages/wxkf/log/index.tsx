@@ -64,7 +64,7 @@ export default function IndexPage() {
       key: 'action',
       render: (_, record) => (
         <div>
-          <Link href={`/ui/wxkf/log/${record.aggregateId}/messages`} passHref>
+          <Link href={`/wxkf/log/${record.aggregateId}/messages`} passHref>
             <Button className="mr-2" type="primary">
               消息
             </Button>
@@ -76,8 +76,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/wxkf/log?page=${pagination.current}`,
-      `/ui/wxkf/log?page=${pagination.current}`,
+      `/wxkf/log?page=${pagination.current}`,
+      `/wxkf/log?page=${pagination.current}`,
       { shallow: true },
     );
   }

@@ -65,7 +65,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Link
-            href={`/ui/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
+            href={`/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
             passHref
           >
             <Button className="mr-2" type="primary">
@@ -181,8 +181,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/wxkf/account?page=${pagination.current}`,
-      `/ui/wxkf/account?page=${pagination.current}`,
+      `/wxkf/account?page=${pagination.current}`,
+      `/wxkf/account?page=${pagination.current}`,
       { shallow: true },
     );
   }

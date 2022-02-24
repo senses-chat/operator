@@ -12,11 +12,14 @@ export function handleSessionMessageContent(msg): ReactNode {
     case 'text_with_buttons':
       return (
         <>
+          <p className="mb-0">{msg.content.text}</p>
+          <div className="my-1">
           {msg.content.buttons.map((button, index) => (
             <Button key={index} href={button.payload} className="mr-2">
               {button.title}
             </Button>
           ))}
+          </div>
           <p className="mb-0">{msg.content.textAfterButtons}</p>
         </>
       );
