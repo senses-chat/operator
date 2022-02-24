@@ -226,8 +226,8 @@ export default function AccountLinksPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
-      `/ui/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      `/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      `/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
       { shallow: true },
     );
   }

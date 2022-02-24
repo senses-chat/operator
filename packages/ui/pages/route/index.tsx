@@ -275,8 +275,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/route?page=${pagination.current}&size=${pagination.pageSize}`,
-      `/ui/route?page=${pagination.current}&size=${pagination.pageSize}`,
+      `/route?page=${pagination.current}&size=${pagination.pageSize}`,
+      `/route?page=${pagination.current}&size=${pagination.pageSize}`,
       { shallow: true },
     );
   }
