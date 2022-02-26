@@ -14,7 +14,7 @@ import path from 'path';
 import fs from 'fs';
 
 import { WxkfAccountLink } from './models';
-import { WxkfServiceRegistry } from 'src/wxkf/wxkf.registry';
+import { WxkfServiceRegistry } from '@senses-chat/operator-wxkf';
 
 @Controller('/api/wxkf')
 export class WxkfApiController {

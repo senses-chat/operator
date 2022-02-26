@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@senses-chat/operator-common": "0.1.0",
-    "@senses-chat/operator-database": "0.1.0"
+    "@senses-chat/operator-database": "0.1.0",
+    "uniqid": "^5.4.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "^16",
+    "@types/uniqid": "^5.3.2",
     "rimraf": "^3.0.0"
   },
   "volta": {

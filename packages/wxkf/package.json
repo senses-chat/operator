@@ -1,7 +1,7 @@
 {
-  "name": "@senses-chat/operator-rasa",
+  "name": "@senses-chat/operator-wxkf",
   "version": "0.1.0",
-  "description": "Rasa Related Modules for Senses Chat Operator",
+  "description": "Wecom Customer Service (WeiXin KeFu) Related Modules for Senses Chat Operator",
   "author": "Simon Liang <simon@x-tech.io>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -20,7 +20,9 @@
   "dependencies": {
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
-    "@senses-chat/operator-events": "0.1.0"
+    "@senses-chat/operator-events": "0.1.0",
+    "lru-cache": "^6.0.0",
+    "query-string": "^7.1.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
@@ -32,6 +34,7 @@
     "rxjs": "^7.4.0"
   },
   "devDependencies": {
+    "@types/lru-cache": "^5.1.1",
     "@types/node": "^16",
     "rimraf": "^3.0.0"
   },

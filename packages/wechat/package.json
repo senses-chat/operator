@@ -1,7 +1,7 @@
 {
-  "name": "@senses-chat/operator-rasa",
+  "name": "@senses-chat/operator-wechat",
   "version": "0.1.0",
-  "description": "Rasa Related Modules for Senses Chat Operator",
+  "description": "Wechat Related Modules for Senses Chat Operator",
   "author": "Simon Liang <simon@x-tech.io>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -20,7 +20,11 @@
   "dependencies": {
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
-    "@senses-chat/operator-events": "0.1.0"
+    "@senses-chat/operator-events": "0.1.0",
+    "fast-xml-parser": "^4.0.0-beta.8",
+    "form-data": "^4.0.0",
+    "node-fetch": "^2",
+    "query-string": "^7.1.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
@@ -33,6 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^16",
+    "@types/node-fetch": "^2",
     "rimraf": "^3.0.0"
   },
   "volta": {
