@@ -9,7 +9,7 @@ interface ErrorBody {
   message: string;
 }
 
-export const fetcher = (input: RequestInfo, init?: RequestInit): Promise<any> =>
+export const fetcher = (input: RequestInfo, init?: RequestInit, handler?: (res) => any): Promise<any> =>
   fetch(input, init).then(async (res) => {
     if (res.status !== 200 && res.status !== 201) {
       const body: ErrorBody = await res.json();
@@ -18,6 +18,11 @@ export const fetcher = (input: RequestInfo, init?: RequestInit): Promise<any> =>
       }
       return undefined;
     }
+
+    if (handler) {
+      return await handler(res);
+    }
+    
     return res.json();
   });
 

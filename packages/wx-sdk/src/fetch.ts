@@ -1,5 +1,10 @@
 import { RequestInfo, RequestInit } from 'node-fetch';
 
-const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
+const _importDynamic = new Function('modulePath', 'return import(modulePath)')
 
-export default fetch;
+async function fetchLocal(url: RequestInfo, init?: RequestInit) {
+  const {default: fetch} = await _importDynamic('node-fetch');
+  return fetch(url, init);
+}
+
+export default fetchLocal;
