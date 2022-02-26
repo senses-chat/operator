@@ -36,7 +36,6 @@
     "rxjs": "^7.4.0"
   },
   "devDependencies": {
-    "@types/node": "^16",
     "@types/node-fetch": "^2",
     "rimraf": "^3.0.0"
   },

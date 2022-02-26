@@ -24,22 +24,21 @@
     "@senses-chat/operator-common": "0.1.0",
     "ioredis": "^4.28.2",
     "lru-cache": "^6.0.0",
-    "minio": "^7.0.25"
+    "minio": "^7.0.25",
+    "prisma": "^3.9.2",
+    "rimraf": "^3.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
     "@nestjs/config": "^1.1.5",
     "@nestjs/core": "^8.3.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.4.0"
   },
   "devDependencies": {
     "@types/ioredis": "^4.28.5",
     "@types/lru-cache": "^5.1.1",
-    "@types/minio": "^7.0.11",
-    "@types/node": "^16",
-    "prisma": "^3.9.2",
-    "rimraf": "^3.0.0"
+    "@types/minio": "^7.0.11"
   },
   "volta": {
     "node": "16.13.1",

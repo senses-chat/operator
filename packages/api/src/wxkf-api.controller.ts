@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { WxkfAccountLink } from './models';
+import { WxkfAccountLink } from '@senses-chat/operator-database';
 import { WxkfServiceRegistry } from '@senses-chat/operator-wxkf';
 
 @Controller('/api/wxkf')
@@ -38,7 +38,7 @@ export class WxkfApiController {
     if (!mediaId) {
       mediaId = await this.wxkfServiceRegistry
         .getService(body.corpId)
-        .uploadAvatar(this.config.get<string>('wxkf.defaultAvatarS3'));
+        .uploadAvatar(this.config.get<string>('api.wxkf.defaultAvatarS3'));
     }
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)

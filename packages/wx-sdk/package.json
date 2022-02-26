@@ -31,7 +31,6 @@
     "@types/content-disposition": "^0.5.4",
     "@types/form-data": "^2.5.0",
     "@types/mime-types": "^2.1.1",
-    "@types/node": "^16",
     "rimraf": "^3.0.0"
   },
   "volta": {

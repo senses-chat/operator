@@ -20,7 +20,8 @@
   "dependencies": {
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
-    "@senses-chat/operator-events": "0.1.0"
+    "@senses-chat/operator-events": "0.1.0",
+    "rimraf": "^3.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
@@ -30,10 +31,6 @@
     "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.4.0"
-  },
-  "devDependencies": {
-    "@types/node": "^16",
-    "rimraf": "^3.0.0"
   },
   "volta": {
     "node": "16.13.1",

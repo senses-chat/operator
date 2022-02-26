@@ -19,6 +19,7 @@
     "nuke": "docker-compose down -v && sh init_minio.sh && docker-compose up -d"
   },
   "devDependencies": {
+    "@types/node": "^16",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "eslint": "^8.5.0",
