@@ -1,33 +1,33 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ConfigModule } from '@nestjs/config';
 
 import { StorageModule } from '@senses-chat/operator-database';
 import { EventSourcingModule } from '@senses-chat/operator-events';
 
-import { ConfigModule } from 'src/modules';
-
+import wx3pConfig from './3rdparty.config';
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
-import { QueryHandlers } from './queries';
-import { WxkfSagas } from './sagas';
-import { WxkfController } from './wxkf.controller';
-import { WxkfServiceRegistry } from './wxkf.registry';
+import { WechatSagas } from './sagas';
+
+import { WechatController } from './wechat.controller';
+import { WechatService } from './wechat.service';
+import { Wechat3rdPartyService } from './3rdparty.service';
 
 @Module({
   imports: [
     CqrsModule,
     EventSourcingModule,
-    ConfigModule,
+    ConfigModule.forFeature(wx3pConfig),
     StorageModule.register(),
   ],
-  controllers: [WxkfController],
+  controllers: [WechatController],
   providers: [
-    WxkfServiceRegistry,
-    WxkfSagas,
+    WechatService,
+    Wechat3rdPartyService,
+    WechatSagas,
     ...CommandHandlers,
     ...EventHandlers,
-    ...QueryHandlers,
   ],
-  exports: [WxkfServiceRegistry],
 })
-export class WxkfModule {}
+export class WechatModule {}

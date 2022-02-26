@@ -2,11 +2,14 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
 import { SessionDefinition } from '@senses-chat/operator-database';
-import { GetWxkfMessageLogQuery, ListWxkfMessageLogsQuery } from 'src/wxkf';
 import {
   GetSessionQuery,
   ListSessionsQuery,
 } from '@senses-chat/operator-events';
+import {
+  GetWxkfMessageLogQuery,
+  ListWxkfMessageLogsQuery,
+} from '@senses-chat/operator-wxkf';
 
 @Controller('/api/history')
 export class HistoryController {

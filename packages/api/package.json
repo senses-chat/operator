@@ -1,7 +1,7 @@
 {
-  "name": "@senses-chat/operator-events",
+  "name": "@senses-chat/operator-api",
   "version": "0.1.0",
-  "description": "Event-Driven Related Modules for Senses Chat Operator",
+  "description": "External-Facing API Module for Senses Chat Operator",
   "author": "Simon Liang <simon@x-tech.io>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -20,19 +20,17 @@
   "dependencies": {
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
-    "uniqid": "^5.4.0",
+    "@senses-chat/operator-events": "0.1.0",
+    "@senses-chat/operator-wxkf": "0.1.0",
     "rimraf": "^3.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.3.0",
+    "@nestjs/config": "^1.1.5",
     "@nestjs/core": "^8.3.0",
     "@nestjs/cqrs": "^8.0.2",
-    "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.4.0"
-  },
-  "devDependencies": {
-    "@types/uniqid": "^5.3.2"
   },
   "volta": {
     "node": "16.13.1",
