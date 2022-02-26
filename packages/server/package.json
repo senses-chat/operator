@@ -19,6 +19,7 @@
     "@nestjs/config": "^1.1.5",
     "@nestjs/core": "^8.3.0",
     "@nestjs/cqrs": "^8.0.2",
+    "@nestjs/platform-fastify": "^8.3.1",
     "@senses-chat/operator-api": "0.1.0",
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
@@ -27,6 +28,7 @@
     "@senses-chat/operator-wechat": "0.1.0",
     "@senses-chat/operator-wxkf": "0.1.0",
     "@senses-chat/wx-sdk": "0.1.0",
+    "fastify-xml-body-parser": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^7.4.0"

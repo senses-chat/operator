@@ -1,29 +1,23 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { Express } from 'express';
-import bodyParser from 'body-parser';
-import xmlBodyParser from 'body-parser-xml';
-
-xmlBodyParser(bodyParser);
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('Main');
 
-  const app = await NestFactory.create(AppModule);
-  const express: Express = app.getHttpAdapter().getInstance();
-  express.use(
-    bodyParser.xml({
-      limit: '1mb',
-      xmlParseOptions: {
-        explicitArray: false,
-        normalize: false,
-      },
-    }),
-  );
-  app.enableCors();
+  const fastify = new FastifyAdapter();
+  fastify.register(import('fastify-xml-body-parser'));
+
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, fastify, {
+    cors: {
+      allowedHeaders: '*',
+      origin: '*',
+    },
+  });
+
   app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 
   const configService: ConfigService = app.get(ConfigService);
