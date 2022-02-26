@@ -31,11 +31,8 @@ export default function IndexPage() {
       title: 'ID',
       dataIndex: 'aggregateId',
       key: 'aggregateId',
-    },
-    {
-      title: '类型',
-      dataIndex: 'aggregateType',
-      key: 'aggregateType',
+      render: (aggregateId: string) =>
+        aggregateId.split('-').map((item) => <div key={item}>{item}</div>),
     },
     {
       title: '消息数量',
@@ -43,7 +40,7 @@ export default function IndexPage() {
       key: 'count',
     },
     {
-      title: '创建时间',
+      title: '会话起始时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
@@ -51,7 +48,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: '更新时间',
+      title: '最后更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (

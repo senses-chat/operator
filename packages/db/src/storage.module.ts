@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 
@@ -24,12 +24,15 @@ import {
  */
 @Module({})
 export class StorageModule {
+  private static logger = new Logger(StorageModule.name);
+
   public static register(): DynamicModule {
     const modules: any[] = [ConfigModule.forFeature(storageConfig), MinioModule, PrismaModule];
 
     const useRedis = process.env.STORAGE_USE_REDIS === 'true';
 
     if (useRedis) {
+      StorageModule.logger.debug('Using Redis for storage');
       modules.push(RedisModule);
     }
 

@@ -76,30 +76,32 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: '来源类型',
+      title: '来源渠道类型',
       dataIndex: 'sourceType',
       key: 'sourceType',
     },
     {
-      title: '来源名字',
+      title: '来源渠道名',
       dataIndex: 'sourceName',
       key: 'sourceName',
+      render: (sourceName: string) =>
+        sourceName.split(':').map((item) => <div key={item}>{item}</div>),
     },
     {
-      title: '目标类型',
+      title: '转接目标类型',
       dataIndex: 'destinationType',
       key: 'destinationType',
     },
     {
-      title: '目标名字',
+      title: '转接目标名',
       dataIndex: 'destinationName',
       key: 'destinationName',
     },
     {
-      title: '是否激活',
+      title: '状态',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? '是' : '否'),
+      render: (isActive: boolean) => (isActive ? '已激活' : '未激活'),
     },
     {
       title: '创建时间',
@@ -140,7 +142,7 @@ export default function IndexPage() {
             更新
           </Button>
           <Popconfirm
-            title="确认删除该路由？"
+            title="确认删除对接配置？"
             onConfirm={() => onDeleteRoute(record.id)}
             okText="确认"
             cancelText="取消"
@@ -194,9 +196,9 @@ export default function IndexPage() {
       }),
     });
     if (res) {
-      message.success('删除路由成功');
+      message.success('删除配置成功');
     } else {
-      message.error('删除路由失败');
+      message.error('删除配置失败');
     }
     mutate(
       url(
@@ -237,10 +239,10 @@ export default function IndexPage() {
       },
     );
     if (res) {
-      message.success(`${editId ? '更新' : '新建'}路由成功`);
+      message.success(`${editId ? '更新' : '新建'}配置成功`);
       setIsModalVisible(false);
     } else {
-      message.error(`${editId ? '更新' : '新建'}路由失败`);
+      message.error(`${editId ? '更新' : '新建'}配置失败`);
     }
     mutate(
       url(
@@ -284,7 +286,7 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>路由管理</title>
+        <title>对接管理</title>
       </Head>
 
       <div className="flex flex-row justify-end mb-2">
@@ -306,7 +308,7 @@ export default function IndexPage() {
       />
 
       <Modal
-        title={`${editId ? '更新' : '新建'}路由`}
+        title={`${editId ? '更新' : '新建'}配置`}
         visible={isModalVisible}
         onOk={onConfirmRasaServer}
         onCancel={() => setIsModalVisible(false)}
@@ -369,7 +371,7 @@ export default function IndexPage() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="是否激活">
+          <Form.Item label="状态">
             <Switch
               checked={editIsActive}
               onChange={(value) => setEditIsActive(value)}

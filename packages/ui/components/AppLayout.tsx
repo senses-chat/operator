@@ -1,8 +1,9 @@
 import React, { FC, ReactNode, useEffect } from 'react';
-import { Layout } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import createPersistedState from 'use-persisted-state';
+import { Layout } from 'antd';
 
 import { SideNav } from './SideNav';
 
@@ -22,7 +23,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
   const [collapsed, setCollapsed] = useCollapsedState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (status === 'unauthenticated') {
       router.push('/api/auth/signin');
     }
   }, [router, status]);
@@ -49,7 +50,12 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
           className="footer w-full h-20 flex text-center items-center justify-center fixed bottom-0"
           style={{ paddingRight: collapsed ? '80px' : '200px' }}
         >
-          Made with &lt;3 by X-Tech in 2021
+          &copy; 2022&nbsp;
+          <Link href="https://www.senses.chat" passHref>
+            <a target="_blank" rel="noreferrer">
+              广州先思科技有限公司
+            </a>
+          </Link>
         </Footer>
       </Layout>
     </Layout>

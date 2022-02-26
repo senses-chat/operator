@@ -35,11 +35,11 @@ export default function IndexPage() {
   );
 
   const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
+    // {
+    //   title: 'ID',
+    //   dataIndex: 'id',
+    //   key: 'id',
+    // },
     {
       title: '来源',
       dataIndex: 'source',
@@ -78,7 +78,7 @@ export default function IndexPage() {
       key: 'count',
     },
     {
-      title: '过期时间',
+      title: '会话过期时间',
       dataIndex: 'expiredAt',
       key: 'expiredAt',
       render: (expiredAt) => (
@@ -86,7 +86,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: '创建时间',
+      title: '会话创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (createdAt) => (
@@ -94,7 +94,7 @@ export default function IndexPage() {
       ),
     },
     {
-      title: '更新时间',
+      title: '会话最后更新时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (updatedAt) => (
@@ -109,7 +109,7 @@ export default function IndexPage() {
         <div>
           <Link href={`/session/${record.id}/messages`} passHref>
             <Button className="mr-2" type="primary">
-              消息
+              消息记录
             </Button>
           </Link>
         </div>
@@ -128,7 +128,7 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>会话管理</title>
+        <title>会话记录</title>
       </Head>
 
       <Table

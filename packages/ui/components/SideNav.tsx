@@ -34,7 +34,7 @@ export const SideNav: FC<SideNavProps> = ({
       left: 0,
     }}
   >
-    <div className="h-8 m-4 text-white">Chat Operator</div>
+    <div className="h-8 m-4 text-white">{`先思${collapsed ? '' : '智联'}`}</div>
     <Menu theme="dark" mode="inline" defaultSelectedKeys={[selected]}>
       <Menu.Item key="/" icon={<HomeOutlined />}>
         <Link href="/">首页</Link>
@@ -43,16 +43,16 @@ export const SideNav: FC<SideNavProps> = ({
         <Link href="/wxkf/account">微信客服账号管理</Link>
       </Menu.Item>
       <Menu.Item key="/wxkf/log" icon={<MessageOutlined />}>
-        <Link href="/wxkf/log">微信客服日志管理</Link>
+        <Link href="/wxkf/log">微信客服记录</Link>
       </Menu.Item>
       <Menu.Item key="/session" icon={<MessageOutlined />}>
-        <Link href="/session">会话管理</Link>
+        <Link href="/session">会话记录</Link>
       </Menu.Item>
       <Menu.Item key="/rasa-server" icon={<RobotOutlined />}>
-        <Link href="/rasa-server">Rasa 服务管理</Link>
+        <Link href="/rasa-server">聊天机器人管理</Link>
       </Menu.Item>
       <Menu.Item key="/route" icon={<LinkOutlined />}>
-        <Link href="/route">路由管理</Link>
+        <Link href="/route">对接管理</Link>
       </Menu.Item>
     </Menu>
   </Sider>

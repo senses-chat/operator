@@ -46,7 +46,7 @@ export default function AccountLinksPage() {
 
   const columns = [
     {
-      title: '场景',
+      title: '场景值',
       dataIndex: 'scene',
       key: 'scene',
     },
@@ -57,7 +57,7 @@ export default function AccountLinksPage() {
       render: (sceneParam: JSON) => qs.stringify(sceneParam),
     },
     {
-      title: '链接',
+      title: '客服接入链接',
       dataIndex: 'url',
       key: 'url',
       render: (url: string) => (
@@ -97,12 +97,12 @@ export default function AccountLinksPage() {
 
   const columnsSceneParam = [
     {
-      title: 'Key 值',
+      title: '字段',
       dataIndex: 'key',
       key: 'key',
     },
     {
-      title: 'Value 值',
+      title: '值',
       dataIndex: 'value',
       key: 'value',
     },
@@ -165,7 +165,7 @@ export default function AccountLinksPage() {
     }
 
     if (temp.find((item) => item.key === editKey)) {
-      message.error('Key 值已经存在');
+      message.error('字段冲突，请检查');
       return;
     }
 
@@ -198,10 +198,10 @@ export default function AccountLinksPage() {
       }),
     });
     if (res) {
-      message.success('新建账号链接成功');
+      message.success('新建接入链接成功');
       setIsModalVisible(false);
     } else {
-      message.error('新建账号链接失败');
+      message.error('新建接入链接失败');
     }
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
@@ -217,9 +217,9 @@ export default function AccountLinksPage() {
       }),
     });
     if (res) {
-      message.success('删除账号链接成功');
+      message.success('删除接入链接成功');
     } else {
-      message.error('删除账号链接失败');
+      message.error('删除接入链接失败');
     }
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
@@ -235,11 +235,11 @@ export default function AccountLinksPage() {
   return (
     <AppLayout>
       <Head>
-        <title>微信客服账号管理</title>
+        <title>微信客服账号接入链接管理</title>
       </Head>
 
       <div className="flex flex-row justify-between items-center mb-2">
-        <p className="mb-0">名字: {accountName}</p>
+        <p className="mb-0">名称: {accountName}</p>
         <Button type="primary" onClick={onCreateAccountLink}>
           新建
         </Button>

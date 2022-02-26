@@ -49,13 +49,13 @@ export default function IndexPage() {
       key: 'open_kfid',
     },
     {
-      title: '头像',
+      title: '客服账号头像',
       dataIndex: 'avatar',
       key: 'avatar',
       render: (url: string) => <Image src={url} width={50} height={50} />,
     },
     {
-      title: '名字',
+      title: '客服账号名',
       dataIndex: 'name',
       key: 'name',
     },
@@ -70,7 +70,7 @@ export default function IndexPage() {
             passHref
           >
             <Button className="mr-2" type="primary">
-              链接管理
+              客服接入链接管理
             </Button>
           </Link>
           <Button
@@ -83,7 +83,7 @@ export default function IndexPage() {
             Update
           </Button>
           <Popconfirm
-            title="确认删除这个账户？"
+            title="确认删除这个客服账户？"
             onConfirm={() => onDeleteAccount(record.open_kfid)}
             okText="确认"
             cancelText="取消"
@@ -148,7 +148,7 @@ export default function IndexPage() {
 
   async function onConfirmAccount() {
     if (!editName) {
-      message.error('缺少名字');
+      message.error('请填入客服账号名');
       return;
     }
 
@@ -181,12 +181,9 @@ export default function IndexPage() {
   }
 
   async function onBeforeUploadAvatar() {
-    const res = await fetcher(
-      url(`/api/wxkf/account/avatar`),
-      {
-        method: 'GET'
-      },
-    );
+    const res = await fetcher(url(`/api/wxkf/account/avatar`), {
+      method: 'GET',
+    });
     if (res) {
       setAvatarS3Key(res.s3);
       return res.link;
@@ -208,7 +205,7 @@ export default function IndexPage() {
           return true;
         }
         return false;
-      }
+      },
     );
     if (resUpload) {
       const res = await fetcher(
@@ -224,7 +221,7 @@ export default function IndexPage() {
         },
         async (res) => {
           return await res.text();
-        }
+        },
       );
 
       if (res) {
@@ -251,7 +248,7 @@ export default function IndexPage() {
 
       <div className="flex flex-row justify-end mb-2">
         <Button type="primary" onClick={onCreateAccount}>
-          新建
+          新建客服账号
         </Button>
       </div>
 
@@ -283,9 +280,9 @@ export default function IndexPage() {
         onCancel={() => setIsModalVisible(false)}
       >
         <Form>
-          <Form.Item label="名字">
+          <Form.Item label="客服账号名">
             <Input
-              placeholder="名字"
+              placeholder="客服账号名"
               value={editName}
               onChange={(ev) => setEditName(ev.target.value)}
             />
@@ -307,9 +304,7 @@ export default function IndexPage() {
                 </div>
               )}
             </Upload>
-            <p className="text-red-400">
-              如果没有上传头像，将会使用默认头像
-            </p>
+            <p className="text-red-400">如果没有上传头像，将会使用默认头像</p>
           </Form.Item>
         </Form>
       </Modal>

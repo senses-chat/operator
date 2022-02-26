@@ -55,7 +55,7 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: '名字',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
@@ -65,10 +65,10 @@ export default function IndexPage() {
       key: 'url',
     },
     {
-      title: '是否激活',
+      title: '状态',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? '是' : '否'),
+      render: (isActive: boolean) => (isActive ? '已激活' : '未激活'),
     },
     {
       title: '创建时间',
@@ -210,7 +210,7 @@ export default function IndexPage() {
   return (
     <AppLayout>
       <Head>
-        <title>Rasa 服务管理</title>
+        <title>聊天机器人管理</title>
       </Head>
 
       <div className="flex flex-row justify-end mb-2">
@@ -238,9 +238,9 @@ export default function IndexPage() {
         onCancel={() => setIsModalVisible(false)}
       >
         <Form>
-          <Form.Item label="名字">
+          <Form.Item label="名称">
             <Input
-              placeholder="名字"
+              placeholder="名称"
               value={editName}
               onChange={(ev) => setEditName(ev.target.value)}
             />
@@ -252,7 +252,7 @@ export default function IndexPage() {
               onChange={(ev) => setEditURL(ev.target.value)}
             />
           </Form.Item>
-          <Form.Item label="是否激活">
+          <Form.Item label="状态">
             <Switch
               checked={editIsActive}
               onChange={(value) => setEditIsActive(value)}
