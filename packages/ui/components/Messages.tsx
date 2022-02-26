@@ -18,7 +18,7 @@ export function Messages({ messages }: MessagesPayload) {
       {messages.map((message, index) => (
         <div
           key={index}
-          className={`flex flex-row items-center mt-5 mb-5 ${
+          className={`flex flex-row items-center my-5 ${
             message.type === 'user' ? 'flex-row-reverse' : ''
           }`}
         >

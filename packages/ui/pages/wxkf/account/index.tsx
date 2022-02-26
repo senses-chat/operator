@@ -36,6 +36,7 @@ export default function IndexPage() {
   const [editMediaId, setEditMediaId] = useState(null);
   const [editAvatarLink, setEditAvatarLink] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarS3Key, setAvatarS3Key] = useState('');
   const { data }: SWRResponse<Account[], Error> = useSWR(
     url(`/api/wxkf/account`),
     fetcher,
@@ -65,7 +66,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Link
-            href={`/ui/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
+            href={`/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
             passHref
           >
             <Button className="mr-2" type="primary">
@@ -179,10 +180,65 @@ export default function IndexPage() {
     mutate(url(`/api/wxkf/account`));
   }
 
+  async function onBeforeUploadAvatar() {
+    const res = await fetcher(
+      url(`/api/wxkf/account/avatar`),
+      {
+        method: 'GET'
+      },
+    );
+    if (res) {
+      setAvatarS3Key(res.s3);
+      return res.link;
+    } else {
+      message.error(`获取头像上传链接失败`);
+      return null;
+    }
+  }
+
+  async function onUploadAvatar({ onError, onSuccess, file, action }: any) {
+    const resUpload = await fetcher(
+      action,
+      {
+        method: 'PUT',
+        body: file,
+      },
+      (res) => {
+        if (res.status === 200) {
+          return true;
+        }
+        return false;
+      }
+    );
+    if (resUpload) {
+      const res = await fetcher(
+        url(`/api/wxkf/account/avatar`),
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            avatar: avatarS3Key,
+          }),
+        },
+        async (res) => {
+          return await res.text();
+        }
+      );
+
+      if (res) {
+        onSuccess(res);
+      }
+    }
+
+    onError();
+  }
+
   function onChangePage(pagination) {
     router.push(
-      `/ui/wxkf/account?page=${pagination.current}`,
-      `/ui/wxkf/account?page=${pagination.current}`,
+      `/wxkf/account?page=${pagination.current}`,
+      `/wxkf/account?page=${pagination.current}`,
       { shallow: true },
     );
   }
@@ -236,11 +292,11 @@ export default function IndexPage() {
           </Form.Item>
           <Form.Item label="头像">
             <Upload
-              name="avatar"
               listType="picture-card"
               showUploadList={false}
-              action={url('/api/wxkf/account/avatar')}
+              action={onBeforeUploadAvatar}
               onChange={onAvatarChange}
+              customRequest={onUploadAvatar}
             >
               {editAvatarLink ? (
                 <Avatar shape="square" size={64} src={editAvatarLink} />

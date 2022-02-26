@@ -201,8 +201,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/rasa-server?page=${pagination.current}&size=${pagination.pageSize}`,
-      `/ui/rasa-server?page=${pagination.current}&size=${pagination.pageSize}`,
+      `/rasa-server?page=${pagination.current}&size=${pagination.pageSize}`,
+      `/rasa-server?page=${pagination.current}&size=${pagination.pageSize}`,
       { shallow: true },
     );
   }

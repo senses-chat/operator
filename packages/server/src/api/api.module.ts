@@ -9,7 +9,7 @@ import { HistoryController } from './history.controller';
 import { BotConfigApiController } from './bot-config.controller';
 
 @Module({
-  imports: [CqrsModule, EventSourcingModule, WxkfModule, PrismaModule],
+  imports: [CqrsModule, EventSourcingModule, WxkfModule, PrismaModule, ConfigModule],
   controllers: [WxkfApiController, HistoryController, BotConfigApiController],
 })
 export class ApiModule {}

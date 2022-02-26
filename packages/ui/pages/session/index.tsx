@@ -107,7 +107,7 @@ export default function IndexPage() {
       key: 'action',
       render: (_, record) => (
         <div>
-          <Link href={`/ui/session/${record.id}/messages`} passHref>
+          <Link href={`/session/${record.id}/messages`} passHref>
             <Button className="mr-2" type="primary">
               消息
             </Button>
@@ -119,8 +119,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/ui/session?page=${pagination.current}`,
-      `/ui/session?page=${pagination.current}`,
+      `/session?page=${pagination.current}`,
+      `/session?page=${pagination.current}`,
       { shallow: true },
     );
   }
