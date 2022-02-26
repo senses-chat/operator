@@ -5,13 +5,8 @@ import {
   Body,
   Query,
   Logger,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
-import path from 'path';
-import fs from 'fs';
+import { ConfigService } from '@nestjs/config';
 
 import { WxkfAccountLink } from './models';
 import { WxkfServiceRegistry } from 'src/wxkf/wxkf.registry';
@@ -20,7 +15,7 @@ import { WxkfServiceRegistry } from 'src/wxkf/wxkf.registry';
 export class WxkfApiController {
   private readonly logger = new Logger(WxkfApiController.name);
 
-  constructor(private readonly wxkfServiceRegistry: WxkfServiceRegistry) {}
+  constructor(private readonly wxkfServiceRegistry: WxkfServiceRegistry, private readonly config: ConfigService) {}
 
   @Get('/account')
   async getAccountList(@Query('corpId') corpId?: string): Promise<any[]> {
@@ -41,16 +36,9 @@ export class WxkfApiController {
   async createAccount(@Body() body: any): Promise<boolean> {
     let mediaId = body.mediaId;
     if (!mediaId) {
-      const file: any = {
-        buffer: fs.readFileSync(
-          path.resolve(__dirname, '../../public/default_avatar.png'),
-        ),
-        originalname: 'default_avatar.png',
-        mimetype: 'image/png',
-      };
       mediaId = await this.wxkfServiceRegistry
         .getService(body.corpId)
-        .uploadAvatar(file);
+        .uploadAvatar(this.config.get<string>('wxkf.defaultAvatarS3'));
     }
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
@@ -65,12 +53,18 @@ export class WxkfApiController {
   }
 
   @Post('/account/avatar')
-  @UseInterceptors(FileInterceptor('avatar'))
   async uploadAccountAvatar(
-    @UploadedFile() file: Express.Multer.File,
+    @Body('avatar') avatar: string,
     @Query('corpId') corpId?: string,
   ): Promise<string> {
-    return await this.wxkfServiceRegistry.getService(corpId).uploadAvatar(file);
+    return await this.wxkfServiceRegistry.getService(corpId).uploadAvatar(`avatar/temp/${avatar}`);
+  }
+
+  @Get('/account/avatar')
+  async getAccountAvatarUploadLink(
+    @Query('corpId') corpId?: string,
+  ): Promise<{ s3: string, link: string }> {
+    return await this.wxkfServiceRegistry.getService(corpId).getAvatarUploadLink();
   }
 
   @Get('/account/link')

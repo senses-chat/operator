@@ -25,7 +25,7 @@ import {
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
 } from '@senses-chat/wx-sdk';
-import { plainToInstance } from '@senses-chat/operator-common';
+import { plainToInstance, getS3FileName, getS3ObjectName, getS3BucketName } from '@senses-chat/operator-common';
 
 import { WxkfCredentials, WxkfAccountLink } from './models';
 
@@ -40,6 +40,7 @@ export class WxkfService {
   constructor(
     private readonly credentials: WxkfCredentials,
     private readonly assetsBucket: string,
+    private readonly defaultAvatarS3: string,
     private readonly minioClient: Minio,
     private readonly prisma: PrismaService,
     private readonly kvStorage: KeyValueStorageBase,
@@ -257,25 +258,47 @@ export class WxkfService {
     await this.kvStorage.set(key, cursor);
   }
 
-  public async uploadAvatar(avatar: Express.Multer.File): Promise<string> {
+  public async getAvatarUploadLink(): Promise<{ s3: string, link: string }> {
+    const date = +new Date();
+
+    const link = await this.minioClient.presignedPutObject(
+      this.assetsBucket,
+      `avatar/temp/${this.corpId}/${date}`,
+      60 * 5,
+    );
+
+    return {
+      s3: `${this.corpId}/${date}`,
+      link,
+    };
+  }
+
+  public async uploadAvatar(avatarS3Path: string): Promise<string> {
+    const bucket = getS3BucketName(avatarS3Path) || this.assetsBucket;
+    const objectName = getS3ObjectName(avatarS3Path);
+    const avatarStat = await this.minioClient.statObject(bucket, objectName);
+    const avatarFile = await this.minioClient.getObject(bucket, objectName);
+
     const response = await this.wxkfClient.uploadMedia(
       plainToInstance(WxkfMediaUploadInput, {
         type: WxkfMediaType.Image,
-        media: avatar.buffer,
-        filename: avatar.originalname,
-        contentType: avatar.mimetype,
-        knownLength: avatar.size,
+        media: avatarFile.read(),
+        filename: getS3FileName(avatarS3Path),
+        contentType: avatarStat?.metaData?.mimetype || undefined,
+        knownLength: avatarStat.size,
       }),
     );
 
-    await this.minioClient.putObject(
-      this.assetsBucket,
-      `${this.corpId}/${response.media_id}`,
-      avatar.buffer,
-      {
-        'Content-Type': avatar.mimetype,
-      },
-    );
+    if (this.defaultAvatarS3 !== `s3://${bucket}/${objectName}`) {
+      await this.minioClient.copyObject(
+        this.assetsBucket,
+        `avatar/${this.corpId}/${response.media_id}`,
+        `${bucket}/${objectName}`,
+        null,
+      );
+  
+      await this.minioClient.removeObject(bucket, objectName);
+    }
 
     return response.media_id;
   }
@@ -326,10 +349,12 @@ export function wxkfServiceFactory(
 ): WxkfService {
   const credentials = config.get<WxkfCredentials>('wxkf.credentials');
   const assetsBucket = config.get<string>('wxkf.assetsBucket');
+  const defaultAvatarS3 = config.get<string>('wxkf.defaultAvatarS3');
   const minioClient = minio.instance;
   return new WxkfService(
     credentials,
     assetsBucket,
+    defaultAvatarS3,
     minioClient,
     prisma,
     kvStorage,
