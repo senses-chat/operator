@@ -16,11 +16,11 @@ export class NewWxkfMessageCommandHandler
   constructor(private readonly eventStore: EventStoreService) {}
 
   public async execute(command: NewWxkfMessageCommand): Promise<void> {
-    let id = `${command.corpid}-${command.open_kfid}-${command.external_userid}`;
+    let id = `${command.corpid}:${command.open_kfid}:${command.external_userid}`;
 
     if (command.msgtype === WxkfIncomingMessageType.Event) {
       const event = (command as WxkfIncomingEventMessage).event;
-      id = `${command.corpid}-${event.open_kfid}-${event.external_userid}`;
+      id = `${command.corpid}:${event.open_kfid}:${event.external_userid}`;
     }
 
     const log = await this.eventStore.getAggregate<WxkfMessageLog>(

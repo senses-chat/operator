@@ -32,7 +32,7 @@ export default function IndexPage() {
       dataIndex: 'aggregateId',
       key: 'aggregateId',
       render: (aggregateId: string) =>
-        aggregateId.split('-').map((item) => <div key={item}>{item}</div>),
+        aggregateId.split(':').map((item) => <div key={item}>{item}</div>),
     },
     {
       title: '消息数量',
