@@ -11,6 +11,9 @@ module.exports = (options, webpack) => {
     'amqplib',
     'amqp-connection-manager',
     '@nestjs/websockets/socket-module',
+    '@nestjs/platform-express',
+    'fastify-static',
+    'point-of-view',
   ];
 
   return {
