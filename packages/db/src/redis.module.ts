@@ -9,4 +9,4 @@ export const Module: DynamicModule = RedisModule.forRootAsync({
   useFactory: (configService: ConfigService) =>
     configService.get('storage.redis'),
   inject: [ConfigService],
-});
+}, false);

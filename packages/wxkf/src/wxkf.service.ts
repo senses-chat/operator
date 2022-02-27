@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Client as Minio } from 'minio';
 import qs from 'query-string';
 
 import {
@@ -41,7 +40,7 @@ export class WxkfService {
     private readonly credentials: WxkfCredentials,
     private readonly assetsBucket: string,
     private readonly defaultAvatarS3: string,
-    private readonly minioClient: Minio,
+    private readonly minio: MinioService,
     private readonly prisma: PrismaService,
     private readonly kvStorage: KeyValueStorageBase,
   ) {
@@ -60,7 +59,7 @@ export class WxkfService {
     const { media, filename, contentType } = await this.wxkfClient.getMedia(
       mediaId,
     );
-    await this.minioClient.putObject(
+    await this.minio.putObject(
       this.assetsBucket,
       `${this.corpId}/${filename}`,
       media,
@@ -261,7 +260,7 @@ export class WxkfService {
   public async getAvatarUploadLink(): Promise<{ s3: string, link: string }> {
     const date = +new Date();
 
-    const link = await this.minioClient.presignedPutObject(
+    const link = await this.minio.presignedPutObject(
       this.assetsBucket,
       `avatar/temp/${this.corpId}/${date}`,
       60 * 5,
@@ -276,8 +275,8 @@ export class WxkfService {
   public async uploadAvatar(avatarS3Path: string): Promise<string> {
     const bucket = getS3BucketName(avatarS3Path) || this.assetsBucket;
     const objectName = getS3ObjectName(avatarS3Path);
-    const avatarStat = await this.minioClient.statObject(bucket, objectName);
-    const avatarFile = await this.minioClient.getObject(bucket, objectName);
+    const avatarStat = await this.minio.statObject(bucket, objectName);
+    const avatarFile = await this.minio.getObject(bucket, objectName);
 
     const response = await this.wxkfClient.uploadMedia(
       plainToInstance(WxkfMediaUploadInput, {
@@ -290,14 +289,14 @@ export class WxkfService {
     );
 
     if (this.defaultAvatarS3 !== `s3://${bucket}/${objectName}`) {
-      await this.minioClient.copyObject(
+      await this.minio.copyObject(
         this.assetsBucket,
         `avatar/${this.corpId}/${response.media_id}`,
         `${bucket}/${objectName}`,
         null,
       );
-  
-      await this.minioClient.removeObject(bucket, objectName);
+
+      await this.minio.removeObject(bucket, objectName);
     }
 
     return response.media_id;
@@ -350,12 +349,11 @@ export function wxkfServiceFactory(
   const credentials = config.get<WxkfCredentials>('wxkf.credentials');
   const assetsBucket = config.get<string>('wxkf.assetsBucket');
   const defaultAvatarS3 = config.get<string>('wxkf.defaultAvatarS3');
-  const minioClient = minio.instance;
   return new WxkfService(
     credentials,
     assetsBucket,
     defaultAvatarS3,
-    minioClient,
+    minio,
     prisma,
     kvStorage,
   );

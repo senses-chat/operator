@@ -23,7 +23,7 @@
     "@senses-chat/operator-events": "0.1.0",
     "fast-xml-parser": "^4.0.0-beta.8",
     "form-data": "^4.0.0",
-    "node-fetch": "^2",
+    "node-fetch": "^2.6.7",
     "query-string": "^7.1.1"
   },
   "peerDependencies": {

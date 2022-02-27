@@ -35,7 +35,7 @@ export class WechatService {
   private readonly logger = new Logger(WechatService.name);
 
   constructor(
-    private readonly minioService: MinioService,
+    private readonly minio: MinioService,
     private readonly prisma: PrismaService,
     @Inject(WECHAT_KV_STORAGE)
     private readonly kvStorage: KeyValueStorageBase,
@@ -124,14 +124,14 @@ export class WechatService {
 
         this.logger.debug(`s3 location: ${bucket}/${key}`);
 
-        const imageStats = await this.minioService.instance.statObject(
+        const imageStats = await this.minio.statObject(
           bucket,
           key,
         );
 
         this.logger.debug(imageStats);
 
-        const imageStream = await this.minioService.instance.getObject(
+        const imageStream = await this.minio.getObject(
           bucket,
           key,
         );

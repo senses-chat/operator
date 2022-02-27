@@ -1,10 +1,8 @@
-import { RequestInfo, RequestInit } from 'node-fetch';
+import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import qs from 'query-string';
 import { plainToInstance } from '@senses-chat/operator-common';
 
-import fetch from './fetch';
 import { Constructor, WxResponse } from './model';
-
 
 export abstract class WxBaseClient {
   constructor(protected readonly urlPrefix: string) {}

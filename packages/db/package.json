@@ -19,13 +19,13 @@
     "lint": "eslint --fix"
   },
   "dependencies": {
-    "@liaoliaots/nestjs-redis": "^5.2.0",
-    "@prisma/client": "^3.9.2",
+    "@liaoliaots/nestjs-redis": "^6.0.0",
+    "@prisma/client": "^3.10.0",
     "@senses-chat/operator-common": "0.1.0",
     "ioredis": "^4.28.2",
     "lru-cache": "^6.0.0",
     "minio": "^7.0.25",
-    "prisma": "^3.9.2",
+    "prisma": "^3.10.0",
     "rimraf": "^3.0.0"
   },
   "peerDependencies": {
