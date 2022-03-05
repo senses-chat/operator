@@ -50,6 +50,7 @@ model RasaServer {
   id        Int      @id @default(autoincrement())
   name      String   @unique @db.VarChar
   url       String   @db.VarChar
+  pingUrl   String?  @db.VarChar
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @db.Timestamptz(6)

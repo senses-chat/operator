@@ -18,9 +18,11 @@
     "lint": "eslint --fix"
   },
   "dependencies": {
+    "@nestjs/schedule": "^1.0.2",
     "@senses-chat/operator-common": "0.1.0",
     "@senses-chat/operator-database": "0.1.0",
     "@senses-chat/operator-events": "0.1.0",
+    "node-fetch": "^2.6.7",
     "rimraf": "^3.0.0"
   },
   "peerDependencies": {
@@ -35,5 +37,9 @@
   "volta": {
     "node": "16.13.1",
     "yarn": "1.22.17"
+  },
+  "devDependencies": {
+    "@types/cron": "^1.7.3",
+    "@types/node-fetch": "^2"
   }
 }
