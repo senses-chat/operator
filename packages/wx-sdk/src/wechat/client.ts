@@ -1,7 +1,19 @@
-import { XMLParser } from 'fast-xml-parser';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import contentDisposition from 'content-disposition';
+import { lookup as lookupMimeType } from 'mime-types';
+import { plainToInstance } from 'class-transformer';
+
 import { WxBaseClient } from '../client';
 import { WxMsgCrypto } from '../crypto';
-import { WxAccessTokenResponse } from '../model';
+import { WxAccessTokenResponse, WxResponse } from '../model';
+import {
+  WechatMediaGetResponse,
+  WechatMediaUploadInput,
+  WechatMediaUploadResponse,
+  WechatMessageInput,
+  WechatVideoUrlResponse,
+} from './model';
 
 export interface WechatClientOptions {
   appId: string;
@@ -19,14 +31,14 @@ export interface WechatClientOptions {
 export class WechatClient extends WxBaseClient {
   private static URL_PREFIX = 'https://api.weixin.qq.com/cgi-bin';
 
-  private readonly appId: string;
-  private readonly appSecret?: string;
-  private readonly token?: string;
-  private readonly aesKey?: string;
-  private readonly getAccessTokenFromCache?: (
+  protected readonly appId: string;
+  protected readonly appSecret?: string;
+  protected readonly token?: string;
+  protected readonly aesKey?: string;
+  protected readonly getAccessTokenFromCache?: (
     appId: string,
   ) => Promise<string | undefined>;
-  private readonly storeAccessTokenToCache?: (
+  protected readonly storeAccessTokenToCache?: (
     appId: string,
     accessToken: string,
     expiresIn: number,
@@ -41,6 +53,78 @@ export class WechatClient extends WxBaseClient {
     this.aesKey = options.aesKey;
     this.getAccessTokenFromCache = options.getAccessTokenFromCache;
     this.storeAccessTokenToCache = options.storeAccessTokenToCache;
+  }
+
+  public async uploadMedia(
+    input: WechatMediaUploadInput,
+  ): Promise<WechatMediaUploadResponse> {
+    const access_token = await this.fetchAccessToken();
+
+    const { type, media, filename, filepath, contentType, knownLength } = input;
+
+    const form = new FormData();
+    form.append('media', media, {
+      filename,
+      filepath,
+      contentType,
+      knownLength,
+    });
+
+    const url = this.url('/media/upload', { access_token, type });
+
+    return this.request(WechatMediaUploadResponse, url, {
+      method: 'POST',
+      headers: form.getHeaders(),
+      body: form,
+    });
+  }
+
+  public async getMedia(
+    media_id: string,
+    isFromJsSDK?: boolean,
+  ): Promise<WechatMediaGetResponse | WechatVideoUrlResponse | WxResponse> {
+    const access_token = await this.fetchAccessToken();
+
+    const url = this.url(isFromJsSDK ? '/media/get/jssdk' : '/media/get', {
+      access_token,
+      media_id,
+    });
+    const response = await fetch(url);
+    const contentType = response.headers.get('Content-Type');
+    const cdHeaderValue = response.headers.get('Content-Disposition');
+
+    if (contentType === 'application/json' || !cdHeaderValue) {
+      const json: any = await response.json();
+
+      if (!json.video_url) {
+        throw new Error(
+          `Wxkf Media Get Error code ${json.errcode}: ${json.errmsg}`,
+        );
+      }
+
+      return plainToInstance(WechatVideoUrlResponse, json);
+    }
+
+    const { filename } = contentDisposition.parse(cdHeaderValue).parameters;
+    const media = await response.buffer();
+
+    return plainToInstance(WechatMediaGetResponse, {
+      media,
+      filename,
+      // content-type header doesn't seem to be accurate, use it as fallback
+      contentType: lookupMimeType(filename) || contentType,
+    });
+  }
+
+  public async messageCustomSend(
+    input: WechatMessageInput,
+  ): Promise<WxResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/message/custom/send', { access_token });
+    return this.request(WxResponse, url, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
   }
 
   public async fetchAccessToken(): Promise<string> {
@@ -74,30 +158,7 @@ export class WechatClient extends WxBaseClient {
     return response.access_token;
   }
 
-  public validateRequestSignature(
-    signature: string,
-    timestamp: string,
-    nonce: string,
-    echostr: string,
-  ): boolean {
-    const crypto = new WxMsgCrypto(this.appId, this.token, this.aesKey);
-    const sign = crypto.getSignature(timestamp, nonce, echostr);
-    return sign === signature;
-  }
-
-  public decryptXmlMessage(encryptedXml: string): any {
-    const parser = new XMLParser();
-    return parser.parse(this.decryptMessage(encryptedXml)).xml;
-  }
-
-  public decryptMessage(encrypted: string): string {
-    const crypto = new WxMsgCrypto(this.appId, this.token, this.aesKey);
-    const { message, id: decryptedAppId } = crypto.decrypt(encrypted);
-
-    if (decryptedAppId !== this.appId) {
-      throw new Error('invalid receiveId');
-    }
-
-    return message;
+  protected getCrypto(): WxMsgCrypto {
+    return new WxMsgCrypto(this.appId, this.token, this.aesKey);
   }
 }

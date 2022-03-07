@@ -1,4 +1,3 @@
-import { XMLParser } from 'fast-xml-parser';
 import { WxBaseClient } from '../client';
 import { WxMsgCrypto } from '../crypto';
 import { WxOpenAccessTokenResponse } from './model';
@@ -99,30 +98,7 @@ export class WechatOpenClient extends WxBaseClient {
     return response.access_token;
   }
 
-  public validateRequestSignature(
-    signature: string,
-    timestamp: string,
-    nonce: string,
-    echostr: string,
-  ): boolean {
-    const crypto = new WxMsgCrypto(this.appId, this.token, this.aesKey);
-    const sign = crypto.getSignature(timestamp, nonce, echostr);
-    return sign === signature;
-  }
-
-  public decryptXmlMessage(encryptedXml: string): any {
-    const parser = new XMLParser();
-    return parser.parse(this.decryptMessage(encryptedXml)).xml;
-  }
-
-  public decryptMessage(encrypted: string): string {
-    const crypto = new WxMsgCrypto(this.appId, this.token, this.aesKey);
-    const { message, id: decryptedAppId } = crypto.decrypt(encrypted);
-
-    if (decryptedAppId !== this.appId) {
-      throw new Error('invalid receiveId');
-    }
-
-    return message;
+  protected getCrypto(): WxMsgCrypto {
+    return new WxMsgCrypto(this.appId, this.token, this.aesKey);
   }
 }

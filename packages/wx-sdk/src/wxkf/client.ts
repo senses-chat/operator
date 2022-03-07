@@ -2,9 +2,7 @@ import fetch from 'node-fetch';
 import FormData from 'form-data';
 import contentDisposition from 'content-disposition';
 import { lookup as lookupMimeType } from 'mime-types';
-import { XMLParser } from 'fast-xml-parser';
-
-import { plainToInstance } from '@senses-chat/operator-common';
+import { plainToInstance } from 'class-transformer';
 
 import {
   WxkfMessagePayload,
@@ -280,30 +278,7 @@ export class WxkfClient extends WxBaseClient {
     return response.access_token;
   }
 
-  public validateWxkfRequestSignature(
-    signature: string,
-    timestamp: string,
-    nonce: string,
-    echostr: string,
-  ): boolean {
-    const crypto = new WxMsgCrypto(this.corpId, this.token, this.aesKey);
-    const sign = crypto.getSignature(timestamp, nonce, echostr);
-    return sign === signature;
-  }
-
-  public decryptXmlMessage(encryptedXml: string): any {
-    const parser = new XMLParser();
-    return parser.parse(this.decryptMessage(encryptedXml)).xml;
-  }
-
-  public decryptMessage(encrypted: string): string {
-    const crypto = new WxMsgCrypto(this.corpId, this.token, this.aesKey);
-    const { message, id: decryptedCorpId } = crypto.decrypt(encrypted);
-
-    if (decryptedCorpId !== this.corpId) {
-      throw new Error('invalid receiveId');
-    }
-
-    return message;
+  protected getCrypto(): WxMsgCrypto {
+    return new WxMsgCrypto(this.corpId, this.token, this.aesKey);
   }
 }
