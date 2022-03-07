@@ -13,7 +13,6 @@ import { CommandBus } from '@nestjs/cqrs';
 import { plainToInstance } from '@senses-chat/operator-common';
 
 import { WechatService } from './wechat.service';
-import { Wechat3rdPartyService } from './3rdparty.service';
 import { NewWechatMessageCommand } from './commands/new-msg.command';
 import { WechatServiceRegistry } from './wechat.registry';
 
@@ -23,7 +22,6 @@ export class WechatController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly wechatServiceRegistry: WechatServiceRegistry,
-    private readonly wx3pService: Wechat3rdPartyService,
   ) {}
 
   @Get('/:appNamespace')
@@ -72,28 +70,6 @@ export class WechatController {
     this.commandBus.execute(
       plainToInstance(NewWechatMessageCommand, { ...payload, appNamespace }),
     );
-
-    return 'success';
-  }
-
-  @Post('3rdparty/webhook')
-  async thirdPartyWebhook(@Body('xml') body: any): Promise<string> {
-    let payload = body;
-
-    if (payload.Encrypt) {
-      this.logger.debug('incoming message encrypted, decrypting');
-      payload = await this.wx3pService.decodeEncryptedXmlMessage(body.Encrypt);
-    }
-
-    this.logger.log(payload);
-    // TODO: push payload into command bus after digesting the channel
-
-    if (payload.InfoType === 'component_verify_ticket') {
-      this.logger.debug('storing component verify ticket');
-      await this.wx3pService.storeComponentVerifyTicket(
-        payload.ComponentVerifyTicket,
-      );
-    }
 
     return 'success';
   }
