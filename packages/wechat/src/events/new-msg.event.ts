@@ -1,19 +1,12 @@
 import { IEventWithMetadata, EventMetadata } from '@senses-chat/operator-common';
 import { Event } from '@senses-chat/operator-common';
-
-import { WxIncomingMessage } from '../models';
+import { WechatIncomingMessage } from '@senses-chat/wx-sdk';
 
 @Event()
 export class NewWechatMessageEvent
-  implements WxIncomingMessage, IEventWithMetadata
+  extends WechatIncomingMessage
+  implements IEventWithMetadata
 {
   appNamespace: string;
-  ToUserName: string;
-  FromUserName: string;
-  CreateTime: number;
-  MsgType: string;
-  Event?: string;
-  Content?: string;
-  SessionFrom?: string;
   metadata?: EventMetadata;
 }

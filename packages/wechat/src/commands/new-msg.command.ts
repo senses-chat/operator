@@ -1,13 +1,9 @@
 import { ICommand } from '@nestjs/cqrs';
-import { WxIncomingMessage } from '../models';
+import { WechatIncomingMessage } from '@senses-chat/wx-sdk';
 
-export class NewWechatMessageCommand implements WxIncomingMessage, ICommand {
+export class NewWechatMessageCommand
+  extends WechatIncomingMessage
+  implements ICommand
+{
   appNamespace: string;
-  ToUserName: string;
-  FromUserName: string;
-  CreateTime: number;
-  MsgType: string;
-  Event?: string;
-  Content?: string;
-  SessionFrom?: string;
 }

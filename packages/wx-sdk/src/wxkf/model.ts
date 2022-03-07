@@ -1,4 +1,4 @@
-import { Type } from '@senses-chat/operator-common';
+import { Type } from 'class-transformer';
 import { Readable } from 'stream';
 
 import { WxResponse } from '../model';

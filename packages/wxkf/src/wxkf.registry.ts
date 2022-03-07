@@ -8,8 +8,8 @@ import {
   KeyValueStorageBase,
   WXKF_KV_STORAGE,
 } from '@senses-chat/operator-database';
-import { WxkfCredentials } from '.';
 
+import { WxkfCredentials } from './models';
 import { WxkfService, wxkfServiceFactory } from './wxkf.service';
 
 @Injectable()
