@@ -176,8 +176,6 @@ export default function IndexPage() {
       }
 
       mediaId = await onUploadAvatar({
-        onError: () => {},
-        onSuccess: () => {},
         file: res,
         action: avatarS3Link,
       });
@@ -259,12 +257,12 @@ export default function IndexPage() {
       );
 
       if (res) {
-        await onSuccess(res);
+        onSuccess && await onSuccess(res);
         return res;
       }
     }
 
-    await onError();
+    onError && await onError();
     return null
   }
 

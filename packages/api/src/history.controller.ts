@@ -22,7 +22,9 @@ export class HistoryController {
 
   @Get('/wxkf_msg_logs')
   async listWxkfMessageLogs() {
-    return this.queryBus.execute(new ListWxkfMessageLogsQuery());
+    return this.queryBus.execute(new ListWxkfMessageLogsQuery({
+      updatedAt: 'desc',
+    }));
   }
 
   @Get('/sessions/:id')
@@ -39,6 +41,8 @@ export class HistoryController {
       }
     >
   > {
-    return this.queryBus.execute(new ListSessionsQuery());
+    return this.queryBus.execute(new ListSessionsQuery({
+      updatedAt: 'desc',
+    }));
   }
 }

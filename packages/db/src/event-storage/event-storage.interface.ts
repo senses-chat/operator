@@ -5,7 +5,7 @@ export interface IEventStorage<
 > {
   get defaultInitialVersion(): string | number;
 
-  getByType(aggregateType: string): Promise<
+  getByType(aggregateType: string, orderBy?: { [key: string]: 'asc' | 'desc' }): Promise<
     Array<{
       aggregateId: string;
       count: number;
