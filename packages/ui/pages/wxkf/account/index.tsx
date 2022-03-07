@@ -21,6 +21,8 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
 
+import DefaultAvatarImg from '../../../public/default_avatar.png';
+
 interface Account {
   open_kfid: string;
   name: string;
@@ -37,6 +39,7 @@ export default function IndexPage() {
   const [editAvatarLink, setEditAvatarLink] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [avatarS3Key, setAvatarS3Key] = useState('');
+  const [avatarS3Link, setAvatarS3Link] = useState('');
   const { data }: SWRResponse<Account[], Error> = useSWR(
     url(`/api/wxkf/account`),
     fetcher,
@@ -103,6 +106,7 @@ export default function IndexPage() {
     setEditMediaId(null);
     setEditAvatarLink('');
     setIsModalVisible(true);
+    onBeforeUploadAvatar();
   }
 
   function onUpdateAccount(id, name, avatar) {
@@ -111,6 +115,7 @@ export default function IndexPage() {
     setEditMediaId(null);
     setEditAvatarLink(avatar);
     setIsModalVisible(true);
+    onBeforeUploadAvatar();
   }
 
   async function onDeleteAccount(id) {
@@ -157,6 +162,34 @@ export default function IndexPage() {
       return;
     }
 
+    let mediaId = undefined;
+    if (!editMediaId) {
+      const res = await fetcher(DefaultAvatarImg.src, {
+        method: 'GET',
+      }, async (res) => {
+        const buffer = await res.arrayBuffer();
+        return new File([buffer], 'default_avatar.png', { type: 'image/png' });
+      });
+      if (!res) {
+        message.error('上传默认头像失败');
+        return;
+      }
+
+      mediaId = await onUploadAvatar({
+        onError: () => {},
+        onSuccess: () => {},
+        file: res,
+        action: avatarS3Link,
+      });
+
+      setEditMediaId(mediaId);
+      setEditAvatarLink(DefaultAvatarImg.src);
+      if (!mediaId) {
+        message.error('上传默认头像失败');
+        return;
+      }
+    }
+
     const res = await fetcher(
       url(`/api/wxkf/account/${editId ? 'update' : 'add'}`),
       {
@@ -167,7 +200,7 @@ export default function IndexPage() {
         body: JSON.stringify({
           id: editId || undefined,
           name: editName || undefined,
-          mediaId: editMediaId || undefined,
+          mediaId: editMediaId || mediaId,
         }),
       },
     );
@@ -186,6 +219,7 @@ export default function IndexPage() {
     });
     if (res) {
       setAvatarS3Key(res.s3);
+      setAvatarS3Link(res.link);
       return res.link;
     } else {
       message.error(`获取头像上传链接失败`);
@@ -225,11 +259,13 @@ export default function IndexPage() {
       );
 
       if (res) {
-        onSuccess(res);
+        await onSuccess(res);
+        return res;
       }
     }
 
-    onError();
+    await onError();
+    return null
   }
 
   function onChangePage(pagination) {

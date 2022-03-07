@@ -35,11 +35,6 @@ export class WxkfApiController {
   @Post('/account/add')
   async createAccount(@Body() body: any): Promise<boolean> {
     let mediaId = body.mediaId;
-    if (!mediaId) {
-      mediaId = await this.wxkfServiceRegistry
-        .getService(body.corpId)
-        .uploadAvatar(this.config.get<string>('api.wxkf.defaultAvatarS3'));
-    }
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
       .createAccount(body.name, mediaId));
