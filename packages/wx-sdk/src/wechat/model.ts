@@ -3,6 +3,17 @@ import { Readable } from 'stream';
 
 import { WxResponse } from '../model';
 
+// TODO: subtypes
+export class WechatIncomingMessage {
+  ToUserName: string;
+  FromUserName: string;
+  CreateTime: number;
+  MsgType: string;
+  Event?: string;
+  Content?: string;
+  SessionFrom?: string;
+}
+
 export class WxAuthorizationCodeResponse extends WxResponse {
   openid: string;
   unionid?: string;

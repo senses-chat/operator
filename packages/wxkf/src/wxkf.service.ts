@@ -308,7 +308,7 @@ export class WxkfService {
     nonce: string,
     echostr: string,
   ): boolean {
-    return this.wxkfClient.validateWxkfRequestSignature(
+    return this.wxkfClient.validateRequestSignature(
       signature,
       timestamp,
       nonce,

@@ -2,6 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 
 import { plainToInstance } from '@senses-chat/operator-common';
+import { WechatMessageInput, WechatMessageType } from '@senses-chat/wx-sdk';
 import {
   TextMessageContent,
   TextWithButtonsMessageContent,
@@ -9,9 +10,9 @@ import {
   ImageMessageContent,
 } from '@senses-chat/operator-events';
 
-import { WechatService } from '../../wechat.service';
 import { SendWechatMessageEvent } from '../send-msg.event';
-import { WxMessagePayload, WxMessageType } from '../../models';
+import { WechatServiceRegistry } from '../../wechat.registry';
+import { WechatService } from '../../wechat.service';
 
 @EventsHandler(SendWechatMessageEvent)
 export class SendWechatMessageEventHandler
@@ -19,13 +20,14 @@ export class SendWechatMessageEventHandler
 {
   private readonly logger = new Logger(SendWechatMessageEventHandler.name);
 
-  constructor(private readonly wechatService: WechatService) {}
+  constructor(private readonly wechatServiceRegistry: WechatServiceRegistry) {}
 
   public async handle(event: SendWechatMessageEvent): Promise<void> {
     this.logger.verbose(`send wechat message event: ${JSON.stringify(event)}`);
 
     const { message } = event;
     const [appNamespace, openid] = message.namespaces;
+    const wechatService: WechatService = await this.wechatServiceRegistry.getService(appNamespace);
 
     this.logger.debug(`${appNamespace} ${openid}`);
 
@@ -41,11 +43,10 @@ export class SendWechatMessageEventHandler
 
       this.logger.debug(finalText);
 
-      return this.wechatService.sendMessage(
-        appNamespace,
-        plainToInstance(WxMessagePayload, {
+      return wechatService.sendMessage(
+        plainToInstance(WechatMessageInput, {
           touser: openid,
-          msgtype: WxMessageType.Text,
+          msgtype: WechatMessageType.Text,
           text: {
             content: finalText,
           },
@@ -54,16 +55,14 @@ export class SendWechatMessageEventHandler
     }
 
     if (message.content instanceof ImageMessageContent) {
-      const media_id = await this.wechatService.uploadImage(
-        appNamespace,
+      const media_id = await wechatService.uploadImage(
         message.content.image_url,
       );
 
-      return this.wechatService.sendMessage(
-        appNamespace,
-        plainToInstance(WxMessagePayload, {
+      return wechatService.sendMessage(
+        plainToInstance(WechatMessageInput, {
           touser: openid,
-          msgtype: WxMessageType.Image,
+          msgtype: WechatMessageType.Image,
           image: {
             media_id,
           },

@@ -24,7 +24,7 @@ export abstract class WxBaseClient {
     return parser.parse(this.decryptMessage(encryptedXml)).xml;
   }
 
-  protected decryptMessage(encrypted: string, id?: string): string {
+  public decryptMessage(encrypted: string, id?: string): string {
     const { message, id: decryptedId } = this.getCrypto().decrypt(encrypted);
 
     // if id not provided, skip the check
