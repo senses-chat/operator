@@ -23,6 +23,7 @@ interface logMessageData {
   metadata: {
     timestamp: string;
   };
+  event?: any;
 }
 
 export default function WxkfMessagesPage() {
@@ -43,6 +44,7 @@ export default function WxkfMessagesPage() {
         type: msg?.message?.type === 'Wxkf' ? 'bot' : 'user',
         message,
         time: msg.metadata.timestamp,
+        metadata: msg.message?.content?.metadata || msg.event || null,
       };
     }) || [];
 

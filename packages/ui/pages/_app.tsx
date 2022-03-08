@@ -6,6 +6,8 @@ import React from 'react';
 import { AppProps } from 'next/app';
 import { SessionProvider, getSession } from "next-auth/react";
 
+import 'components/global.css';
+
 export default function MyApp({
   Component,
   pageProps: { session, ...pageProps },

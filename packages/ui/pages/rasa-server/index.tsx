@@ -75,7 +75,7 @@ export default function IndexPage() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date) => (
-        <p className="mb-0">{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -83,7 +83,7 @@ export default function IndexPage() {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date) => (
-        <p className="mb-0">{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {

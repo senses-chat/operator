@@ -399,6 +399,17 @@ export class WxkfAccountAddResponse extends WxResponse {
   open_kfid: string;
 }
 
+export class WxkfExternalUserGetResponse extends WxResponse {
+  customer_list: Array<{
+    external_userid: string;
+    nickname: string;
+    avatar: string;
+    gender: number;
+    unionid: string;
+  }>;
+  invalid_external_userid: string[];
+}
+
 export class WxkfAccount {
   open_kfid: string;
   name: string;

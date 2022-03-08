@@ -5,6 +5,7 @@ import {
   Body,
   Query,
   Logger,
+  Param,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -84,5 +85,15 @@ export class WxkfApiController {
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
       .deleteAccountLink(body.id));
+  }
+
+  @Get('/externalUser/:id')
+  async getExternalUser(
+    @Query('corpId') corpId?: string,
+    @Param('id') id?: string,
+  ): Promise<any> {
+    return (await this.wxkfServiceRegistry
+      .getService(corpId)
+      .getExternalUser([id])).customer_list?.[0] || null;
   }
 }

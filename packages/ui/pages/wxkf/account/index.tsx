@@ -20,14 +20,9 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
+import { WxkfAccount } from 'utils/schema';
 
 import DefaultAvatarImg from '../../../public/default_avatar.png';
-
-interface Account {
-  open_kfid: string;
-  name: string;
-  avatar: string;
-}
 
 export default function IndexPage() {
   const router = useRouter();
@@ -40,7 +35,7 @@ export default function IndexPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarS3Key, setAvatarS3Key] = useState('');
   const [avatarS3Link, setAvatarS3Link] = useState('');
-  const { data }: SWRResponse<Account[], Error> = useSWR(
+  const { data }: SWRResponse<WxkfAccount[], Error> = useSWR(
     url(`/api/wxkf/account`),
     fetcher,
   );

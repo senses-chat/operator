@@ -38,6 +38,7 @@ export default function SessionMessagesPage() {
         type: msg.message.type === 'Rasa' ? 'bot' : 'user',
         message,
         time: msg.metadata.timestamp,
+        metadata: msg.message?.content?.metadata || null,
       };
     }) || [];
 
