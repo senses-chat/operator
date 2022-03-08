@@ -35,7 +35,7 @@ export class ListSessionsQueryHandler
     >
   > {
     // only returning session definitions
-    const aggregations = await this.eventStore.listAggregates(Session.name);
+    const aggregations = await this.eventStore.listAggregates(Session.name, query.orderBy);
 
     return Promise.all(
       aggregations.map(async (aggregation) => {

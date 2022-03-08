@@ -239,7 +239,7 @@ export default function AccountLinksPage() {
       </Head>
 
       <div className="flex flex-row justify-between items-center mb-2">
-        <p className="mb-0">名称: {accountName}</p>
+        <p>名称: {accountName}</p>
         <Button type="primary" onClick={onCreateAccountLink}>
           新建
         </Button>

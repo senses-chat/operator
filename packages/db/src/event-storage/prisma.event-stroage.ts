@@ -21,7 +21,10 @@ export class PrismaEventStorage<
     return 0;
   }
 
-  async getByType(aggregateType: string): Promise<
+  async getByType(
+    aggregateType: string,
+    orderBy?: { [key: string]: 'asc' | 'desc' },
+  ): Promise<
     Array<{
       aggregateId: string;
       count: number;
@@ -29,6 +32,25 @@ export class PrismaEventStorage<
       updatedAt: Date;
     }>
   > {
+    const orderByParsed: {} = Object.entries(orderBy || {}).reduce((prev, curr) => {
+      const [key, value] = curr;
+      switch (key) {
+        case 'aggregateId':
+          prev[key] = value;
+          break;
+        case 'count':
+          prev._count = { aggregateId: value };
+          break;
+        case 'createdAt':
+          prev._min = { createdAt: value };
+          break;
+        case 'updatedAt':
+          prev._max = { createdAt: value };
+          break;
+      }
+      return prev;
+    }, {} as any);
+    
     const aggregations = await this.prisma.eventStorage.groupBy({
       by: ['aggregateId'],
       _count: {
@@ -43,6 +65,7 @@ export class PrismaEventStorage<
       where: {
         aggregateType,
       },
+      orderBy: orderByParsed || undefined,
     });
 
     return aggregations.map((aggregation) => ({

@@ -5,6 +5,7 @@ import {
   Body,
   Query,
   Logger,
+  Param,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -35,11 +36,6 @@ export class WxkfApiController {
   @Post('/account/add')
   async createAccount(@Body() body: any): Promise<boolean> {
     let mediaId = body.mediaId;
-    if (!mediaId) {
-      mediaId = await this.wxkfServiceRegistry
-        .getService(body.corpId)
-        .uploadAvatar(this.config.get<string>('api.wxkf.defaultAvatarS3'));
-    }
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
       .createAccount(body.name, mediaId));
@@ -89,5 +85,15 @@ export class WxkfApiController {
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
       .deleteAccountLink(body.id));
+  }
+
+  @Get('/externalUser/:id')
+  async getExternalUser(
+    @Query('corpId') corpId?: string,
+    @Param('id') id?: string,
+  ): Promise<any> {
+    return (await this.wxkfServiceRegistry
+      .getService(corpId)
+      .getExternalUser([id])).customer_list?.[0] || null;
   }
 }

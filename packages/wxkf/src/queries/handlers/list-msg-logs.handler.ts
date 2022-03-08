@@ -12,6 +12,6 @@ export class ListWxkfMessageLogsQueryHandler
   constructor(private readonly eventStore: EventStoreService) {}
 
   execute(query: ListWxkfMessageLogsQuery): Promise<any[]> {
-    return this.eventStore.listAggregates(WxkfMessageLog.name);
+    return this.eventStore.listAggregates(WxkfMessageLog.name, query.orderBy);
   }
 }

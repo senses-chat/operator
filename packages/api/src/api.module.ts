@@ -6,7 +6,7 @@ import { EventSourcingModule } from '@senses-chat/operator-events';
 import { WxkfModule } from '@senses-chat/operator-wxkf';
 
 import apiConfig from './config';
-import { WxkfApiController } from './wxkf-api.controller';
+import { WxkfApiController } from './wxkf.controller';
 import { HistoryController } from './history.controller';
 import { BotConfigApiController } from './bot-config.controller';
 
