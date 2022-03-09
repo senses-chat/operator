@@ -8,6 +8,7 @@ export class BotConfigApiController {
 
   constructor(private readonly prisma: PrismaService, private readonly rasaService: RasaService) {}
 
+  // TODO: move rasa server method to rasa service
   @Get('/rasa-server')
   async getRasaServerList(
     @Query('skip') skip: number,
