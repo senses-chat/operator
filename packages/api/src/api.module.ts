@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@senses-chat/operator-database';
 import { EventSourcingModule } from '@senses-chat/operator-events';
 import { WxkfModule } from '@senses-chat/operator-wxkf';
+import { RasaModule } from '@senses-chat/operator-rasa';
 
 import apiConfig from './config';
 import { WxkfApiController } from './wxkf.controller';
@@ -15,6 +16,7 @@ import { BotConfigApiController } from './bot-config.controller';
     CqrsModule,
     EventSourcingModule,
     WxkfModule,
+    RasaModule,
     PrismaModule,
     ConfigModule.forFeature(apiConfig),
   ],

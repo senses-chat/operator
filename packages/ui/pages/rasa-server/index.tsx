@@ -22,6 +22,7 @@ interface RasaServerData {
   id: number;
   name: string;
   url: string;
+  pingUrl: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +35,7 @@ export default function IndexPage() {
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState('');
   const [editURL, setEditURL] = useState('');
+  const [editPingURL, setEditPingURL] = useState('');
   const [editIsActive, setEditIsActive] = useState(false);
   const { data }: SWRResponse<RasaServerData[], Error> = useSWR(
     url(
@@ -65,10 +67,30 @@ export default function IndexPage() {
       key: 'url',
     },
     {
+      title: '检查连通性链接',
+      dataIndex: 'pingUrl',
+      key: 'pingUrl',
+    },
+    {
       title: '状态',
       dataIndex: 'isActive',
       key: 'isActive',
       render: (isActive: boolean) => (isActive ? '已激活' : '未激活'),
+    },
+    {
+      title: '平均延迟',
+      key: 'latency',
+      render: (_, record) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const { data: latencyData } = useSWR(
+          url(`/api/bot/config/rasa-server/latency?name=${record.name}`),
+          fetcher,
+        );
+        if (latencyData) {
+          return `${latencyData.toFixed(2)}ms`;
+        }
+        return '-';
+      },
     },
     {
       title: '创建时间',
@@ -93,13 +115,14 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Button
-            className="mr-2"
+            className="mr-2 my-1"
             type="primary"
             onClick={() =>
               onUpdateRasaServer(
                 record.id,
                 record.name,
                 record.url,
+                record.pingUrl,
                 record.isActive,
               )
             }
@@ -112,7 +135,7 @@ export default function IndexPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2" type="primary" danger>
+            <Button className="mr-2 my-1" type="primary" danger>
               删除
             </Button>
           </Popconfirm>
@@ -125,14 +148,16 @@ export default function IndexPage() {
     setEditId(null);
     setEditName('');
     setEditURL('');
+    setEditPingURL('');
     setEditIsActive(false);
     setIsModalVisible(true);
   }
 
-  function onUpdateRasaServer(id, name, url, isActive) {
+  function onUpdateRasaServer(id, name, url, pingUrl, isActive) {
     setEditId(id);
     setEditName(name);
     setEditURL(url);
+    setEditPingURL(pingUrl);
     setEditIsActive(isActive);
     setIsModalVisible(true);
   }
@@ -163,7 +188,7 @@ export default function IndexPage() {
   }
 
   async function onConfirmRasaServer() {
-    if (!editName || !editURL) {
+    if (!editName || !editURL || !editPingURL) {
       message.error('请填写完整参数');
       return;
     }
@@ -179,6 +204,7 @@ export default function IndexPage() {
           id: editId || undefined,
           name: editName || undefined,
           url: editURL || undefined,
+          pingUrl: editPingURL || undefined,
           isActive: editIsActive,
         }),
       },
@@ -250,6 +276,13 @@ export default function IndexPage() {
               placeholder="链接"
               value={editURL}
               onChange={(ev) => setEditURL(ev.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="测试连通性链接">
+            <Input
+              placeholder="测试连通性链接"
+              value={editPingURL}
+              onChange={(ev) => setEditPingURL(ev.target.value)}
             />
           </Form.Item>
           <Form.Item label="状态">

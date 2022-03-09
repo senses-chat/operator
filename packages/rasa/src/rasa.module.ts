@@ -20,5 +20,6 @@ import { RasaService } from './rasa.service';
     ScheduleModule.forRoot(),
   ],
   providers: [RasaService, RasaSagas, ...CommandHandlers, ...EventHandlers],
+  exports: [RasaService],
 })
 export class RasaModule {}

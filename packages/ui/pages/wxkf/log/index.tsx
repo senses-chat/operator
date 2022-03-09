@@ -71,7 +71,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Link href={`/wxkf/log/${record.aggregateId}/messages`} passHref>
-            <Button className="mr-2" type="primary">
+            <Button className="mr-2 my-1" type="primary">
               消息
             </Button>
           </Link>

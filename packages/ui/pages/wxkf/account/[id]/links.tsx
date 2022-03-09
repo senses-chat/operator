@@ -86,7 +86,7 @@ export default function AccountLinksPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2" type="link" danger>
+            <Button className="mr-2 my-1" type="link" danger>
               删除
             </Button>
           </Popconfirm>

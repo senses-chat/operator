@@ -67,7 +67,7 @@ export default function IndexPage() {
             href={`/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
             passHref
           >
-            <Button className="mr-2" type="primary">
+            <Button className="mr-2 my-1" type="primary">
               客服接入链接管理
             </Button>
           </Link>
@@ -86,7 +86,7 @@ export default function IndexPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2" type="primary" danger>
+            <Button className="mr-2 my-1" type="primary" danger>
               删除
             </Button>
           </Popconfirm>

@@ -76,6 +76,10 @@ export class RasaService implements OnApplicationBootstrap {
     obs.observe({ entryTypes: ['measure'] });
   }
 
+  public async getRasaServerLatencies(rasaServerName: string): Promise<number[]> {
+    return JSON.parse(await this.kvStorage.get(`${PING_TIME}${DELIMITER}${rasaServerName}`) || '[]');
+  }
+
   public async pingRasaServers() {
     const rasaServers = await this.prisma.rasaServer.findMany({
       where: {
