@@ -1,11 +1,12 @@
 import { Controller, Get, Logger, Query, Post, Body } from '@nestjs/common';
 import { PrismaService, RasaServer, Route, RouteType } from '@senses-chat/operator-database';
+import { RasaService } from '@senses-chat/operator-rasa';
 
 @Controller('/api/bot/config')
 export class BotConfigApiController {
   private readonly logger = new Logger(BotConfigApiController.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly rasaService: RasaService) {}
 
   @Get('/rasa-server')
   async getRasaServerList(
@@ -17,6 +18,14 @@ export class BotConfigApiController {
       take: +size || 10,
     });
     return rasaServers;
+  }
+
+  @Get('/rasa-server/latency')
+  async getRasaServerLatency(
+    @Query('name') name: string,
+  ): Promise<number> {
+    const latencies = await this.rasaService.getRasaServerLatencies(name);
+    return latencies.reduce((prev, curr) => (prev + curr), 0) / latencies.length;
   }
 
   @Get('/rasa-server/count')
@@ -39,12 +48,14 @@ export class BotConfigApiController {
   async createRasaServer(
     @Body('name') name: string,
     @Body('url') url: string,
+    @Body('pingUrl') pingUrl: string,
     @Body('isActive') isActive: boolean,
   ): Promise<RasaServer> {
     const rasaServer = await this.prisma.rasaServer.create({
       data: {
         name,
         url,
+        pingUrl,
         isActive,
       },
     });
@@ -56,6 +67,7 @@ export class BotConfigApiController {
     @Body('id') id: number,
     @Body('name') name: string,
     @Body('url') url: string,
+    @Body('pingUrl') pingUrl: string,
     @Body('isActive') isActive: boolean,
   ): Promise<RasaServer> {
     const rasaServer = await this.prisma.rasaServer.update({
@@ -65,6 +77,7 @@ export class BotConfigApiController {
       data: {
         name: name || undefined,
         url: url || undefined,
+        pingUrl: pingUrl || undefined,
         isActive: typeof isActive === 'boolean' ? isActive : undefined,
         updatedAt: new Date(),
       },
