@@ -86,7 +86,7 @@ export default function AccountLinksPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2" type="link" danger>
+            <Button className="mr-2 my-1" type="link" danger>
               删除
             </Button>
           </Popconfirm>
@@ -239,7 +239,7 @@ export default function AccountLinksPage() {
       </Head>
 
       <div className="flex flex-row justify-between items-center mb-2">
-        <p className="mb-0">名称: {accountName}</p>
+        <p>名称: {accountName}</p>
         <Button type="primary" onClick={onCreateAccountLink}>
           新建
         </Button>

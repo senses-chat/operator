@@ -1,11 +1,10 @@
 import { ICommand } from '@nestjs/cqrs';
+
 import { RasaResponsePayload } from '../models';
 
-export class NewRasaMessageCommand implements RasaResponsePayload, ICommand {
+export class NewRasaMessageCommand
+  extends RasaResponsePayload
+  implements ICommand
+{
   namespace: string;
-  recipient_id: string;
-  text: string;
-  buttons?: any[]; // TODO: rasa buttons payload
-  image?: string;
-  custom?: any;
 }

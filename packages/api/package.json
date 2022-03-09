@@ -22,6 +22,7 @@
     "@senses-chat/operator-database": "0.1.0",
     "@senses-chat/operator-events": "0.1.0",
     "@senses-chat/operator-wxkf": "0.1.0",
+    "@senses-chat/operator-rasa": "0.1.0",
     "rimraf": "^3.0.0"
   },
   "peerDependencies": {

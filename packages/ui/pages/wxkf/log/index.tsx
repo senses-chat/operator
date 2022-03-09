@@ -6,8 +6,10 @@ import useSWR, { SWRResponse } from 'swr';
 import { format } from 'date-fns';
 
 import { Table, Button } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 
 import { AppLayout } from 'components/AppLayout';
+import { BotNode } from 'components/BotNode';
 import { url, fetcher } from 'utils/request';
 
 interface LogData {
@@ -28,11 +30,18 @@ export default function IndexPage() {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'aggregateId',
-      key: 'aggregateId',
-      render: (aggregateId: string) =>
-        aggregateId.split(':').map((item) => <div key={item}>{item}</div>),
+      title: '信息流向',
+      key: 'flow',
+      render: (_, record: LogData) => {
+        const namespaces = record.aggregateId.split(':');
+        return (
+          <div className="flex flex-row justify-center">
+            <BotNode type='Wxkf' namespaces={namespaces} />
+            <SwapOutlined className="flex justify-center items-center mx-2 w-4 " />
+            <BotNode type='WxCustomer' namespaces={namespaces} />
+          </div>
+        )
+      }
     },
     {
       title: '消息数量',
@@ -62,7 +71,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Link href={`/wxkf/log/${record.aggregateId}/messages`} passHref>
-            <Button className="mr-2" type="primary">
+            <Button className="mr-2 my-1" type="primary">
               消息
             </Button>
           </Link>

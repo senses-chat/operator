@@ -14,9 +14,11 @@ import {
   message,
   Select,
 } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
+import { BotNode } from 'components/BotNode';
 import { getCorpId } from 'utils/utils';
 
 const Option = Select.Option;
@@ -76,26 +78,17 @@ export default function IndexPage() {
       key: 'id',
     },
     {
-      title: '来源渠道类型',
-      dataIndex: 'sourceType',
-      key: 'sourceType',
-    },
-    {
-      title: '来源渠道名',
-      dataIndex: 'sourceName',
-      key: 'sourceName',
-      render: (sourceName: string) =>
-        sourceName.split(':').map((item) => <div key={item}>{item}</div>),
-    },
-    {
-      title: '转接目标类型',
-      dataIndex: 'destinationType',
-      key: 'destinationType',
-    },
-    {
-      title: '转接目标名',
-      dataIndex: 'destinationName',
-      key: 'destinationName',
+      title: '信息流向',
+      key: 'flow',
+      render: (_, record: RouteData) => {
+        return (
+          <div className="flex flex-row justify-center">
+            <BotNode type={record.sourceType as unknown as string} namespaces={record.sourceName.split(':')} />
+            <SwapOutlined className="flex justify-center items-center mx-2 w-4 " />
+            <BotNode type={record.destinationType as unknown as string} namespaces={record.destinationName.split(':')} />
+          </div>
+        )
+      }
     },
     {
       title: '状态',
@@ -108,7 +101,7 @@ export default function IndexPage() {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date) => (
-        <p className="mb-0">{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -116,7 +109,7 @@ export default function IndexPage() {
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date) => (
-        <p className="mb-0">{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
+        <p>{format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</p>
       ),
     },
     {
@@ -126,7 +119,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Button
-            className="mr-2"
+            className="mr-2 my-1"
             type="primary"
             onClick={() =>
               onUpdateRoute(
@@ -147,7 +140,7 @@ export default function IndexPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2" type="primary" danger>
+            <Button className="mr-2 my-1" type="primary" danger>
               删除
             </Button>
           </Popconfirm>
@@ -339,7 +332,7 @@ export default function IndexPage() {
                   value={`${corpId}:${option.open_kfid}`}
                   key={option.open_kfid}
                 >
-                  {option.open_kfid}
+                  {option.name}
                 </Option>
               ))}
             </Select>

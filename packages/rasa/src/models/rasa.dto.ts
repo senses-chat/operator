@@ -1,9 +1,9 @@
-export interface RasaWebhookPayload {
+export class RasaWebhookPayload {
   sender: string;
   message: string;
 }
 
-export interface RasaResponsePayload {
+export class RasaResponsePayload {
   recipient_id: string;
   text: string;
   buttons?: any[]; // TODO: rasa buttons payload

@@ -13,6 +13,7 @@ import {
 } from './event-storage';
 import { SESSION_STORAGE, PrismaSessionStorage } from './session-storage';
 import {
+  PING_TIME_KV_STORAGE,
   WECHAT_KV_STORAGE,
   WXKF_KV_STORAGE,
   PrismaKeyValueStorage,
@@ -53,6 +54,15 @@ export class StorageModule {
           configService: ConfigService,
           prismaService: PrismaService,
         ) => new PrismaSessionStorage(configService, prismaService),
+      },
+      {
+        provide: PING_TIME_KV_STORAGE,
+        inject: useRedis ? [RedisService] : [PrismaService],
+        useFactory: useRedis
+          ? (redisService: RedisService) =>
+              new RedisKeyValueStorage(redisService, 'ping')
+          : (prismaService: PrismaService) =>
+              new PrismaKeyValueStorage(prismaService, 'ping'),
       },
       {
         provide: WECHAT_KV_STORAGE,

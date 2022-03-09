@@ -6,8 +6,10 @@ import useSWR, { SWRResponse } from 'swr';
 import { format } from 'date-fns';
 
 import { Table, Button } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 
 import { AppLayout } from 'components/AppLayout';
+import { BotNode } from 'components/BotNode';
 import { url, fetcher } from 'utils/request';
 
 interface SessionData {
@@ -35,42 +37,26 @@ export default function IndexPage() {
   );
 
   const columns = [
-    // {
-    //   title: 'ID',
-    //   dataIndex: 'id',
-    //   key: 'id',
-    // },
     {
-      title: '来源',
-      dataIndex: 'source',
-      key: 'source',
-      render: (source) => (
-        <div>
-          <p>类型: {source.type}</p>
-          <p className="mb-0">命名空间:</p>
-          {source.namespaces.map((namespace, index) => (
-            <p className="mb-0" key={index}>
-              {namespace}
-            </p>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: '目标',
-      dataIndex: 'destination',
-      key: 'destination',
-      render: (destination) => (
-        <div>
-          <p>类型: {destination.type}</p>
-          <p className="mb-0">命名空间:</p>
-          {destination.namespaces.map((namespace, index) => (
-            <p className="mb-0" key={index}>
-              {namespace}
-            </p>
-          ))}
-        </div>
-      ),
+      title: '信息流向',
+      key: 'flow',
+      render: (_, record: SessionData) => {
+        return (
+          <div className="flex flex-row justify-center">
+            <BotNode type={record.source.type} namespaces={record.source.namespaces} />
+            {
+              record.source.type === 'Wxkf' && (
+                <>
+                  <SwapOutlined className="flex justify-center items-center mx-2 w-4 " />
+                  <BotNode type='WxCustomer' namespaces={record.source.namespaces} />
+                </>
+              )
+            }
+            <SwapOutlined className="flex justify-center items-center mx-2 w-4 " />
+            <BotNode type={record.destination.type} namespaces={record.destination.namespaces} />
+          </div>
+        )
+      }
     },
     {
       title: '消息数量',
@@ -108,10 +94,19 @@ export default function IndexPage() {
       render: (_, record) => (
         <div>
           <Link href={`/session/${record.id}/messages`} passHref>
-            <Button className="mr-2" type="primary">
-              消息记录
+            <Button className="mr-2 my-1" type="primary">
+              会话消息记录
             </Button>
           </Link>
+          {
+            record.source.type === 'Wxkf' && (
+              <Link href={`/wxkf/log/${record.source.namespaces.join(':')}/messages`} passHref>
+                <Button className="mr-2 my-1" type="primary">
+                  微信客服消息记录
+                </Button>
+              </Link>
+            )
+          }
         </div>
       ),
     },

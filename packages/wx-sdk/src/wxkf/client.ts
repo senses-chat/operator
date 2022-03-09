@@ -23,6 +23,7 @@ import {
   WxkfServiceStateGetResponse,
   WxkfServiceStateTransInput,
   WxkfServiceStateTransResponse,
+  WxkfExternalUserGetResponse,
 } from './model';
 import { WxBaseClient } from '../client';
 import { WxResponse, WxAccessTokenResponse } from '../model';
@@ -126,6 +127,19 @@ export class WxkfClient extends WxBaseClient {
     return this.request(WxkfServiceStateGetResponse, url, {
       method: 'POST',
       body: JSON.stringify(input),
+    });
+  }
+
+  public async getExternalUser(
+    external_userid_list: string[],
+  ): Promise<WxkfExternalUserGetResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/customer/batchget', { access_token });
+    return this.request(WxkfExternalUserGetResponse, url, {
+      method: 'POST',
+      body: JSON.stringify({
+        external_userid_list,
+      }),
     });
   }
 

@@ -23,6 +23,7 @@ import {
   WxkfServiceStateTransResponse,
   WxkfSyncMsgInput,
   WxkfSyncMsgResponse,
+  WxkfExternalUserGetResponse,
 } from '@senses-chat/wx-sdk';
 import { plainToInstance, getS3FileName, getS3ObjectName, getS3BucketName } from '@senses-chat/operator-common';
 
@@ -39,7 +40,6 @@ export class WxkfService {
   constructor(
     private readonly credentials: WxkfCredentials,
     private readonly assetsBucket: string,
-    private readonly defaultAvatarS3: string,
     private readonly minio: MinioService,
     private readonly prisma: PrismaService,
     private readonly kvStorage: KeyValueStorageBase,
@@ -205,6 +205,12 @@ export class WxkfService {
     );
   }
 
+  public async getExternalUser(
+    external_userid_list: string[],
+  ): Promise<WxkfExternalUserGetResponse> {
+    return this.wxkfClient.getExternalUser(external_userid_list);
+  }
+
   public async transferServiceState(
     open_kfid: string,
     external_userid: string,
@@ -288,16 +294,14 @@ export class WxkfService {
       }),
     );
 
-    if (this.defaultAvatarS3 !== `s3://${bucket}/${objectName}`) {
-      await this.minio.copyObject(
-        this.assetsBucket,
-        `avatar/${this.corpId}/${response.media_id}`,
-        `${bucket}/${objectName}`,
-        null,
-      );
+    await this.minio.copyObject(
+      this.assetsBucket,
+      `avatar/${this.corpId}/${response.media_id}`,
+      `${bucket}/${objectName}`,
+      null,
+    );
 
-      await this.minio.removeObject(bucket, objectName);
-    }
+    await this.minio.removeObject(bucket, objectName);
 
     return response.media_id;
   }
@@ -348,11 +352,9 @@ export function wxkfServiceFactory(
 ): WxkfService {
   const credentials = config.get<WxkfCredentials>('wxkf.credentials');
   const assetsBucket = config.get<string>('wxkf.assetsBucket');
-  const defaultAvatarS3 = config.get<string>('wxkf.defaultAvatarS3');
   return new WxkfService(
     credentials,
     assetsBucket,
-    defaultAvatarS3,
     minio,
     prisma,
     kvStorage,
