@@ -35,7 +35,7 @@ export class WxkfApiController {
 
   @Post('/account/add')
   async createAccount(@Body() body: any): Promise<boolean> {
-    let mediaId = body.mediaId;
+    const mediaId = body.mediaId;
     return !!(await this.wxkfServiceRegistry
       .getService(body.corpId)
       .createAccount(body.name, mediaId));

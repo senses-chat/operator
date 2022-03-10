@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { getBufferFromStream } from '@senses-chat/operator-common';
 import {
   getS3BucketName,
   getS3FileName,
@@ -51,16 +52,17 @@ export class WechatService {
   public async uploadImage(imagePath: string): Promise<string> {
     const bucket = getS3BucketName(imagePath) || this.assetsBucket;
     const objectName = getS3ObjectName(imagePath);
-    const avatarStat = await this.minio.statObject(bucket, objectName);
-    const avatarFile = await this.minio.getObject(bucket, objectName);
+    const objectStat = await this.minio.statObject(bucket, objectName);
+    const objectStream = await this.minio.getObject(bucket, objectName);
+    const objectBuffer = await getBufferFromStream(objectStream);
 
     const response = await this.wechatClient.uploadMedia(
       plainToInstance(WechatMediaUploadInput, {
         type: WechatMediaType.Image,
-        media: avatarFile.read(),
+        media: objectBuffer,
         filename: getS3FileName(imagePath),
-        contentType: avatarStat?.metaData?.mimetype || undefined,
-        knownLength: avatarStat.size,
+        contentType: objectStat?.metaData?.mimetype || undefined,
+        knownLength: objectStat.size,
       }),
     );
 

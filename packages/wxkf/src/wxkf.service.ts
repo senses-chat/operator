@@ -25,7 +25,13 @@ import {
   WxkfSyncMsgResponse,
   WxkfExternalUserGetResponse,
 } from '@senses-chat/wx-sdk';
-import { plainToInstance, getS3FileName, getS3ObjectName, getS3BucketName } from '@senses-chat/operator-common';
+import {
+  plainToInstance,
+  getS3FileName,
+  getS3ObjectName,
+  getS3BucketName,
+  getBufferFromStream,
+} from '@senses-chat/operator-common';
 
 import { WxkfCredentials, WxkfAccountLink } from './models';
 
@@ -263,7 +269,7 @@ export class WxkfService {
     await this.kvStorage.set(key, cursor);
   }
 
-  public async getAvatarUploadLink(): Promise<{ s3: string, link: string }> {
+  public async getAvatarUploadLink(): Promise<{ s3: string; link: string }> {
     const date = +new Date();
 
     const link = await this.minio.presignedPutObject(
@@ -283,11 +289,12 @@ export class WxkfService {
     const objectName = getS3ObjectName(avatarS3Path);
     const avatarStat = await this.minio.statObject(bucket, objectName);
     const avatarFile = await this.minio.getObject(bucket, objectName);
+    const avatarFileBuffer = await getBufferFromStream(avatarFile);
 
     const response = await this.wxkfClient.uploadMedia(
       plainToInstance(WxkfMediaUploadInput, {
         type: WxkfMediaType.Image,
-        media: avatarFile.read(),
+        media: avatarFileBuffer,
         filename: getS3FileName(avatarS3Path),
         contentType: avatarStat?.metaData?.mimetype || undefined,
         knownLength: avatarStat.size,
@@ -352,11 +359,5 @@ export function wxkfServiceFactory(
 ): WxkfService {
   const credentials = config.get<WxkfCredentials>('wxkf.credentials');
   const assetsBucket = config.get<string>('wxkf.assetsBucket');
-  return new WxkfService(
-    credentials,
-    assetsBucket,
-    minio,
-    prisma,
-    kvStorage,
-  );
+  return new WxkfService(credentials, assetsBucket, minio, prisma, kvStorage);
 }
