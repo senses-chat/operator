@@ -7,8 +7,10 @@ import {
   Query,
   Logger,
   NotFoundException,
+  Res,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { FastifyReply } from 'fastify';
 
 import { plainToInstance } from '@senses-chat/operator-common';
 
@@ -54,7 +56,8 @@ export class WechatController {
   async getMessage(
     @Param('appNamespace') appNamespace: string,
     @Body('xml') body: any,
-  ): Promise<string> {
+    @Res() res: FastifyReply,
+  ): Promise<void> {
     const wechatService = await this.getWechatServiceFromAppNamespace(appNamespace);
 
     let payload = body;
@@ -71,7 +74,7 @@ export class WechatController {
       plainToInstance(NewWechatMessageCommand, { ...payload, appNamespace }),
     );
 
-    return 'success';
+    res.status(200).send('success');
   }
 
   private async getWechatServiceFromAppNamespace(
