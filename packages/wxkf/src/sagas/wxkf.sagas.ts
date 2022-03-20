@@ -139,6 +139,7 @@ export class WxkfSagas {
                   msg_code: messageEvent.welcome_code,
                   scene: messageEvent.scene,
                   scene_param: messageEvent.scene_param,
+                  external_userid: messageEvent.external_userid,
                 },
               },
             });

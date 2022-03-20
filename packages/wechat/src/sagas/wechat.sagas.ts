@@ -25,7 +25,11 @@ export class WechatSagas {
       concatMap((event: NewWechatMessageEvent) => {
         let routeMessage: RouteMessage;
 
-        if (event.MsgType === 'miniprogrampage' || event.MsgType === 'event') {
+        if (
+          event.MsgType === 'event' &&
+          (event.Event.toLocaleLowerCase() === 'subscribe' ||
+            event.Event.toLocaleLowerCase() === 'scan')
+        ) {
           // fake /greet
           // TODO: make this into a configuration somehow
           routeMessage = plainToInstance(RouteMessage, {
@@ -34,6 +38,11 @@ export class WechatSagas {
             content: {
               type: 'text',
               text: '/greet',
+              metadata: {
+                eventType: event.Event.toLocaleLowerCase(),
+                scene: (event.EventKey || '').replace('qrscene_', ''),
+                openid: event.FromUserName,
+              },
             },
           });
         }

@@ -10,6 +10,7 @@ export class WechatIncomingMessage {
   CreateTime: number;
   MsgType: string;
   Event?: string;
+  EventKey?: string;
   Content?: string;
   SessionFrom?: string;
 }
