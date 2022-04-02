@@ -32,6 +32,7 @@ export class PrismaEventStorage<
       updatedAt: Date;
     }>
   > {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const orderByParsed: {} = Object.entries(orderBy || {}).reduce((prev, curr) => {
       const [key, value] = curr;
       switch (key) {
@@ -50,7 +51,7 @@ export class PrismaEventStorage<
       }
       return prev;
     }, {} as any);
-    
+
     const aggregations = await this.prisma.eventStorage.groupBy({
       by: ['aggregateId'],
       _count: {

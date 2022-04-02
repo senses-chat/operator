@@ -10,6 +10,7 @@ import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
 import { RasaSagas } from './sagas';
 import { RasaService } from './rasa.service';
+import { RasaController } from './rasa.controller';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RasaService } from './rasa.service';
     StorageModule.register(),
     ScheduleModule.forRoot(),
   ],
+  controllers: [RasaController],
   providers: [RasaService, RasaSagas, ...CommandHandlers, ...EventHandlers],
   exports: [RasaService],
 })
