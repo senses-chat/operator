@@ -12,7 +12,7 @@ export class SendWechatMessageCommandHandler
   constructor(private readonly eventStore: EventStoreService) {}
 
   public async execute(command: SendWechatMessageCommand): Promise<void> {
-    const id = `${command.message.namespaces[0]}-${command.message.namespaces[1]}`;
+    const id = `${command.message.namespaces[0]}:${command.message.namespaces[1]}`;
 
     const log = await this.eventStore.getAggregate<WechatMessageLog>(
       WechatMessageLog.name,
