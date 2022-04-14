@@ -78,6 +78,9 @@ export class PrismaSessionStorage implements ISessionStorage {
         sourceType: type,
         sourceNamespaces: namespaces.join(':'),
       },
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
 
     if (sessionStorage) {
