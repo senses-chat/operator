@@ -5,7 +5,7 @@ import {
   MinioService,
   PrismaService,
   KeyValueStorageBase,
-  WXKF_KV_STORAGE,
+  WECHAT_KV_STORAGE,
 } from '@senses-chat/operator-database';
 
 import { WechatCredentials } from './models';
@@ -19,7 +19,7 @@ export class WechatServiceRegistry {
     private readonly config: ConfigService,
     private readonly minio: MinioService,
     private readonly prisma: PrismaService,
-    @Inject(WXKF_KV_STORAGE)
+    @Inject(WECHAT_KV_STORAGE)
     private readonly kvStorage: KeyValueStorageBase,
   ) {
     this.services = new LRUCache({
