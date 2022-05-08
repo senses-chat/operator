@@ -9,7 +9,7 @@ import {
 } from '@senses-chat/operator-database';
 
 import { WechatCredentials } from './models';
-import { WechatService } from './wechat.service';
+import { WechatService, wechatServiceFactory } from './wechat.service';
 
 @Injectable()
 export class WechatServiceRegistry {
@@ -39,9 +39,9 @@ export class WechatServiceRegistry {
         throw new Error(`Wechat app ${namespace} not found`);
       }
 
-      const newService = new WechatService(
+      const newService = wechatServiceFactory(
         credentials,
-        this.config.get<string>('wechat.assetsBucket'),
+        this.config,
         this.minio,
         this.kvStorage,
       );
@@ -50,6 +50,18 @@ export class WechatServiceRegistry {
       return newService;
     }
 
+    return service;
+  }
+
+  public registerService<T extends WechatService>(
+    namespace: string,
+    factory: (
+      minio: MinioService,
+      kvStorage: KeyValueStorageBase,
+    ) => T,
+  ): T {
+    const service = factory(this.minio, this.kvStorage);
+    this.services.set(namespace, service);
     return service;
   }
 

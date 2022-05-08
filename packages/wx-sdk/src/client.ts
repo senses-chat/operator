@@ -1,7 +1,8 @@
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import qs from 'query-string';
 import { plainToInstance } from 'class-transformer';
+import uniqid from 'uniqid';
 
 import { Constructor, WxResponse } from './model';
 import { WxMsgCrypto } from './crypto';
@@ -17,6 +18,41 @@ export abstract class WxBaseClient {
   ): boolean {
     const sign = this.getCrypto().getSignature(timestamp, nonce, echostr);
     return sign === signature;
+  }
+
+  public encryptXmlMessage(message: string, timestamp?: number): string {
+    const xml = new XMLBuilder({
+      preserveOrder: true,
+      cdataPropName: 'cdata',
+    });
+    const encrypted = this.getCrypto().encrypt(message);
+    const nonce = uniqid();
+    if (!timestamp) {
+      timestamp = Math.floor(+Date.now() / 1000);
+    }
+    const signature = this.getCrypto().getSignature(`${timestamp}`, nonce, encrypted);
+
+    // TODO: sign message
+    return xml.build([
+      {
+        xml: [
+          {
+            Encrypt: [{ cdata: [{ '#text': encrypted }] }],
+          },
+          {
+            MsgSignature: [{ cdata: [{ '#text': signature }] }],
+          },
+          {
+            TimeStamp: [
+              { '#text': `${timestamp}` },
+            ],
+          },
+          {
+            Nonce: [{ cdata: [{ '#text': nonce }] }],
+          },
+        ],
+      },
+    ]);
   }
 
   public decryptXmlMessage(encryptedXml: string): any {

@@ -27,5 +27,6 @@ import { WechatServiceRegistry } from './wechat.registry';
     ...CommandHandlers,
     ...EventHandlers,
   ],
+  exports: [WechatServiceRegistry],
 })
 export class WechatModule {}
