@@ -32,7 +32,6 @@ export abstract class WxBaseClient {
     }
     const signature = this.getCrypto().getSignature(`${timestamp}`, nonce, encrypted);
 
-    // TODO: sign message
     return xml.build([
       {
         xml: [
