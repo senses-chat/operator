@@ -11,17 +11,16 @@ import {
   Form,
   Input,
   message,
-  Tooltip,
 } from 'antd';
-import { CopyOutlined, QrcodeOutlined } from '@ant-design/icons';
+import { CopyOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import qs from 'query-string';
 import QRCode from 'qrcode.react';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
 
-interface Account {
+interface AccountLink {
+  id: string;
   openKfId: string;
   scene: string;
   scene_param: JSON;
@@ -32,6 +31,7 @@ export default function AccountLinksPage() {
   const router = useRouter();
   const { id: accountId, name: accountName, page } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSceneModalVisible, setIsSceneModalVisible] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editScene, setEditScene] = useState('');
   const [editSceneParam, setEditSceneParam] = useState([]);
@@ -39,7 +39,7 @@ export default function AccountLinksPage() {
   const [editUpdateKey, setEditUpdateKey] = useState('');
   const [editKey, setEditKey] = useState('');
   const [editValue, setEditValue] = useState('');
-  const { data }: SWRResponse<Account[], Error> = useSWR(
+  const { data }: SWRResponse<AccountLink[], Error> = useSWR(
     url(`/api/wxkf/account/link?id=${accountId}`),
     fetcher,
   );
@@ -54,24 +54,35 @@ export default function AccountLinksPage() {
       title: '场景参数',
       dataIndex: 'scene_param',
       key: 'scene_param',
-      render: (sceneParam: JSON) => qs.stringify(sceneParam),
+      render: (sceneParam: JSON) => {
+        return (
+          Object.entries(sceneParam || {}).length > 0 ? (
+            <Button type='link' onClick={() => onOpenSceneParamModal(sceneParam) }>查看参数</Button>
+          ) : (
+            <p style={{ marginLeft: '16px' }}>无</p>
+          )
+        );
+      },
     },
     {
-      title: '客服接入链接',
+      title: '接入链接',
       dataIndex: 'url',
       key: 'url',
       render: (url: string) => (
-        <div>
-          <p className="mb-1">{url}</p>
-          <CopyToClipboard text={url} onCopy={() => message.success('复制成功')}>
-            <Tooltip title={'复制'}>
-              <CopyOutlined className="mr-2 text-sky-500 hover:scale-110" />
-            </Tooltip>
-          </CopyToClipboard>
-          <Tooltip title={<QRCode value={url} />}>
-            <QrcodeOutlined className="mr-2 text-sky-500 hover:scale-110" />
-          </Tooltip>
-        </div>
+        <CopyToClipboard text={url} onCopy={() => message.success('复制成功')}>
+          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#0ea5e9' }}>
+            <p style={{ marginRight: '5px' }}>复制客服链接</p>
+            <CopyOutlined className="mr-2 text-sky-500 hover:scale-110" />
+          </div>
+        </CopyToClipboard>
+      ),
+    },
+    {
+      title: '接入链接二维码',
+      dataIndex: 'url',
+      key: 'url',
+      render: (url: string) => (
+        <QRCode value={url} size={64} />
       ),
     },
     {
@@ -80,6 +91,9 @@ export default function AccountLinksPage() {
       key: 'action',
       render: (_, record) => (
         <div>
+          <Button className="mr-2 my-1" type="link" onClick={() => onUpdateLink(record)}>
+            编辑
+          </Button>
           <Popconfirm
             title="确认删除这个链接？"
             onConfirm={() => onDeleteLink(record.id)}
@@ -155,6 +169,23 @@ export default function AccountLinksPage() {
     setEditValue(editSceneParam.find((item) => item.key === key).value);
   }
 
+  function onUpdateLink(link: AccountLink) {
+    setIsModalVisible(true);
+    setEditId(link.id);
+    setEditScene(link.scene);
+    initSceneParam(link.scene_param);
+  }
+
+  function initSceneParam(sceneParam) {
+    const scene = Object.entries((sceneParam || {})).map(([key, value]) => ({ key, value}));
+    setEditSceneParam(scene);
+  }
+
+  function onOpenSceneParamModal(sceneParam) {
+    initSceneParam(sceneParam);
+    setIsSceneModalVisible(true);
+  }
+
   function onConfirmSceneParam() {
     const temp = [...editSceneParam];
     if (editUpdateKey) {
@@ -183,13 +214,13 @@ export default function AccountLinksPage() {
   }
 
   async function onConfirmLink() {
-    const res = await fetcher(url('/api/wxkf/account/link/add'), {
+    const res = await fetcher(url(`/api/wxkf/account/link/${editId ? 'update' : 'add'}`), {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        id: accountId,
+        id: editId || accountId,
         scene: editScene,
         sceneParam: editSceneParam.reduce(
           (prev, curr) => ({ ...prev, [curr.key]: curr.value }),
@@ -198,10 +229,10 @@ export default function AccountLinksPage() {
       }),
     });
     if (res) {
-      message.success('新建接入链接成功');
+      message.success(`${editId ? '更新' : '新建'}接入链接成功`);
       setIsModalVisible(false);
     } else {
-      message.error('新建接入链接失败');
+      message.error(`${editId ? '更新' : '新建'}接入链接失败`);
     }
     mutate(url(`/api/wxkf/account/link?id=${accountId}`));
   }
@@ -263,6 +294,24 @@ export default function AccountLinksPage() {
           total: data?.length || 0,
         }}
       />
+
+      <Modal
+        title={'查看场景参数'}
+        visible={isSceneModalVisible}
+        onOk={() => setIsSceneModalVisible(false)}
+        footer={[
+          <Button key="submit" type="primary" onClick={() => setIsSceneModalVisible(false)}>
+            关闭
+          </Button>
+        ]}
+      >
+        <Table
+          dataSource={editSceneParam}
+          columns={columnsSceneParam.slice(0, 2)}
+          rowKey="key"
+          pagination={false}
+        />
+      </Modal>
 
       <Modal
         title={`${editId ? '更新' : '新建'}账号链接`}

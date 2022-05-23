@@ -29,7 +29,7 @@ export function BotNode({ type, namespaces, className }: BotNodePayload) {
       icon = (<Avatar className="mr-2 bg-purple-600" size='small' src={<RobotOutlined style={{ verticalAlign: '0' }} />}></Avatar>);
       break;
     case 'WxCustomer':
-      icon = (<Avatar className="mr-2 bg-orange-600" size='small' src={<WechatOutlined style={{ verticalAlign: '0' }} />}></Avatar>);
+      icon = (<Avatar className="mr-2 bg-green-600" size='small' src={<WechatOutlined style={{ verticalAlign: '0' }} />}></Avatar>);
       break;
     default:
       icon = (<Avatar className="mr-2" size='small'>{type.slice(0, 1)}</Avatar>);
