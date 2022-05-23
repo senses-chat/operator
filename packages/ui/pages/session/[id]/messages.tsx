@@ -119,7 +119,7 @@ export default function SessionMessagesPage() {
       </Breadcrumb>
 
       <div className='flex flex-row bg-slate-200 text-center p-2'>
-        <p className='basis-50 grow-0'>会话路径</p>
+        <p style={{ flex: '300px 0 0' }}>会话路径</p>
         <div className='grow'>
           {
             data && (
@@ -134,7 +134,7 @@ export default function SessionMessagesPage() {
         </div>
       </div>
       <div className='flex flex-row bg-gray-100 h-full'>
-        <div className='basis-50 grow-0 bg-white'>
+        <div style={{ flex: '300px 0 0' }} className='bg-white'>
         {
           points.map((point) => (
             <div className='flex flex-row items-center justify-between p-3 border-b' key={point.index}>
