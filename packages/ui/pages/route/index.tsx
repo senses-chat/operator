@@ -14,7 +14,10 @@ import {
   message,
   Select,
 } from 'antd';
-import { SwapOutlined } from '@ant-design/icons';
+import { 
+  CheckCircleOutlined,
+  MinusCircleOutlined
+} from '@ant-design/icons';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
@@ -73,18 +76,22 @@ export default function IndexPage() {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: '信息流向',
-      key: 'flow',
+      title: '接入账号',
+      key: 'account',
       render: (_, record: RouteData) => {
         return (
           <div className="flex flex-row justify-center">
             <BotNode type={record.sourceType as unknown as string} namespaces={record.sourceName.split(':')} />
-            <SwapOutlined className="flex justify-center items-center mx-2 w-4 " />
+          </div>
+        )
+      }
+    },
+    {
+      title: '对接bot',
+      key: 'bot',
+      render: (_, record: RouteData) => {
+        return (
+          <div className="flex flex-row justify-center">
             <BotNode type={record.destinationType as unknown as string} namespaces={record.destinationName.split(':')} />
           </div>
         )
@@ -94,7 +101,23 @@ export default function IndexPage() {
       title: '状态',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? '已激活' : '未激活'),
+      render: (isActive: boolean) => (
+        <div style={{ display: 'flex', alignItems: 'center', color: isActive ? '#90ee90' : '#bbbfc5' }}>
+          {
+            isActive ? (
+              <>
+                <CheckCircleOutlined />
+                <span style={{ marginLeft: '3px' }}>已启用</span>
+              </>
+            ) : (
+              <>
+                <MinusCircleOutlined />
+                <span style={{ marginLeft: '3px' }}>未启用</span>
+              </>
+            )
+          }
+        </div> 
+      ),
     },
     {
       title: '创建时间',
@@ -120,7 +143,7 @@ export default function IndexPage() {
         <div>
           <Button
             className="mr-2 my-1"
-            type="primary"
+            type="link"
             onClick={() =>
               onUpdateRoute(
                 record.id,
@@ -140,7 +163,7 @@ export default function IndexPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2 my-1" type="primary" danger>
+            <Button className="mr-2 my-1" type="link" danger>
               删除
             </Button>
           </Popconfirm>

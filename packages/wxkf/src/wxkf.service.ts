@@ -177,6 +177,44 @@ export class WxkfService {
     return link;
   }
 
+  public async updateAccountLink(
+    id: number,
+    scene: string,
+    sceneParam: any,
+  ): Promise<WxkfAccountLink> {
+    let link = await this.prisma.wxkfAccountLink.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!link) {
+      return null;
+    }
+
+    const accountLink = await this.fetchAccountLink(link.openKfId, scene);
+    if (!accountLink) {
+      return null;
+    }
+    const urlWithParam =
+      accountLink +
+      (Object.keys(sceneParam).length > 0
+        ? `${scene ? '&' : '?'}scene_param=${encodeURIComponent(
+            qs.stringify(sceneParam),
+          )}`
+        : '');
+    link = await this.prisma.wxkfAccountLink.update({
+      where: {
+        id,
+      },
+      data: {
+        scene,
+        scene_param: sceneParam,
+        url: urlWithParam,
+      },
+    });
+    return link;
+  }
+
   public async deleteAccountLink(id: number): Promise<WxkfAccountLink> {
     return await this.prisma.wxkfAccountLink.delete({
       where: {

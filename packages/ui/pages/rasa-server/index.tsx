@@ -14,6 +14,10 @@ import {
   Switch,
   message,
 } from 'antd';
+import {
+  CheckCircleOutlined,
+  MinusCircleOutlined
+} from '@ant-design/icons';
 
 import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
@@ -52,30 +56,31 @@ export default function IndexPage() {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: '链接',
-      dataIndex: 'url',
-      key: 'url',
-    },
-    {
-      title: '检查连通性链接',
-      dataIndex: 'pingUrl',
-      key: 'pingUrl',
-    },
-    {
       title: '状态',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: (isActive: boolean) => (isActive ? '已激活' : '未激活'),
+      render: (isActive: boolean) => (
+        <div style={{ display: 'flex', alignItems: 'center', color: isActive ? '#90ee90' : '#bbbfc5' }}>
+          {
+            isActive ? (
+              <>
+                <CheckCircleOutlined />
+                <span style={{ marginLeft: '3px' }}>已启用</span>
+              </>
+            ) : (
+              <>
+                <MinusCircleOutlined />
+                <span style={{ marginLeft: '3px' }}>未启用</span>
+              </>
+            )
+          }
+        </div>
+      )
     },
     {
       title: '平均延迟',
@@ -116,7 +121,7 @@ export default function IndexPage() {
         <div>
           <Button
             className="mr-2 my-1"
-            type="primary"
+            type="link"
             onClick={() =>
               onUpdateRasaServer(
                 record.id,
@@ -127,7 +132,7 @@ export default function IndexPage() {
               )
             }
           >
-            更新
+            编辑
           </Button>
           <Popconfirm
             title="确认删除该 Rasa 服务吗？"
@@ -135,7 +140,7 @@ export default function IndexPage() {
             okText="确认"
             cancelText="取消"
           >
-            <Button className="mr-2 my-1" type="primary" danger>
+            <Button className="mr-2 my-1" type="link" danger>
               删除
             </Button>
           </Popconfirm>

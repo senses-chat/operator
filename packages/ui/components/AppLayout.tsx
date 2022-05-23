@@ -15,9 +15,10 @@ const useCollapsedState = createPersistedState('side-nav-collapsed');
 
 interface AppLayoutProps {
   children?: ReactNode;
+  withPadding?: boolean;
 }
 
-export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
+export const AppLayout: FC<AppLayoutProps> = ({ children, withPadding = true }: AppLayoutProps) => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [collapsed, setCollapsed] = useCollapsedState(false);
@@ -39,7 +40,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }: AppLayoutProps) => {
         setCollapsed={setCollapsed}
       />
       <Layout className="bg-white">
-        <Content className="p-4 pb-20">
+        <Content className={`${withPadding ? 'p-4' : ''} pb-20`}>
           <div
             className={`${styles['content-container']} h-full w-full bg-white`}
           >
