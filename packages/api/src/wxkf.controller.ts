@@ -96,4 +96,44 @@ export class WxkfApiController {
       .getService(corpId)
       .getExternalUser([id])).customer_list?.[0] || null;
   }
+
+  @Get('/department')
+  async getDepartmentList(@Query('corpId') corpId?: string): Promise<any[]> {
+    const departmentList = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .fetchDepartmentList();
+    return departmentList;
+  }
+
+  @Get('/department/user')
+  async getUserList(@Query('corpId') corpId?: string, @Query('departmentId') departmentId?: number): Promise<any[]> {
+    const usertList = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .fetchUserList(departmentId);
+    return usertList;
+  }
+
+  @Get('/servicer')
+  async getServicerList(@Query('open_kfid') open_kfid: string, @Query('corpId') corpId?: string): Promise<any[]> {
+    const servicerList = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .fetchServicerList(open_kfid);
+    return servicerList;
+  }
+
+  @Post('/servicer/add')
+  async addServicer(@Body('open_kfid') open_kfid: string, @Body('userId') userId: string, @Query('corpId') corpId?: string): Promise<any> {
+    const result = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .addServicer(open_kfid, userId);
+    return result;
+  }
+
+  @Post('/servicer/remove')
+  async removeServicer(@Body('open_kfid') open_kfid: string, @Body('userId') userId: string, @Query('corpId') corpId?: string): Promise<any> {
+    const result = await this.wxkfServiceRegistry
+      .getService(corpId)
+      .removeServicer(open_kfid, userId);
+    return result;
+  }
 }

@@ -8,6 +8,9 @@ import {
   PrismaService,
 } from '@senses-chat/operator-database';
 import {
+  WxkfServicer,
+  WxkfUser,
+  WxkfDepartment,
   WxkfAccount,
   WxkfAccountAddInput,
   WxkfAccountDeleteInput,
@@ -79,6 +82,31 @@ export class WxkfService {
   public async fetchAccountList(): Promise<WxkfAccount[]> {
     const response = await this.wxkfClient.listAccounts();
     return response.account_list;
+  }
+
+  public async fetchDepartmentList(): Promise<WxkfDepartment[]> {
+    const response = await this.wxkfClient.listDepartment();
+    return response.department;
+  }
+
+  public async fetchUserList(department_id: number): Promise<WxkfUser[]> {
+    const response = await this.wxkfClient.listUser(department_id);
+    return response.userlist;
+  }
+
+  public async fetchServicerList(open_kfid: string): Promise<WxkfServicer[]> {
+    const response = await this.wxkfClient.listServicer(open_kfid);
+    return response.servicer_list;
+  }
+
+  public async addServicer(open_kfid: string, userId: string): Promise<any> {
+    const response = await this.wxkfClient.addServicer(open_kfid, userId);
+    return response.result_list?.[0];
+  }
+
+  public async removeServicer(open_kfid: string, userId: string): Promise<any> {
+    const response = await this.wxkfClient.removeServicer(open_kfid, userId);
+    return response.result_list?.[0];
   }
 
   public async createAccount(name: string, media_id: string): Promise<string> {
