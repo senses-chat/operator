@@ -1,9 +1,11 @@
 import { ReactNode } from 'react';
 import { Button } from 'antd';
 
-export function handleSessionMessageContent(msg): ReactNode {
+export function handleSessionMessageContent(msg): ReactNode | string {
   switch (msg.content.type) {
     case 'text':
+      if (['/greet', '/bye'].includes(msg.content.text)) return msg.content.text;
+      if (!msg.content.text && msg.content.metadata.servicer_userid) return '/redirect';
       return <p className="mb-0">{msg.content.text}</p>;
     case 'file':
       return <p className="mb-0">{`file: ${msg.content.file_url}`}</p>;
@@ -26,9 +28,11 @@ export function handleSessionMessageContent(msg): ReactNode {
   }
 }
 
-export function handleWxkfIncomeMessageContent(msg): ReactNode {
+export function handleWxkfIncomeMessageContent(msg): ReactNode | string {
   switch (msg.msgtype) {
     case 'text':
+      if (['/greet', '/bye'].includes(msg.text.content)) return msg.text.content;
+      if (!msg.text.content && msg.metadata.servicer_userid) return '/redirect';
       return <p className="mb-0">{msg.text.content}</p>;
     case 'image':
       return <p className="mb-0">{`image: ${msg.image.media_id}`}</p>;
@@ -43,7 +47,7 @@ export function handleWxkfIncomeMessageContent(msg): ReactNode {
         <p className="mb-0">{`location: ${msg.location.name} ${msg.location.address}`}</p>
       );
     case 'event':
-      return <p className="mb-0">{`event: ${msg.event.event_type}`}</p>;
+      return msg.event.event_type;
   }
 }
 

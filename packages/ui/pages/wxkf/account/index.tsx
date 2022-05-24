@@ -42,11 +42,6 @@ export default function IndexPage() {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'open_kfid',
-      key: 'open_kfid',
-    },
-    {
       title: '客服账号头像',
       dataIndex: 'avatar',
       key: 'avatar',
@@ -62,7 +57,7 @@ export default function IndexPage() {
       dataIndex: '',
       key: 'action',
       render: (_, record) => (
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Link
             href={`/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
             passHref

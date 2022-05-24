@@ -80,6 +80,13 @@ export class WxkfApiController {
       .addAccountLink(body.id, body.scene, body.sceneParam));
   }
 
+  @Post('/account/link/update')
+  async updateAccountLink(@Body() body: any): Promise<boolean> {
+    return !!(await this.wxkfServiceRegistry
+      .getService(body.corpId)
+      .updateAccountLink(body.id, body.scene, body.sceneParam));
+  }
+
   @Post('/account/link/delete')
   async deleteAccountLink(@Body() body: any): Promise<boolean> {
     return !!(await this.wxkfServiceRegistry

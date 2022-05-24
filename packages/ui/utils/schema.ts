@@ -14,3 +14,19 @@ export interface WxkfUser {
   name?: string;
   open_userid?: string;
 }
+
+export interface SessionData {
+  id: string;
+  source: {
+    type: string;
+    namespaces: string[];
+  };
+  destination: {
+    type: string;
+    namespaces: string[];
+  };
+  createdAt: string;
+  updatedAt: string;
+  count: number;
+  expiredAt: string;
+}
