@@ -66,6 +66,14 @@ export default function IndexPage() {
               客服接入链接管理
             </Button>
           </Link>
+          <Link
+            href={`/wxkf/account/${record.open_kfid}/servicers?name=${record.name}`}
+            passHref
+          >
+            <Button className="mr-2 my-1" type="primary">
+              接待人员管理
+            </Button>
+          </Link>
           <Button
             className="mr-2"
             type="primary"

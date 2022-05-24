@@ -442,3 +442,51 @@ export class WxkfServiceStateTransInput {
 export class WxkfServiceStateTransResponse extends WxResponse {
   msg_code?: string;
 }
+
+export class WxkfDepartment {
+  id: number;
+  name?: string;
+}
+
+export class WxkfDepartmentListResponse extends WxResponse {
+  @Type(() => WxkfDepartment)
+  department: WxkfDepartment[];
+}
+
+export class WxkfUser {
+  userid: string;
+  name?: string;
+  open_userid?: string;
+}
+
+export class WxkfUserResponse extends WxResponse {
+  @Type(() => WxkfUser)
+  userlist: WxkfUser[];
+}
+
+export class WxkfServicer {
+  userid: string;
+  status?: number;
+  department_id?: number;
+}
+
+export class WxkfServicerResponse extends WxResponse {
+  @Type(() => WxkfServicer)
+  servicer_list: WxkfServicer[];
+}
+
+export class WxkfServicerAddResponse extends WxResponse {
+  result_list: Array<{
+    userid: string;
+    errcode: number;
+    errmsg: string;
+  }>;
+}
+
+export class WxkfServicerRemoveResponse extends WxResponse {
+  result_list: Array<{
+    userid: string;
+    errcode: number;
+    errmsg: string;
+  }>;
+}

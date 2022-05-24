@@ -24,6 +24,11 @@ import {
   WxkfServiceStateTransInput,
   WxkfServiceStateTransResponse,
   WxkfExternalUserGetResponse,
+  WxkfDepartmentListResponse,
+  WxkfUserResponse,
+  WxkfServicerResponse,
+  WxkfServicerAddResponse,
+  WxkfServicerRemoveResponse
 } from './model';
 import { WxBaseClient } from '../client';
 import { WxResponse, WxAccessTokenResponse } from '../model';
@@ -105,6 +110,58 @@ export class WxkfClient extends WxBaseClient {
     return this.request(WxkfAddContactWayResponse, url, {
       method: 'POST',
       body: JSON.stringify(input),
+    });
+  }
+
+  public async listDepartment(): Promise<WxkfDepartmentListResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/department/list', { access_token });
+    return this.request(WxkfDepartmentListResponse, url);
+  }
+
+  public async listUser(department_id: number): Promise<WxkfUserResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/user/simplelist', {
+      access_token,
+      department_id,
+      fetch_child: 0,
+    });
+    return this.request(WxkfUserResponse, url);
+  }
+
+  public async listServicer(open_kfid: string): Promise<WxkfServicerResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/servicer/list', { access_token, open_kfid });
+    return this.request(WxkfServicerResponse, url);
+  }
+
+  public async addServicer(
+    open_kfid: string,
+    userid: string,
+  ): Promise<WxkfServicerAddResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/servicer/add', { access_token });
+    return this.request(WxkfServicerAddResponse, url, {
+      method: 'POST',
+      body: JSON.stringify({
+        open_kfid,
+        userid_list: [userid],
+      }),
+    });
+  }
+
+  public async removeServicer(
+    open_kfid: string,
+    userid: string,
+  ): Promise<WxkfServicerRemoveResponse> {
+    const access_token = await this.fetchAccessToken();
+    const url = this.url('/kf/servicer/del', { access_token });
+    return this.request(WxkfServicerRemoveResponse, url, {
+      method: 'POST',
+      body: JSON.stringify({
+        open_kfid,
+        userid_list: [userid],
+      }),
     });
   }
 
