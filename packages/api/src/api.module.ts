@@ -10,6 +10,7 @@ import apiConfig from './config';
 import { WxkfApiController } from './wxkf.controller';
 import { HistoryController } from './history.controller';
 import { BotConfigApiController } from './bot-config.controller';
+import { HomeApiController } from './home.controller';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { BotConfigApiController } from './bot-config.controller';
     PrismaModule,
     ConfigModule.forFeature(apiConfig),
   ],
-  controllers: [WxkfApiController, HistoryController, BotConfigApiController],
+  controllers: [WxkfApiController, HistoryController, BotConfigApiController, HomeApiController],
 })
 export class ApiModule {}
