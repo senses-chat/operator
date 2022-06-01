@@ -14,6 +14,15 @@ import { SessionData } from 'utils/schema';
 const { Title, Paragraph } = Typography;
 
 export default function IndexPage(props: { body: string }) {
+  const { data: dashboardData }: SWRResponse<{
+    visitor: number;
+    visitorBot: number;
+    visitorKf: number;
+    visitorRate: number;
+  }, Error> = useSWR(
+    url(`/api/home/dashboard`),
+    fetcher,
+  );
   const { data }: SWRResponse<SessionData[], Error> = useSWR(
     url(`/api/history/sessions`),
     fetcher,
@@ -94,26 +103,26 @@ export default function IndexPage(props: { body: string }) {
       <Row gutter={24}>
         <Col span={8}>
           <Card>
-            <Statistic title={<span className='flex items-center'><UserOutlined className='mr-1' />今日访客</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={0} />
+            <Statistic title={<span className='flex items-center'><UserOutlined className='mr-1' />今日访客</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={dashboardData?.visitor} />
             <Card.Meta
               className='text-right'
-              description={<Tag color="success">{'+0%'}</Tag>}
+              description={<Tag color={dashboardData?.visitorRate >= 0 ? 'success' : 'error'}>{`${dashboardData?.visitorRate > 0 ? '+' : ''}${dashboardData?.visitorRate}%`}</Tag>}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
-            <Statistic title={<span className='flex items-center'><RobotOutlined className='mr-1' />智能客服接待</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={0} />
+            <Statistic title={<span className='flex items-center'><RobotOutlined className='mr-1' />智能客服接待</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={dashboardData?.visitorBot} />
             <Card.Meta
-              description={<p className='text-right'>{'占比：0%'}</p>}
+              description={<p className='text-right'>{`占比：${(dashboardData?.visitorBot / dashboardData?.visitor * 100).toFixed(2)}%`}</p>}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
-            <Statistic title={<span className='flex items-center'><CustomerServiceOutlined className='mr-1' />人工接待</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={0} />
+            <Statistic title={<span className='flex items-center'><CustomerServiceOutlined className='mr-1' />人工接待</span>} valueStyle={{ fontSize: '40px', textAlign: 'center' }} value={dashboardData?.visitorKf} />
             <Card.Meta
-              description={<p className='text-right'>{'占比：0%'}</p>}
+              description={<p className='text-right'>{`占比：${(dashboardData?.visitorKf / dashboardData?.visitor * 100).toFixed(2)}%`}</p>}
             />
           </Card>
         </Col>
