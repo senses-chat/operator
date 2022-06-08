@@ -36,11 +36,11 @@ services:
       MINIO_SECRET_KEY: minio123
       MINIO_HTTP_TRACE: /root/.minio/trace.log
     volumes:
-      - ./data/minio/data:/data
-      - ./data/minio/config:/root/.minio
+      - minio_data:/data
+      - minio_config:/root/.minio
 
 volumes:
   redis:
-    driver: local
   postgres:
-    driver: local
+  minio_data:
+  minio_config:
