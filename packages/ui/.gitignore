@@ -41,3 +41,6 @@ lerna-debug.log*
 
 login_ssh.sh
 *.pem
+
+# Sentry
+.sentryclirc
