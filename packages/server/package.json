@@ -28,7 +28,10 @@
     "@senses-chat/operator-wechat": "0.1.0",
     "@senses-chat/operator-wxkf": "0.1.0",
     "@senses-chat/wx-sdk": "0.1.0",
+    "@sentry/node": "^7.1.1",
+    "@sentry/tracing": "^7.1.1",
     "fastify-xml-body-parser": "^2.0.0",
+    "nest-raven": "^8.1.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^7.4.0"
