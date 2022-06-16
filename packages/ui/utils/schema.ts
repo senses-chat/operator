@@ -30,3 +30,27 @@ export interface SessionData {
   count: number;
   expiredAt: string;
 }
+
+export interface WechatAppData {
+  id: number;
+  name: string;
+  appId: string;
+  appSecret?: string;
+  token?: string;
+  aesKey?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
+
+export interface WecomAppData {
+  id: number;
+  name: string;
+  corpId: string;
+  corpSecret?: string;
+  token?: string;
+  aesKey?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}

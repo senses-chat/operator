@@ -28,6 +28,9 @@ handler.all('*', async (req, res) => {
 
   return httpProxyMiddleware(req, res, {
     target: process.env.UI_API_URL,
+    headers: {
+      'NEXT_AUTH_USER_ID': session.userId,
+    } as any
   });
 });
 
