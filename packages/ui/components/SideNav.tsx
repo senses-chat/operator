@@ -40,9 +40,6 @@ export const SideNav: FC<SideNavProps> = ({
       <Menu.Item key="/" icon={<HomeOutlined />}>
         <Link href="/">首页</Link>
       </Menu.Item>
-      <Menu.Item key="/wxkf/account" icon={<CustomerServiceOutlined />}>
-        <Link href="/wxkf/account">微信客服账号管理</Link>
-      </Menu.Item>
       <Menu.Item key="/session" icon={<MessageOutlined />}>
         <Link href="/session">会话管理</Link>
       </Menu.Item>

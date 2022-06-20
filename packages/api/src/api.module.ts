@@ -21,6 +21,11 @@ import { AccountApiController } from './account.controller';
     PrismaModule,
     ConfigModule.forFeature(apiConfig),
   ],
-  controllers: [WxkfApiController, HistoryController, AccountApiController, BotConfigApiController],
+  controllers: [
+    WxkfApiController,
+    HistoryController,
+    AccountApiController,
+    BotConfigApiController
+  ],
 })
 export class ApiModule {}

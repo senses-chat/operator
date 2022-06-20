@@ -418,12 +418,12 @@ export class WxkfService {
 }
 
 export function wxkfServiceFactory(
+  credentials: WxkfCredentials,
   config: ConfigService,
   minio: MinioService,
   prisma: PrismaService,
   kvStorage: KeyValueStorageBase,
 ): WxkfService {
-  const credentials = config.get<WxkfCredentials>('wxkf.credentials');
   const assetsBucket = config.get<string>('wxkf.assetsBucket');
   return new WxkfService(credentials, assetsBucket, minio, prisma, kvStorage);
 }

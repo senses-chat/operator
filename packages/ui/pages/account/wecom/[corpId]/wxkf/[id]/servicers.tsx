@@ -28,20 +28,20 @@ interface Account {
 
 export default function AccountServicersPage() {
   const router = useRouter();
-  const { id: accountId, name: accountName, page } = router.query;
+  const { id: accountId, name: accountName, page, corpId } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editDepartment, setEditDepartment] = useState(null);
   const [editUserId, setEditUserId] = useState(null);
   const { data }: SWRResponse<Account[], Error> = useSWR(
-    url(`/api/wxkf/servicer?open_kfid=${accountId}`),
+    url(`/api/wxkf/servicer?open_kfid=${accountId}&corpId=${corpId}`),
     fetcher,
   );
   const { data: dataDepartment }: SWRResponse<WxkfDepartment[], Error> = useSWR(
-    url(`/api/wxkf/department`),
+    url(`/api/wxkf/department?corpId=${corpId}`),
     fetcher,
   );
   const { data: dataUser }: SWRResponse<WxkfUser[], Error> = useSWR(
-    editDepartment ? url(`/api/wxkf/department/user?departmentId=${editDepartment}`) : null,
+    editDepartment ? url(`/api/wxkf/department/user?departmentId=${editDepartment}&corpId=${corpId}`) : null,
     fetcher,
   );
 
@@ -98,6 +98,7 @@ export default function AccountServicersPage() {
       body: JSON.stringify({
         open_kfid: accountId,
         userId: editUserId,
+        corpId,
       }),
     });
     if (res) {
@@ -106,7 +107,7 @@ export default function AccountServicersPage() {
     } else {
       message.error('添加接待人员失败');
     }
-    mutate(url(`/api/wxkf/servicer?open_kfid=${accountId}`));
+    mutate(url(`/api/wxkf/servicer?open_kfid=${accountId}&corpId=${corpId}`));
   }
 
   async function onDeleteServicer(id) {
@@ -118,6 +119,7 @@ export default function AccountServicersPage() {
       body: JSON.stringify({
         open_kfid: accountId,
         userId: id,
+        corpId
       }),
     });
     if (res) {
@@ -125,13 +127,13 @@ export default function AccountServicersPage() {
     } else {
       message.error('移除接待人员失败');
     }
-    mutate(url(`/api/wxkf/servicer?open_kfid=${accountId}`));
+    mutate(url(`/api/wxkf/servicer?open_kfid=${accountId}&corpId=${corpId}`));
   }
 
   function onChangePage(pagination) {
     router.push(
-      `/wxkf/account/${accountId}/servicers?name=${accountName}&page=${pagination.current}`,
-      `/wxkf/account/${accountId}/servicers?name=${accountName}&page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf/${accountId}/servicers?name=${accountName}&page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf/${accountId}/servicers?name=${accountName}&page=${pagination.current}`,
       { shallow: true },
     );
   }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import useSWR, { SWRResponse, mutate } from 'swr';
 import { format } from 'date-fns';
 
@@ -84,6 +85,17 @@ export default function IndexPage() {
       key: 'action',
       render: (_, record) => (
         <div>
+          <Link
+            href={`/account/wecom/${record.corpId}/wxkf`}
+            passHref
+          >
+            <Button
+              className="mr-2 my-1"
+              type="link"
+            >
+              微信客服账号管理
+            </Button>
+          </Link>
           <Button
             className="mr-2 my-1"
             type="link"

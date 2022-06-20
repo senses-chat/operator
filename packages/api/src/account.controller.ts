@@ -11,10 +11,14 @@ export class AccountApiController {
   async getWechatAppList(
     @Query('skip') skip: number,
     @Query('size') size: number,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<WechatApp[]> {
     const wechatApps = await this.prisma.wechatApp.findMany({
       skip: +skip || 0,
       take: +size || 10,
+      where: {
+        userId,
+      }
     });
     return wechatApps.map((item) => ({
       ...item,
@@ -23,15 +27,31 @@ export class AccountApiController {
   }
 
   @Get('/wechat/count')
-  async getWechatAppCount(): Promise<number> {
-    const count = await this.prisma.wechatApp.count();
+  async getWechatAppCount(
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
+  ): Promise<number> {
+    const count = await this.prisma.wechatApp.count({
+      where: {
+        userId,
+      }
+    });
     return count;
   }
 
   @Post('/wechat/remove')
   async deleteWechatApp(
     @Body('id') id: number,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<boolean> {
+    if (!(await this.prisma.wechatApp.findFirst({
+      where: {
+        id,
+        userId,
+      }
+    }))) {
+      return true;
+    }
+
     const wechatApp = await this.prisma.wechatApp.delete({
       where: {
         id,
@@ -48,7 +68,17 @@ export class AccountApiController {
     @Body('appSecret') appSecret: string,
     @Body('token') token: string,
     @Body('aesKey') aesKey: string,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<WechatApp> {
+    if (!(await this.prisma.wechatApp.findFirst({
+      where: {
+        id,
+        userId,
+      }
+    }))) {
+      return null;
+    }
+
     const wechatApp = await this.prisma.wechatApp.update({
       where: {
         id,
@@ -91,10 +121,14 @@ export class AccountApiController {
   async getWecomAppList(
     @Query('skip') skip: number,
     @Query('size') size: number,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<WecomApp[]> {
     const wecomApps = await this.prisma.wecomApp.findMany({
       skip: +skip || 0,
       take: +size || 10,
+      where: {
+        userId,
+      }
     });
     return wecomApps.map((item) => ({
       ...item,
@@ -103,15 +137,31 @@ export class AccountApiController {
   }
 
   @Get('/wecom/count')
-  async getWecomAppCount(): Promise<number> {
-    const count = await this.prisma.wecomApp.count();
+  async getWecomAppCount(
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
+  ): Promise<number> {
+    const count = await this.prisma.wecomApp.count({
+      where: {
+        userId,
+      }
+    });
     return count;
   }
 
   @Post('/wecom/remove')
   async deleteWecomApp(
     @Body('id') id: number,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<boolean> {
+    if (!(await this.prisma.wecomApp.findFirst({
+      where: {
+        id,
+        userId,
+      }
+    }))) {
+      return true;
+    }
+
     const wecomApp = await this.prisma.wecomApp.delete({
       where: {
         id,
@@ -128,7 +178,17 @@ export class AccountApiController {
     @Body('corpSecret') corpSecret: string,
     @Body('token') token: string,
     @Body('aesKey') aesKey: string,
+    @Headers('NEXT_AUTH_USER_ID') userId: string,
   ): Promise<WecomApp> {
+    if (!(await this.prisma.wecomApp.findFirst({
+      where: {
+        id,
+        userId,
+      }
+    }))) {
+      return null;
+    }
+
     const wecomApp = await this.prisma.wecomApp.update({
       where: {
         id,

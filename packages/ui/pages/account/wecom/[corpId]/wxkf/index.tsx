@@ -22,11 +22,11 @@ import { url, fetcher } from 'utils/request';
 import { AppLayout } from 'components/AppLayout';
 import { WxkfAccount } from 'utils/schema';
 
-import DefaultAvatarImg from '../../../public/default_avatar.png';
+import DefaultAvatarImg from 'public/default_avatar.png';
 
 export default function IndexPage() {
   const router = useRouter();
-  const { page } = router.query;
+  const { page, corpId } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState('');
@@ -36,7 +36,7 @@ export default function IndexPage() {
   const [avatarS3Key, setAvatarS3Key] = useState('');
   const [avatarS3Link, setAvatarS3Link] = useState('');
   const { data }: SWRResponse<WxkfAccount[], Error> = useSWR(
-    url(`/api/wxkf/account`),
+    url(`/api/wxkf/account?corpId=${corpId}`),
     fetcher,
   );
 
@@ -59,7 +59,7 @@ export default function IndexPage() {
       render: (_, record) => (
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Link
-            href={`/wxkf/account/${record.open_kfid}/links?name=${record.name}`}
+            href={`/account/wecom/${corpId}/wxkf/${record.open_kfid}/links?name=${record.name}`}
             passHref
           >
             <Button className="mr-2 my-1" type="primary">
@@ -67,7 +67,7 @@ export default function IndexPage() {
             </Button>
           </Link>
           <Link
-            href={`/wxkf/account/${record.open_kfid}/servicers?name=${record.name}`}
+            href={`/account/wecom/${corpId}/wxkf/${record.open_kfid}/servicers?name=${record.name}`}
             passHref
           >
             <Button className="mr-2 my-1" type="primary">
@@ -124,6 +124,7 @@ export default function IndexPage() {
       },
       body: JSON.stringify({
         id,
+        corpId,
       }),
     });
     if (res) {
@@ -131,7 +132,7 @@ export default function IndexPage() {
     } else {
       message.error('删除账号失败');
     }
-    mutate(url(`/api/wxkf/account`));
+    mutate(url(`/api/wxkf/account?corpId=${corpId}`));
   }
 
   function onAvatarChange(info) {
@@ -197,6 +198,7 @@ export default function IndexPage() {
           id: editId || undefined,
           name: editName || undefined,
           mediaId: editMediaId || mediaId,
+          corpId,
         }),
       },
     );
@@ -206,11 +208,11 @@ export default function IndexPage() {
     } else {
       message.error(`${editId ? '更新' : '新建'}账号失败`);
     }
-    mutate(url(`/api/wxkf/account`));
+    mutate(url(`/api/wxkf/account?corpId=${corpId}`));
   }
 
   async function onBeforeUploadAvatar() {
-    const res = await fetcher(url(`/api/wxkf/account/avatar`), {
+    const res = await fetcher(url(`/api/wxkf/account/avatar?corpId=${corpId}`), {
       method: 'GET',
     });
     if (res) {
@@ -247,6 +249,7 @@ export default function IndexPage() {
           },
           body: JSON.stringify({
             avatar: avatarS3Key,
+            corpId,
           }),
         },
         async (res) => {
@@ -266,8 +269,8 @@ export default function IndexPage() {
 
   function onChangePage(pagination) {
     router.push(
-      `/wxkf/account?page=${pagination.current}`,
-      `/wxkf/account?page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf?page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf?page=${pagination.current}`,
       { shallow: true },
     );
   }
