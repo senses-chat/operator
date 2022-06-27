@@ -37,7 +37,9 @@ export class WxkfSagas {
   public newMessageSaga(events$: Observable<IEvent>): Observable<ICommand> {
     return events$.pipe(
       ofType(NewWxkfMessageEvent),
-      concatMap((event: NewWxkfMessageEvent) => {
+      concatMap(async (event: NewWxkfMessageEvent) => {
+        const wxkfService = await this.wxkfServiceRegistry.getService(event.corpid);
+
         if (event.origin === WxkfIncomingMessageOrigin.FromServicer) {
           // do not process incoming message from servicer
           return EMPTY;
@@ -48,9 +50,7 @@ export class WxkfSagas {
           return of(wxkfMessage).pipe(
             concatMap((message: WxkfIncomingFileMessage) =>
               from(
-                this.wxkfServiceRegistry
-                  .getService(event.corpid)
-                  .downloadMedia(message.file.media_id),
+                wxkfService.downloadMedia(message.file.media_id),
               ),
             ),
             concatMap((file_url) =>
@@ -84,9 +84,7 @@ export class WxkfSagas {
           return of(wxkfMessage).pipe(
             concatMap((message: WxkfIncomingImageMessage) =>
               from(
-                this.wxkfServiceRegistry
-                  .getService(event.corpid)
-                  .downloadMedia(message.image.media_id),
+                wxkfService.downloadMedia(message.image.media_id),
               ),
             ),
             concatMap((image_url) =>
@@ -201,9 +199,7 @@ export class WxkfSagas {
         }
 
         return from(
-          this.wxkfServiceRegistry
-            .getService(event.corpid)
-            .getServiceState(
+          wxkfService.getServiceState(
               event.open_kfid ||
                 (event as WxkfIncomingEventMessage).event.open_kfid,
               event.external_userid ||

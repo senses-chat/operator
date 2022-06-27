@@ -15,6 +15,7 @@ import { WxkfService, wxkfServiceFactory } from './wxkf.service';
 @Injectable()
 export class WxkfServiceRegistry {
   public readonly defaultCorpId: string;
+  private readonly defaultCredentials: WxkfCredentials;
   private defaultService: WxkfService;
   private readonly services: LRUCache<string, WxkfService>;
 
@@ -26,7 +27,8 @@ export class WxkfServiceRegistry {
     private readonly kvStorage: KeyValueStorageBase,
   ) {
     this.defaultCorpId = config.get<string>('wxkf.credentials.corpId');
-    this.defaultService = wxkfServiceFactory(config, minio, prisma, kvStorage);
+    this.defaultCredentials = config.get<WxkfCredentials>('wxkf.credentials');
+    this.defaultService = wxkfServiceFactory(this.defaultCredentials, config, minio, prisma, kvStorage);
     this.services = new LRUCache({
       max: 100,
       maxAge: 1000 * 60 * 60 * 48,
@@ -34,12 +36,33 @@ export class WxkfServiceRegistry {
     });
   }
 
-  public getService(corpId?: string): WxkfService | undefined {
+  public async getService(corpId?: string): Promise<WxkfService | undefined> {
     if (corpId === this.defaultCorpId || !corpId) {
       return this.defaultService;
     }
 
-    return this.services.get(corpId);
+    const service = this.services.get(corpId);
+
+    if (!service) {
+      const credentials = await this.getWxkfCredentials(corpId);
+
+      if (!credentials) {
+        throw new Error(`Wecom app ${corpId} not found`);
+      }
+
+      const newService = wxkfServiceFactory(
+        credentials,
+        this.config,
+        this.minio,
+        this.prisma,
+        this.kvStorage,
+      );
+
+      this.services.set(corpId, newService);
+      return newService;
+    }
+
+    return service;
   }
 
   public registerService<T extends WxkfService>(
@@ -60,5 +83,24 @@ export class WxkfServiceRegistry {
     }
 
     return service;
+  }
+
+  private async getWxkfCredentials(corpId: string): Promise<WxkfCredentials | undefined> {
+    const wecomApp = await this.prisma.wecomApp.findFirst({
+      where: {
+        corpId,
+      },
+    });
+
+    if (!wecomApp) {
+      return undefined;
+    }
+
+    return {
+      corpId: wecomApp.corpId,
+      secret: wecomApp.corpSecret,
+      token: wecomApp.token,
+      aesKey: wecomApp.aesKey,
+    } as WxkfCredentials;
   }
 }

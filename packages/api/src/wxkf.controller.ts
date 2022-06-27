@@ -20,32 +20,28 @@ export class WxkfApiController {
 
   @Get('/account')
   async getAccountList(@Query('corpId') corpId?: string): Promise<any[]> {
-    const accountList = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .fetchAccountList();
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const accountList = await wxkfService.fetchAccountList();
     return accountList;
   }
 
   @Post('/account/delete')
   async deleteAccount(@Body() body: any): Promise<boolean> {
-    return await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .deleteAccount(body.id);
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
+    return await wxkfService.deleteAccount(body.id);
   }
 
   @Post('/account/add')
   async createAccount(@Body() body: any): Promise<boolean> {
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
     const mediaId = body.mediaId;
-    return !!(await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .createAccount(body.name, mediaId));
+    return !!(await wxkfService.createAccount(body.name, mediaId));
   }
 
   @Post('/account/update')
   async updateAccount(@Body() body: any): Promise<boolean> {
-    return await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .updateAccount(body.id, body?.name || null, body?.mediaId || null);
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
+    return await wxkfService.updateAccount(body.id, body?.name || null, body?.mediaId || null);
   }
 
   @Post('/account/avatar')
@@ -53,14 +49,16 @@ export class WxkfApiController {
     @Body('avatar') avatar: string,
     @Query('corpId') corpId?: string,
   ): Promise<string> {
-    return await this.wxkfServiceRegistry.getService(corpId).uploadAvatar(`avatar/temp/${avatar}`);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    return await wxkfService.uploadAvatar(`avatar/temp/${avatar}`);
   }
 
   @Get('/account/avatar')
   async getAccountAvatarUploadLink(
     @Query('corpId') corpId?: string,
   ): Promise<{ s3: string, link: string }> {
-    return await this.wxkfServiceRegistry.getService(corpId).getAvatarUploadLink();
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    return await wxkfService.getAvatarUploadLink();
   }
 
   @Get('/account/link')
@@ -68,30 +66,26 @@ export class WxkfApiController {
     @Query('id') id?: string,
     @Query('corpId') corpId?: string,
   ): Promise<WxkfAccountLink[]> {
-    return await this.wxkfServiceRegistry
-      .getService(corpId)
-      .getAccountLinks(id);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    return await wxkfService.getAccountLinks(id);
   }
 
   @Post('/account/link/add')
   async addAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .addAccountLink(body.id, body.scene, body.sceneParam));
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
+    return !!(await wxkfService.addAccountLink(body.id, body.scene, body.sceneParam));
   }
 
   @Post('/account/link/update')
   async updateAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .updateAccountLink(body.id, body.scene, body.sceneParam));
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
+    return !!(await wxkfService.updateAccountLink(body.id, body.scene, body.sceneParam));
   }
 
   @Post('/account/link/delete')
   async deleteAccountLink(@Body() body: any): Promise<boolean> {
-    return !!(await this.wxkfServiceRegistry
-      .getService(body.corpId)
-      .deleteAccountLink(body.id));
+    const wxkfService = await this.wxkfServiceRegistry.getService(body.corpId);
+    return !!(await wxkfService.deleteAccountLink(body.id));
   }
 
   @Get('/externalUser/:id')
@@ -99,48 +93,42 @@ export class WxkfApiController {
     @Query('corpId') corpId?: string,
     @Param('id') id?: string,
   ): Promise<any> {
-    return (await this.wxkfServiceRegistry
-      .getService(corpId)
-      .getExternalUser([id])).customer_list?.[0] || null;
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    return (await wxkfService.getExternalUser([id])).customer_list?.[0] || null;
   }
 
   @Get('/department')
   async getDepartmentList(@Query('corpId') corpId?: string): Promise<any[]> {
-    const departmentList = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .fetchDepartmentList();
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const departmentList = await wxkfService.fetchDepartmentList();
     return departmentList;
   }
 
   @Get('/department/user')
   async getUserList(@Query('corpId') corpId?: string, @Query('departmentId') departmentId?: number): Promise<any[]> {
-    const usertList = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .fetchUserList(departmentId);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const usertList = await wxkfService.fetchUserList(departmentId);
     return usertList;
   }
 
   @Get('/servicer')
   async getServicerList(@Query('open_kfid') open_kfid: string, @Query('corpId') corpId?: string): Promise<any[]> {
-    const servicerList = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .fetchServicerList(open_kfid);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const servicerList = await wxkfService.fetchServicerList(open_kfid);
     return servicerList;
   }
 
   @Post('/servicer/add')
   async addServicer(@Body('open_kfid') open_kfid: string, @Body('userId') userId: string, @Query('corpId') corpId?: string): Promise<any> {
-    const result = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .addServicer(open_kfid, userId);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const result = await wxkfService.addServicer(open_kfid, userId);
     return result;
   }
 
   @Post('/servicer/remove')
   async removeServicer(@Body('open_kfid') open_kfid: string, @Body('userId') userId: string, @Query('corpId') corpId?: string): Promise<any> {
-    const result = await this.wxkfServiceRegistry
-      .getService(corpId)
-      .removeServicer(open_kfid, userId);
+    const wxkfService = await this.wxkfServiceRegistry.getService(corpId);
+    const result = await wxkfService.removeServicer(open_kfid, userId);
     return result;
   }
 }

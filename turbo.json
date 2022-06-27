@@ -23,6 +23,9 @@
     "clean": {
       "cache": false
     },
+    "clean-dep": {
+      "cache": false
+    },
     "db:generate": {
       "cache": false
     },

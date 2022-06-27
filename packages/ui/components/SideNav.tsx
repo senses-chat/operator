@@ -36,12 +36,9 @@ export const SideNav: FC<SideNavProps> = ({
     }}
   >
     <div className="h-8 m-4 text-white">{`先思${collapsed ? '' : '智联'}`}</div>
-    <Menu theme="dark" mode="inline" defaultSelectedKeys={[selected]} defaultOpenKeys={['bot']}>
+    <Menu theme="dark" mode="inline" defaultSelectedKeys={[selected]} defaultOpenKeys={['bot', 'account']}>
       <Menu.Item key="/" icon={<HomeOutlined />}>
         <Link href="/">首页</Link>
-      </Menu.Item>
-      <Menu.Item key="/wxkf/account" icon={<CustomerServiceOutlined />}>
-        <Link href="/wxkf/account">微信客服账号管理</Link>
       </Menu.Item>
       <Menu.Item key="/session" icon={<MessageOutlined />}>
         <Link href="/session">会话管理</Link>
@@ -52,6 +49,14 @@ export const SideNav: FC<SideNavProps> = ({
         </Menu.Item>
         <Menu.Item key="/route" >
           <Link href="/route">对接管理</Link>
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu key="account" title="账号管理" icon={<RobotOutlined />}>
+        <Menu.Item key="/account/wechat" >
+          <Link href="/account/wechat">微信账号管理</Link>
+        </Menu.Item>
+        <Menu.Item key="/account/wecom" >
+          <Link href="/account/wecom">企业微信账号管理</Link>
         </Menu.Item>
       </SubMenu>
     </Menu>

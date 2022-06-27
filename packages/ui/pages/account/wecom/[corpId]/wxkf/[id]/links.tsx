@@ -29,7 +29,7 @@ interface AccountLink {
 
 export default function AccountLinksPage() {
   const router = useRouter();
-  const { id: accountId, name: accountName, page } = router.query;
+  const { id: accountId, name: accountName, page, corpId } = router.query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSceneModalVisible, setIsSceneModalVisible] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -40,7 +40,7 @@ export default function AccountLinksPage() {
   const [editKey, setEditKey] = useState('');
   const [editValue, setEditValue] = useState('');
   const { data }: SWRResponse<AccountLink[], Error> = useSWR(
-    url(`/api/wxkf/account/link?id=${accountId}`),
+    url(`/api/wxkf/account/link?id=${accountId}&corpId=${corpId}`),
     fetcher,
   );
 
@@ -226,6 +226,7 @@ export default function AccountLinksPage() {
           (prev, curr) => ({ ...prev, [curr.key]: curr.value }),
           {},
         ),
+        corpId,
       }),
     });
     if (res) {
@@ -245,6 +246,7 @@ export default function AccountLinksPage() {
       },
       body: JSON.stringify({
         id,
+        corpId,
       }),
     });
     if (res) {
@@ -252,13 +254,13 @@ export default function AccountLinksPage() {
     } else {
       message.error('删除接入链接失败');
     }
-    mutate(url(`/api/wxkf/account/link?id=${accountId}`));
+    mutate(url(`/api/wxkf/account/link?id=${accountId}&corpId=${corpId}`));
   }
 
   function onChangePage(pagination) {
     router.push(
-      `/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
-      `/wxkf/account/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf/${accountId}/links?name=${accountName}&page=${pagination.current}`,
+      `/account/wecom/${corpId}/wxkf/${accountId}/links?name=${accountName}&page=${pagination.current}`,
       { shallow: true },
     );
   }

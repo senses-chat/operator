@@ -50,10 +50,12 @@ export class SendWxkfMessageEventHandler
 
     this.logger.debug(JSON.stringify(payload));
 
+    const wxkfService = await this.wxkfServiceRegistry.getService(payload.corpid);
+
     if (content.type === MessageContentType.Text) {
       const textMessageContent = content as TextMessageContent;
       if (textMessageContent.text) {
-        await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
+        await wxkfService.sendMessage(
           plainToInstance(WxkfMessagePayload, {
             ...payload,
             msgtype: WxkfMessageType.Text,
@@ -67,7 +69,7 @@ export class SendWxkfMessageEventHandler
 
     if (content.type === MessageContentType.TextWithButtons) {
       const textWithButtonsContent = content as TextWithButtonsMessageContent;
-      await this.wxkfServiceRegistry.getService(payload.corpid).sendMessage(
+      await wxkfService.sendMessage(
         plainToInstance(WxkfMessagePayload, {
           ...payload,
           msgtype: WxkfMessageType.Menu,
@@ -103,7 +105,7 @@ export class SendWxkfMessageEventHandler
     // }
 
     if (content.metadata && content.metadata.service_state) {
-      await this.wxkfServiceRegistry.getService(payload.corpid).transferServiceState(
+      await wxkfService.transferServiceState(
         payload.open_kfid,
         payload.touser,
         content.metadata.service_state,
