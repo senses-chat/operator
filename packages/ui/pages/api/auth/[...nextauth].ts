@@ -61,5 +61,8 @@ export default NextAuth({
       session.userId = token.sub;
       return session
     }
+  },
+  pages: {
+    signIn: '/auth/signin',
   }
 })
