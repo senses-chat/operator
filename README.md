@@ -30,6 +30,7 @@ Demo (微信扫描二维码):
 - Bilibili
 - WebSocket 通道（SocketIO）
 - Microsoft BotFramework
+- ChatGPT
 
 目前所有收发的消息均可在 Redis Stream 或者 SQL（通过 Prisma）中存储。
 
