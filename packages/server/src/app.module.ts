@@ -8,6 +8,8 @@ import { WxkfModule } from '@senses-chat/operator-wxkf';
 
 import serverConfig from './config';
 import { AppController } from './app.controller';
+import { RavenInterceptor, RavenModule } from 'nest-raven';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 const ENV = process.env.NODE_ENV;
 
@@ -23,8 +25,12 @@ const ENV = process.env.NODE_ENV;
     WxkfModule,
     RasaModule,
     ApiModule,
+    RavenModule
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [{
+    provide: APP_INTERCEPTOR,
+    useValue: new RavenInterceptor(),
+  }],
 })
 export class AppModule {}

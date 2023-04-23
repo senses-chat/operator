@@ -3,6 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
+import * as Sentry from "@sentry/node"
+import "@sentry/tracing"
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -26,5 +29,10 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0');
   logger.log(`server started listening at 0.0.0.0:${port}`);
 }
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+})
 
 bootstrap();
